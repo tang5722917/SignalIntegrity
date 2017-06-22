@@ -14,9 +14,8 @@ class XMLProperty(object):
         self.dict={}
         if not propertyValue == None:
             if propertyType == None:
-                self.Default(propertyName,propertyValue,'string')
-            else:
-                self.Default(propertyName,propertyValue,propertyType)
+                propertyType='string'
+        self.Default(propertyName,propertyValue,propertyType)
     def Default(self,propertyName,propertyValue,propertyType):
         self.dict['name']=propertyName
         self.dict['type']=propertyType
@@ -35,7 +34,7 @@ class XMLProperty(object):
         else:
             elementPropertyValue = None
         
-        lines=lines+[indent+ProjectFileBase.indent+'<type>'+elementPropertyType+'</type>']
+#        lines=lines+[indent+ProjectFileBase.indent+'<type>'+elementPropertyType+'</type>']
         
         if isinstance(elementPropertyValue,list):
             lines=lines+[indent+ProjectFileBase.indent+'<value>']
@@ -50,7 +49,7 @@ class XMLProperty(object):
     def InitFromXML(self,element,module):
         self.dict['name']=element.tag
         for elementProperty in element:
-            if 'type' in self.dict and elementProperty.tag == 'value' and self.dict['type']=='array':
+            if isinstance(self.dict['value'],list) and elementProperty.tag == 'value':
                 self.dict[elementProperty.tag] = []
                 for child in elementProperty:
                     name=child.tag
@@ -58,7 +57,7 @@ class XMLProperty(object):
                         temp=__import__(module)
                         self.dict['value'].append(eval('temp.'+name+'().InitFromXML(child,module)'))
                     else:
-                        self.dict['value'].append(XMLProperty(child.tag).InitFromXML(child,module))
+                        self.dict['value'].append(XMLProperty(name,None,self.dict['type']).InitFromXML(child,module))
             else:
                 self.dict[elementProperty.tag] = elementProperty.text
         return self.UpdateValue()
@@ -67,7 +66,7 @@ class XMLProperty(object):
             self.value = None
         elif 'type' in self.dict:
             elementPropertyValue = self.dict['value']
-            if elementPropertyValue=='None':
+            if elementPropertyValue in ['None',None]:
                 self.value = None
                 return self
             elementPropertyType = self.dict['type']
@@ -92,10 +91,18 @@ class XMLProperty(object):
             propertyType=self.dict['type']
         else:
             propertyType='string'
+
+        if propertyType is None:
+            propertyType='None'
+
         if 'value' in self.dict:
             propertyValue=self.dict['value']
         else:
             propertyValue='None'
+
+        if propertyValue is None:
+            propertyValue = 'None'
+
         if isinstance(propertyValue,list):
             for i in range(len(propertyValue)):
                 propertyValue[i].PrintFullInformation(prefix+'['+str(i)+']')
@@ -108,15 +115,13 @@ class XMLProperty(object):
         else:
             return None
     def GetValue(self,path):
-        if self.GetPropertyValue('type')=='array':
+        if isinstance(self.GetPropertyValue('value'),list):
             return self.GetPropertyValue('value')
         else:
             return self.value
 
     def SetValue(self,path,value):
-        if self.GetPropertyValue('type')=='array':
-            if not isinstance(value, list):
-                raise
+        if isinstance(value, list):
             self.dict['value']=value
         else:
             self.dict['value']=str(value)
@@ -167,7 +172,8 @@ class XMLConfiguration(object):
                 temp=__import__(module)
                 self.dict[prefix]=eval('temp.'+name+'().InitFromXML(child,module)')
             else:
-                self.dict[name]=XMLProperty(name).InitFromXML(child,module)
+                if name in self.dict:
+                    self.dict[name]=XMLProperty(name,self.dict[name].dict['value'],self.dict[name].dict['type']).InitFromXML(child,module)
         return self
     def Print(self):
         for item in self.dict:
@@ -249,7 +255,7 @@ class ProjectFileBase(object):
                 temp=__import__(self.module)
                 self.dict[prefix]=eval('temp.'+name+'().InitFromXML(child,self.module)')
             else:
-                self.dict[name]=XMLProperty(name).InitFromXML(child,self.module)
+                self.dict[name]=XMLProperty(name,propertyType=self.dict[name].dict['type']).InitFromXML(child,self.module)
         return self
 
     def Print(self):

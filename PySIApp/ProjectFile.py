@@ -29,7 +29,7 @@ class PartPropertyConfiguration(XMLConfiguration):
 class PartPictureConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
-        self.dict['ClassNames']=XMLProperty('ClassNames',[XMLPropertyDefaultString('ClassName') for _ in range(0)],'array')
+        self.dict['ClassNames']=XMLProperty('ClassNames',[XMLPropertyDefaultString('ClassName') for _ in range(0)],'string')
         self.dict['Selected']=XMLPropertyDefaultBool('Selected',False)
         self.dict['Origin']=XMLPropertyDefaultString('Origin')
         self.dict['Orientation']=XMLPropertyDefaultInt('Orientation')
@@ -41,7 +41,7 @@ class DeviceConfiguration(XMLConfiguration):
         XMLConfiguration.__init__(self)
         self.dict['ClassName']=XMLPropertyDefaultString('ClassName')
         self.dict['PartPicture']=PartPictureConfiguration()
-        self.dict['PartProperties']=XMLProperty('PartProperties',[PartPropertyConfiguration() for _ in range(0)],'array')
+        self.dict['PartProperties']=XMLProperty('PartProperties',[PartPropertyConfiguration() for _ in range(0)])
 
 class VertexConfiguration(XMLConfiguration):
     def __init__(self):
@@ -51,7 +51,7 @@ class VertexConfiguration(XMLConfiguration):
 class WireConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
-        self.dict['Vertices']=XMLProperty('Vertices',[XMLPropertyDefaultString() for _ in range(0)],'array')
+        self.dict['Vertex']=XMLProperty('Vertex',[XMLPropertyDefaultString() for _ in range(0)],'string')
 
 class DrawingPropertiesConfiguration(XMLConfiguration):
     def __init__(self):
@@ -66,8 +66,8 @@ class DrawingPropertiesConfiguration(XMLConfiguration):
 class SchematicConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
-        self.dict['Devices']=XMLProperty('Devices',[DeviceConfiguration() for _ in range(0)],'array')
-        self.dict['Wires']=XMLProperty('Wires',[WireConfiguration() for _ in range(0)],'array')
+        self.dict['Devices']=XMLProperty('Devices',[DeviceConfiguration() for _ in range(0)])
+        self.dict['Wires']=XMLProperty('Wires',[WireConfiguration() for _ in range(0)])
 
 class DrawingConfiguration(XMLConfiguration):
     def __init__(self):
@@ -139,14 +139,14 @@ class App(TheApp):
         for w in range(len(project.GetValue('Drawing.Schematic.Wires'))):
             wireProject=project.GetValue('Drawing.Schematic.Wires')[w]
             wire=self.Drawing.schematic.wireList[w]
-            wireProject.SetValue('Vertices',[XMLPropertyDefaultString('Vertex',str(vertex.coord)) for vertex in wire])
+            wireProject.SetValue('Vertex',[XMLPropertyDefaultString('Vertex',str(vertex.coord)) for vertex in wire])
         project.SetValue('CalculationProperties.EndFrequency',self.calculationProperties.endFrequency)
         project.SetValue('CalculationProperties.FrequencyPoints',self.calculationProperties.frequencyPoints)
         project.SetValue('CalculationProperties.UserSampleRate',self.calculationProperties.userSampleRate)
         project.Write(newfilename)
         project.Read(newfilename)
         project.Write(newfilename)
-        pass
+        project.PrintFullInformation()
             
  
 if __name__ == '__main__':
