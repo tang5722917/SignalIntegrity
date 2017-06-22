@@ -24,7 +24,6 @@ class XMLProperty(object):
 
     def OutputXML(self,indent):
         lines=[]
-        lines=lines+[indent+'<'+self.dict['name']+'>']
         if 'type' in self.dict:
             elementPropertyType = self.dict['type']
         else:
@@ -37,29 +36,27 @@ class XMLProperty(object):
 #        lines=lines+[indent+ProjectFileBase.indent+'<type>'+elementPropertyType+'</type>']
         
         if isinstance(elementPropertyValue,list):
-            lines=lines+[indent+ProjectFileBase.indent+'<value>']
+            lines=lines+[indent+'<'+self.dict['name']+'>']
             for item in elementPropertyValue:
                 lines=lines+item.OutputXML(indent+ProjectFileBase.indent+ProjectFileBase.indent)
-            lines=lines+[indent+ProjectFileBase.indent+'</value>']
+            lines=lines+[indent+'</'+self.dict['name']+'>']
         else:
-            lines=lines+[indent+ProjectFileBase.indent+'<value>'+str(elementPropertyValue)+'</value>']
-        lines=lines+[indent+'</'+self.dict['name']+'>']
+            lines=[indent+'<'+self.dict['name']+'>'+str(elementPropertyValue)+'</'+self.dict['name']+'>']
         return lines
 
     def InitFromXML(self,element,module):
         self.dict['name']=element.tag
-        for elementProperty in element:
-            if isinstance(self.dict['value'],list) and elementProperty.tag == 'value':
-                self.dict[elementProperty.tag] = []
-                for child in elementProperty:
-                    name=child.tag
-                    if name[len(name)-len('Configuration'):]=='Configuration':
-                        temp=__import__(module)
-                        self.dict['value'].append(eval('temp.'+name+'().InitFromXML(child,module)'))
-                    else:
-                        self.dict['value'].append(XMLProperty(name,None,self.dict['type']).InitFromXML(child,module))
-            else:
-                self.dict[elementProperty.tag] = elementProperty.text
+        if isinstance(self.dict['value'],list):
+            self.dict['value'] = []
+            for child in element:
+                name=child.tag
+                if name[len(name)-len('Configuration'):]=='Configuration':
+                    temp=__import__(module)
+                    self.dict['value'].append(eval('temp.'+name+'().InitFromXML(child,module)'))
+                else:
+                    self.dict['value'].append(XMLProperty(name,None,self.dict['type']).InitFromXML(child,module))
+        else:
+            self.dict['value'] = element.text
         return self.UpdateValue()
     def UpdateValue(self):
         if not 'value' in self.dict:
@@ -212,7 +209,7 @@ class XMLConfiguration(object):
             return None
 
 class ProjectFileBase(object):
-    indent='    '
+    indent='  '
     def __init__(self,module):
         self.dict={}
         self.module=module
