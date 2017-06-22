@@ -43,7 +43,7 @@ class XMLProperty(object):
                 lines=lines+item.OutputXML(indent+ProjectFileBase.indent+ProjectFileBase.indent)
             lines=lines+[indent+ProjectFileBase.indent+'</value>']
         else:
-            lines=lines+[indent+ProjectFileBase.indent+'<value>'+elementPropertyValue+'</value>']
+            lines=lines+[indent+ProjectFileBase.indent+'<value>'+str(elementPropertyValue)+'</value>']
         lines=lines+[indent+'</'+self.dict['name']+'>']
         return lines
 
@@ -58,7 +58,7 @@ class XMLProperty(object):
                         temp=__import__(module)
                         self.dict['value'].append(eval('temp.'+name+'().InitFromXML(child,module)'))
                     else:
-                        self.dict['value'].append(XMLProperty().InitFromXML(child,module))
+                        self.dict['value'].append(XMLProperty(child.tag).InitFromXML(child,module))
             else:
                 self.dict[elementProperty.tag] = elementProperty.text
         return self.UpdateValue()
@@ -107,12 +107,20 @@ class XMLProperty(object):
             return self.dict[path]
         else:
             return None
-    def GetValue(self,path):            
-        return self.value
+    def GetValue(self,path):
+        if self.GetPropertyValue('type')=='array':
+            return self.GetPropertyValue('value')
+        else:
+            return self.value
 
     def SetValue(self,path,value):
-        self.dict['value']=str(value)
-        self.UpdateValue()
+        if self.GetPropertyValue('type')=='array':
+            if not isinstance(value, list):
+                raise
+            self.dict['value']=value
+        else:
+            self.dict['value']=str(value)
+            self.UpdateValue()
 
 class XMLPropertyDefault(XMLProperty):
     def __init__(self,name,typeString,value=None):

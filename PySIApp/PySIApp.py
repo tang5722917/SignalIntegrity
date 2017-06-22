@@ -43,7 +43,7 @@ from PreferencesDialog import PreferencesDialog
 from FilePicker import AskSaveAsFilename,AskOpenFileName
 
 class TheApp(Frame):
-    def __init__(self):
+    def __init__(self,runMainLoop=True):
         # make absolutely sure the directory of this file is the first in the
         # python path
         thisFileDir=os.path.dirname(os.path.realpath(__file__))
@@ -290,7 +290,8 @@ class TheApp(Frame):
 
         self.UpdateRecentProjectsMenu()
 
-        self.root.mainloop()
+        if runMainLoop:
+            self.root.mainloop()
 
     def onResize(self,event):
         if not self.knowDelta:
