@@ -205,6 +205,10 @@ class Wire(object):
                 vertex.InitFromXml(child)
                 self.append(vertex)
         return self
+    def InitFromProject(self,wireProject):
+        self.__init__()
+        self.vertexList=[eval(vertexProject.GetValue('Vertex')) for vertexProject in wireProject.GetValue('Vertex')]
+        return self
     def CoordinateList(self):
         return [vertex.coord for vertex in self]
     def xml(self):
@@ -244,6 +248,9 @@ class WireList(object):
                 wire=Wire()
                 wire.InitFromXml(child)
                 self.wires.append(wire)
+    def InitFromProject(self,wiresListProject):
+        self.__init__()
+        self.wires=[Wire().InitFromProject(wireProject) for wireProject in wiresListProject]
     def xml(self):
         wiresElement=et.Element('wires')
         wireElements=[]

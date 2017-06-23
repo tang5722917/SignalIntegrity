@@ -14,7 +14,7 @@ import xml.etree.ElementTree as et
 import copy
 
 from PartProperty import PartPropertyReferenceDesignator,PartPropertyDefaultReferenceDesignator
-from Device import DeviceXMLClassFactory
+from Device import DeviceXMLClassFactory,DeviceFromProject
 from NetList import NetList
 from Wire import WireList,Vertex,SegmentList,Wire
 from MenuSystemHelpers import Doer
@@ -45,6 +45,17 @@ class Schematic(object):
                         self.deviceList.append(returnedDevice)
             elif child.tag == 'wires':
                 self.wireList.InitFromXml(child)
+    def InitFromProject(self,project):
+        self.__init__()
+        deviceListProject=project.GetValue('Drawing.Schematic.Devices')
+        for d in range(len(deviceListProject)):
+            try:
+                returnedDevice=DeviceFromProject(deviceListProject[d]).result
+            except NameError: # part picture doesn't exist
+                returnedDevice=None
+            if not returnedDevice is None:
+                self.deviceList.append(returnedDevice)
+        self.wireList.InitFromProject(project.GetValue('Drawing.Schematic.Wires'))
     def NetList(self):
         self.Consolidate()
         return NetList(self)
@@ -1403,3 +1414,13 @@ class Drawing(Frame):
                         geometry = drawingPropertyElement.text
                 self.canvas.config(width=canvasWidth,height=canvasHeight)
                 self.parent.root.geometry(geometry.split('+')[0])
+    def InitFromProject(self,project):
+        drawingProperties=project.GetValue('Drawing.DrawingProperties')
+        self.grid=drawingProperties.GetValue('Grid')
+        self.originx=drawingProperties.GetValue('Originx')
+        self.originy=drawingProperties.GetValue('Originy')
+        self.schematic = Schematic()
+        self.schematic.InitFromProject(project)
+        self.stateMachine = DrawingStateMachine(self)
+        self.canvas.config(width=drawingProperties.GetValue('Width'),height=drawingProperties.GetValue('Height'))
+        self.parent.root.geometry(drawingProperties.GetValue('Geometry').split('+')[0])

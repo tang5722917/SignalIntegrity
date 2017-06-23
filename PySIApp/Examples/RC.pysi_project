@@ -1,0 +1,573 @@
+<Project>
+  <DrawingConfiguration>
+    <DrawingPropertiesConfiguration>
+      <Geometry>467x151+27+56</Geometry>
+      <Originy>2</Originy>
+      <Originx>2</Originx>
+      <Height>106</Height>
+      <Width>467</Width>
+      <Grid>16</Grid>
+    </DrawingPropertiesConfiguration>
+    <SchematicConfiguration>
+      <Wires>
+          <WireConfiguration>
+            <Vertex>
+                <Vertex>(4, 4)</Vertex>
+                <Vertex>(4, 3)</Vertex>
+            </Vertex>
+          </WireConfiguration>
+          <WireConfiguration>
+            <Vertex>
+                <Vertex>(9, 3)</Vertex>
+                <Vertex>(10, 3)</Vertex>
+            </Vertex>
+          </WireConfiguration>
+          <WireConfiguration>
+            <Vertex>
+                <Vertex>(4, 3)</Vertex>
+                <Vertex>(5, 3)</Vertex>
+            </Vertex>
+          </WireConfiguration>
+          <WireConfiguration>
+            <Vertex>
+                <Vertex>(10, 3)</Vertex>
+                <Vertex>(10, 4)</Vertex>
+            </Vertex>
+          </WireConfiguration>
+      </Wires>
+      <Devices>
+          <DeviceConfiguration>
+            <ClassName>DeviceVoltageStepGenerator</ClassName>
+            <PartPictureConfiguration>
+              <Origin>(3, 4)</Origin>
+              <MirroredHorizontally>False</MirroredHorizontally>
+              <Orientation>0</Orientation>
+              <Selected>0</Selected>
+              <ClassNames>
+                  <ClassName>PartPictureVoltageSourceStepGeneratorOnePort</ClassName>
+              </ClassNames>
+              <MirroredVertically>False</MirroredVertically>
+            </PartPictureConfiguration>
+            <PartProperties>
+                <PartPropertyConfiguration>
+                  <Description>part category</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>category</PropertyName>
+                  <Value>Generators</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part type</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>type</PropertyName>
+                  <Value>Voltage Step Generator</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>default reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>defaultreference</PropertyName>
+                  <Value>VG?</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>horizontal offset (s)</Description>
+                  <Keyword>ho</Keyword>
+                  <PropertyName>horizontaloffset</PropertyName>
+                  <Value>-1e-07</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>s</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>duration (s)</Description>
+                  <Keyword>dur</Keyword>
+                  <PropertyName>duration</PropertyName>
+                  <Value>2e-07</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>s</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>start time (s)</Description>
+                  <Keyword>t0</Keyword>
+                  <PropertyName>starttime</PropertyName>
+                  <Value>0.0</Value>
+                  <Visible>True</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>s</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>Sample Rate (S/s)</Description>
+                  <Keyword>fs</Keyword>
+                  <PropertyName>sampleRate</PropertyName>
+                  <Value>40000000000.0</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>S/s</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>voltage amplitude (V)</Description>
+                  <Keyword>a</Keyword>
+                  <PropertyName>voltageamplitude</PropertyName>
+                  <Value>1.0</Value>
+                  <Visible>True</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>V</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part description</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>description</PropertyName>
+                  <Value>One Port Voltage Step Generator</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>ports</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>ports</PropertyName>
+                  <Value>1</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>int</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>reference</PropertyName>
+                  <Value>VG1</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+            </PartProperties>
+          </DeviceConfiguration>
+          <DeviceConfiguration>
+            <ClassName>DeviceResistor</ClassName>
+            <PartPictureConfiguration>
+              <Origin>(5, 2)</Origin>
+              <MirroredHorizontally>False</MirroredHorizontally>
+              <Orientation>0</Orientation>
+              <Selected>0</Selected>
+              <ClassNames>
+                  <ClassName>PartPictureResistorTwoPort</ClassName>
+              </ClassNames>
+              <MirroredVertically>False</MirroredVertically>
+            </PartPictureConfiguration>
+            <PartProperties>
+                <PartPropertyConfiguration>
+                  <Description>part category</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>category</PropertyName>
+                  <Value>Resistors</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part type</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>type</PropertyName>
+                  <Value>Resistor</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>default reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>defaultreference</PropertyName>
+                  <Value>R?</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>resistance (Ohms)</Description>
+                  <Keyword>r</Keyword>
+                  <PropertyName>resistance</PropertyName>
+                  <Value>50.0</Value>
+                  <Visible>True</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>Ohm</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part description</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>description</PropertyName>
+                  <Value>Two Port Resistor</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>ports</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>ports</PropertyName>
+                  <Value>2</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>int</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>reference</PropertyName>
+                  <Value>R1</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+            </PartProperties>
+          </DeviceConfiguration>
+          <DeviceConfiguration>
+            <ClassName>DeviceCapacitor</ClassName>
+            <PartPictureConfiguration>
+              <Origin>(9, 4)</Origin>
+              <MirroredHorizontally>False</MirroredHorizontally>
+              <Orientation>0</Orientation>
+              <Selected>0</Selected>
+              <ClassNames>
+                  <ClassName>PartPictureCapacitorOnePort</ClassName>
+              </ClassNames>
+              <MirroredVertically>False</MirroredVertically>
+            </PartPictureConfiguration>
+            <PartProperties>
+                <PartPropertyConfiguration>
+                  <Description>part category</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>category</PropertyName>
+                  <Value>Capacitors</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part type</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>type</PropertyName>
+                  <Value>Capacitor</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>default reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>defaultreference</PropertyName>
+                  <Value>C?</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>capacitance (F)</Description>
+                  <Keyword>c</Keyword>
+                  <PropertyName>capacitance</PropertyName>
+                  <Value>1e-10</Value>
+                  <Visible>True</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>F</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part description</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>description</PropertyName>
+                  <Value>One Port Capacitor to Ground</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>ports</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>ports</PropertyName>
+                  <Value>1</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>int</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>reference</PropertyName>
+                  <Value>C1</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+            </PartProperties>
+          </DeviceConfiguration>
+          <DeviceConfiguration>
+            <ClassName>DeviceOutput</ClassName>
+            <PartPictureConfiguration>
+              <Origin>(4, 2)</Origin>
+              <MirroredHorizontally>True</MirroredHorizontally>
+              <Orientation>0</Orientation>
+              <Selected>0</Selected>
+              <ClassNames>
+                  <ClassName>PartPictureProbe</ClassName>
+              </ClassNames>
+              <MirroredVertically>False</MirroredVertically>
+            </PartPictureConfiguration>
+            <PartProperties>
+                <PartPropertyConfiguration>
+                  <Description>part category</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>category</PropertyName>
+                  <Value>Special</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part type</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>type</PropertyName>
+                  <Value>Output</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>default reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>defaultreference</PropertyName>
+                  <Value>VO?</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part description</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>description</PropertyName>
+                  <Value>Output</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>voltage gain (V/V)</Description>
+                  <Keyword>gain</Keyword>
+                  <PropertyName>gain</PropertyName>
+                  <Value>1.0</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>voltage offset (V)</Description>
+                  <Keyword>offset</Keyword>
+                  <PropertyName>offset</PropertyName>
+                  <Value>0.0</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>V</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>delay (s)</Description>
+                  <Keyword>td</Keyword>
+                  <PropertyName>delay</PropertyName>
+                  <Value>0.0</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>s</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>reference</PropertyName>
+                  <Value>Vin</Value>
+                  <Visible>True</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+            </PartProperties>
+          </DeviceConfiguration>
+          <DeviceConfiguration>
+            <ClassName>DeviceOutput</ClassName>
+            <PartPictureConfiguration>
+              <Origin>(10, 2)</Origin>
+              <MirroredHorizontally>False</MirroredHorizontally>
+              <Orientation>0</Orientation>
+              <Selected>0</Selected>
+              <ClassNames>
+                  <ClassName>PartPictureProbe</ClassName>
+              </ClassNames>
+              <MirroredVertically>False</MirroredVertically>
+            </PartPictureConfiguration>
+            <PartProperties>
+                <PartPropertyConfiguration>
+                  <Description>part category</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>category</PropertyName>
+                  <Value>Special</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part type</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>type</PropertyName>
+                  <Value>Output</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>default reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>defaultreference</PropertyName>
+                  <Value>VO?</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>part description</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>description</PropertyName>
+                  <Value>Output</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>True</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>voltage gain (V/V)</Description>
+                  <Keyword>gain</Keyword>
+                  <PropertyName>gain</PropertyName>
+                  <Value>1.0</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>voltage offset (V)</Description>
+                  <Keyword>offset</Keyword>
+                  <PropertyName>offset</PropertyName>
+                  <Value>0.0</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>V</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>delay (s)</Description>
+                  <Keyword>td</Keyword>
+                  <PropertyName>delay</PropertyName>
+                  <Value>0.0</Value>
+                  <Visible>False</Visible>
+                  <KeywordVisible>True</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>float</Type>
+                  <Unit>s</Unit>
+                </PartPropertyConfiguration>
+                <PartPropertyConfiguration>
+                  <Description>reference designator</Description>
+                  <Keyword>None</Keyword>
+                  <PropertyName>reference</PropertyName>
+                  <Value>Vout</Value>
+                  <Visible>True</Visible>
+                  <KeywordVisible>False</KeywordVisible>
+                  <Hidden>False</Hidden>
+                  <Type>string</Type>
+                  <Unit>None</Unit>
+                </PartPropertyConfiguration>
+            </PartProperties>
+          </DeviceConfiguration>
+      </Devices>
+    </SchematicConfiguration>
+  </DrawingConfiguration>
+  <CalculationPropertiesConfiguration>
+    <UserSampleRate>40000000000.0</UserSampleRate>
+    <FrequencyPoints>1000</FrequencyPoints>
+    <EndFrequency>20000000000.0</EndFrequency>
+  </CalculationPropertiesConfiguration>
+</Project>

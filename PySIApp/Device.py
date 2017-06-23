@@ -73,6 +73,22 @@ class Device(object):
     def Waveform(self):
         return None
 
+class DeviceFromProject(object):
+    def __init__(self,deviceProject):
+        devicePartPropertiesProjectList=deviceProject.GetValue('PartProperties')
+        propertiesList=[PartPropertyFromProject(devicePartPropertiesProjectList[p]).result for p in range(len(devicePartPropertiesProjectList))]
+        className=deviceProject.GetValue('ClassName')
+        ports=None
+        for partProperty in propertiesList:
+            if partProperty.propertyName == 'ports':
+                ports=partProperty.GetValue()
+        partPicture=PartPictureFromProject(deviceProject.GetValue('PartPicture'),ports)
+        try:
+            self.result=eval(className).__new__(eval(className))
+            Device.__init__(self.result,propertiesList,partPicture)
+        except NameError:
+            self.result=None
+
 class DeviceXMLClassFactory(object):
     def __init__(self,xml):
         propertiesList=[]

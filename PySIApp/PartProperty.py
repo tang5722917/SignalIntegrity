@@ -164,6 +164,22 @@ class PartPropertyXMLClassFactory(PartProperty):
             unit = ''
         self.result=PartProperty(propertyName,ptype,unit,keyword,description,value,hidden,visible,keywordVisible)
 
+class PartPropertyFromProject(PartProperty):
+    def __init__(self,partPropertyProject):
+        propertyName=partPropertyProject.GetValue('PropertyName')
+        keyword=partPropertyProject.GetValue('Keyword')
+        description=partPropertyProject.GetValue('Description')
+        value=partPropertyProject.GetValue('Value')
+        hidden=partPropertyProject.GetValue('Hidden')
+        visible=partPropertyProject.GetValue('Visible')
+        ptype=partPropertyProject.GetValue('Type')
+        unit=partPropertyProject.GetValue('Unit')
+        keywordVisible=partPropertyProject.GetValue('KeywordVisible')
+        # hack because stupid xml outputs none for empty string
+        if ptype == 'float' and (unit is None or unit == 'None'):
+            unit = ''
+        self.result=PartProperty(propertyName,ptype,unit,keyword,description,value,hidden,visible,keywordVisible)
+
 class PartPropertyPortNumber(PartProperty):
     def __init__(self,portNumber):
         PartProperty.__init__(self,'portnumber',type='int',unit=None,keyword='',description='port number',value=portNumber,visible=True)

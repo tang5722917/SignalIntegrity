@@ -41,6 +41,7 @@ from About import AboutDialog
 from Preferences import Preferences
 from PreferencesDialog import PreferencesDialog
 from FilePicker import AskSaveAsFilename,AskOpenFileName
+from ProjectFile import ProjectFile
 
 class TheApp(Frame):
     def __init__(self,runMainLoop=True):
@@ -317,9 +318,9 @@ class TheApp(Frame):
     def onReadProjectFromFile(self):
         if not self.CheckSaveCurrentProject():
             return
-        filename=AskOpenFileName(filetypes=[('xml', '.xml')],
+        filename=AskOpenFileName(filetypes=[('pysi_project', '.pysi_project')],
                                  initialdir=self.fileparts.AbsoluteFilePath(),
-                                 initialfile=self.fileparts.FileNameWithExtension('.xml'))
+                                 initialfile=self.fileparts.FileNameWithExtension('.pysi_project'))
 
         if filename is None:
             return
@@ -337,13 +338,9 @@ class TheApp(Frame):
             self.fileparts=FileParts(filename)
             os.chdir(self.fileparts.AbsoluteFilePath())
             self.fileparts=FileParts(filename)
-            tree=et.parse(self.fileparts.FullFilePathExtension('.xml'))
-            root=tree.getroot()
-            for child in root:
-                if child.tag == 'drawing':
-                    self.Drawing.InitFromXml(child)
-                elif child.tag == 'calculation_properties':
-                    self.calculationProperties.InitFromXml(child, self)
+            self.project=ProjectFile().Read(self.fileparts.FullFilePathExtension('.pysi_project'))
+            self.Drawing.InitFromProject(self.project)
+            self.calculationProperties.InitFromProject(self.project)
         except:
             tkMessageBox.showerror('read project file','file not found or unreadable')
             return

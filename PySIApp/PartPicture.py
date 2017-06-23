@@ -424,6 +424,32 @@ class PartPictureXMLClassFactory(object):
                 mirroredHorizontally = eval(item.text)
         self.result=PartPictureVariable(partPictureClassList,ports,partPictureSelected,origin,orientation,mirroredHorizontally,mirroredVertically)
 
+class PartPictureFromProject(object):
+    def __init__(self,partPictureProject,ports):
+        partPictureSelected = partPictureProject.GetValue('Selected')
+        origin=eval(partPictureProject.GetValue('Origin'))
+        orientation=str(partPictureProject.GetValue('Orientation'))
+        mirroredVertically=partPictureProject.GetValue('MirroredVertically')
+        mirroredHorizontally=partPictureProject.GetValue('MirroredHorizontally')
+        partPictureClassNamesProject=partPictureProject.GetValue('ClassNames')
+        partPictureClassList=[partPictureClassNamesProject[cn].GetValue('ClassName') for cn in range(len(partPictureClassNamesProject))]
+        for cn in range(len(partPictureClassList)):
+            className=partPictureClassList[cn]
+            if className in ['PartPictureOnePort','PartPictureTwoPort','PartPictureThreePort','PartPictureFourPort']:
+                    className='PartPictureSpecifiedPorts'
+            if className in ['PartPictureTwoPortSide','PartPictureThreePortSide','PartPictureFourPortSide']:
+                    className='PartPictureSpecifiedPortsSide'
+            if className in ['PartPictureSystemOnePort','PartPictureSystemTwoPort','PartPictureSystemThreePort','PartPictureSystemFourPort']:
+                    className='PartPictureSystem'
+            if className in ['PartPictureSystemTwoPortSide','PartPictureSystemThreePortSide','PartPictureSystemFourPortSide']:
+                    className='PartPictureSystemSide'
+            if className in ['PartPictureUnknownOnePort','PartPictureUnknownTwoPort','PartPictureUnknownThreePort','PartPictureUnknownFourPort']:
+                    className='PartPictureUnknown'
+            if className in ['PartPictureUnknownTwoPortSide','PartPictureUnknownThreePortSide','PartPictureUnknownFourPortSide']:
+                    className='PartPictureUnknownSide'
+            partPictureClassList[cn]=className
+        self.result=PartPictureVariable(partPictureClassList,ports,partPictureSelected,origin,orientation,mirroredHorizontally,mirroredVertically)
+
 class PartPictureVariable(object):
     def __init__(self,partPictureClassList,ports,partPictureSelected=0,origin=(0,0),orientation='0',mirroredHorizontally=False,mirroredVertically=False):
         self.partPictureClassList = partPictureClassList
