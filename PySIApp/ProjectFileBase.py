@@ -22,6 +22,13 @@ class XMLProperty(object):
         self.dict['value']=propertyValue
         self.UpdateValue()
 
+    def Changed(self,changed):
+        return self.changed or changed
+
+    def SetUnchanged(self):
+        self.changed=False
+        return self
+
     def OutputXML(self,indent):
         lines=[]
         if 'type' in self.dict:
@@ -123,6 +130,7 @@ class XMLProperty(object):
         else:
             self.dict['value']=str(value)
             self.UpdateValue()
+	self.changed=True
 
 class XMLPropertyDefault(XMLProperty):
     def __init__(self,name,typeString,value=None):
@@ -161,6 +169,17 @@ class XMLConfiguration(object):
             lines=lines+self.dict[item].OutputXML(indent+ProjectFileBase.indent)
         lines=lines+[indent+'</'+name+'>']
         return lines
+
+    def Changed(self,changed):
+        for item in self.dict:
+            changed=self.dict[item].Changed(changed)
+        return changed
+
+    def SetUnchanged(self):
+        for item in self.dict:
+            self.dict[item].SetUnchanged()
+        return self
+
     def InitFromXML(self,element,module):
         for child in element:
             name=child.tag
@@ -210,9 +229,10 @@ class XMLConfiguration(object):
 
 class ProjectFileBase(object):
     indent='  '
-    def __init__(self,module):
+    def __init__(self,module,ext='xml'):
         self.dict={}
         self.module=module
+        self.ext=ext.strip('.')
 
     def OutputXML(self):
         lines=[]
@@ -224,9 +244,20 @@ class ProjectFileBase(object):
             print line
         return self
 
+    def Changed(self):
+        changed=False
+        for item in self.dict:
+            changed=self.dict[item].Changed(changed)
+        return changed
+
+    def SetUnchanged(self):
+        for item in self.dict:
+            self.dict[item].SetUnchanged()
+        return self
+
     def Write(self,filename):
-        if not filename.split('.')[-1] == 'xml':
-            filename=filename+'.xml'
+        if not filename.split('.')[-1] == self.ext:
+            filename=filename+'.'+self.ext
         lines=[]
         lines=lines+['<Project>']
         for item in self.dict:
@@ -234,14 +265,16 @@ class ProjectFileBase(object):
         lines=lines+['</Project>']
         with open(filename,'w') as f:
             f.writelines("%s\n" % l for l in lines)
+        self.SetUnchanged()
         return self
 
     def Read(self,filename):
-        if not filename.split('.')[-1] == 'xml':
-            filename=filename+'.xml'
+        if not filename.split('.')[-1] == self.ext:
+            filename=filename+'.'+self.ext
         tree=et.parse(filename)
         root=tree.getroot()
         self.Parse(root)
+        self.SetUnchanged()
         return self
 
     def Parse(self,element):
@@ -252,7 +285,7 @@ class ProjectFileBase(object):
                 temp=__import__(self.module)
                 self.dict[prefix]=eval('temp.'+name+'().InitFromXML(child,self.module)')
             else:
-                self.dict[name]=XMLProperty(name,propertyType=self.dict[name].dict['type']).InitFromXML(child,self.module)
+                self.dict[name]=XMLProperty(name,self.dict[name].dict['value'],self.dict[name].dict['type']).InitFromXML(child,self.module)
         return self
 
     def Print(self):

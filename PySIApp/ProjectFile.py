@@ -84,7 +84,7 @@ class CalculationPropertiesConfiguration(XMLConfiguration):
 
 class ProjectFile(ProjectFileBase):
     def __init__(self):
-        ProjectFileBase.__init__(self,os.path.basename(__file__).split('.')[0])
+        ProjectFileBase.__init__(self,os.path.basename(__file__).split('.')[0],'pysi_project')
         self.dict['Drawing']=DrawingConfiguration()
         self.dict['CalculationProperties']=CalculationPropertiesConfiguration()
 
@@ -101,7 +101,6 @@ class App(TheApp):
                 self.Drawing.InitFromXml(child)
             elif child.tag == 'calculation_properties':
                 self.calculationProperties.InitFromXml(child, self)
-
         project=ProjectFile()
         project.SetValue('Drawing.DrawingProperties.Grid',self.Drawing.grid)
         project.SetValue('Drawing.DrawingProperties.Originx',self.Drawing.originx)
@@ -150,7 +149,7 @@ class App(TheApp):
             
  
 if __name__ == '__main__':
-    App().ConvertOldProjectToNew('RLCTest2.xml', 'NewFile.xml')
+    App().ConvertOldProjectToNew('RLCTest2.xml', 'NewFile.pysi_project')
     
     
     
