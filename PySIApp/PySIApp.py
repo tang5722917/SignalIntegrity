@@ -340,7 +340,7 @@ class TheApp(Frame):
             self.fileparts=FileParts(filename)
             self.project=ProjectFile().Read(self.fileparts.FullFilePathExtension('.pysi_project'))
             self.Drawing.InitFromProject(self.project)
-            self.calculationProperties.InitFromProject(self.project)
+            self.calculationProperties.InitFromProject(self.project,self)
         except:
             tkMessageBox.showerror('read project file','file not found or unreadable')
             return

@@ -197,6 +197,11 @@ class CalculationProperties(object):
                 userSampleRate = float(calculationProperty.text)
         self.__init__(parent,endFrequency,frequencyPoints,userSampleRate)
         #self.PlotDialog().destroy()
+    def InitFromProject(self,project,parent):
+        endFrequency=project.GetValue('CalculationProperties.EndFrequency')
+        frequencyPoints=project.GetValue('CalculationProperties.FrequencyPoints')
+        userSampleRate=project.GetValue('CalculationProperties.UserSampleRate')
+        self.__init__(parent,endFrequency,frequencyPoints,userSampleRate)
     def OpenCalculationProperties(self):
         self.ShowCalculationPropertiesDialog()
 
