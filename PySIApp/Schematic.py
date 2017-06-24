@@ -1416,11 +1416,14 @@ class Drawing(Frame):
                 self.parent.root.geometry(geometry.split('+')[0])
     def InitFromProject(self,project):
         drawingProperties=project.GetValue('Drawing.DrawingProperties')
+        # the canvas and geometry must be set prior to the remainder of the schematic initialization
+        # otherwise it will not be the right size.  In the past, the xml happened to have the drawing
+        # properties first, which made it work, but it was an accident.
+        self.canvas.config(width=drawingProperties.GetValue('Width'),height=drawingProperties.GetValue('Height'))
+        self.parent.root.geometry(drawingProperties.GetValue('Geometry').split('+')[0])
         self.grid=drawingProperties.GetValue('Grid')
         self.originx=drawingProperties.GetValue('Originx')
         self.originy=drawingProperties.GetValue('Originy')
         self.schematic = Schematic()
         self.schematic.InitFromProject(project)
         self.stateMachine = DrawingStateMachine(self)
-        self.canvas.config(width=drawingProperties.GetValue('Width'),height=drawingProperties.GetValue('Height'))
-        self.parent.root.geometry(drawingProperties.GetValue('Geometry').split('+')[0])
