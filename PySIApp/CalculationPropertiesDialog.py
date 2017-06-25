@@ -52,7 +52,7 @@ class CalculationPropertiesDialog(PropertiesDialog):
         self.UpdateStrings()
 
     def onbaseSampleRateEntered(self,event):
-        self.project.SetValue('CalculationProperties.EndFrequency',nextHigher12458(self.project.GetValue('CalculationProperties.BaseSampleRate')*2.))
+        self.project.SetValue('CalculationProperties.EndFrequency',nextHigher12458(self.project.GetValue('CalculationProperties.BaseSampleRate')))
         self.project.SetValue('CalculationProperties.BaseSampleRate',2*self.project.GetValue('CalculationProperties.EndFrequency'))
         self.project.SetValue('CalculationProperties.FrequencyPoints',int(nextHigher12458(self.project.GetValue('CalculationProperties.EndFrequency')/self.project.GetValue('CalculationProperties.FrequencyResolution'))))
         self.project.SetValue('CalculationProperties.FrequencyPoints',max(1,self.project.GetValue('CalculationProperties.FrequencyPoints')))                              
