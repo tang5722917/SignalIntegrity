@@ -70,10 +70,10 @@ class CalculationPropertiesDialog(PropertiesDialog):
         self.UpdateStrings()
 
     def onimpulseLengthEntered(self,event):
-        self.project.SetValue('CalculationProperties.TimePoints',int(self.project.GetValue('CalculationProperties.ImpulseResponseLength')*self.project.GetValue('CalculationProperties.baseSampleRate')+0.5))
-        self.project.SetValue('CalculationProperties.FrequencyPoints',nextHigher12458(self.project.GetValue('CalculationProperties.TimePoints')/2))
+        self.project.SetValue('CalculationProperties.TimePoints',int(self.project.GetValue('CalculationProperties.ImpulseResponseLength')*self.project.GetValue('CalculationProperties.BaseSampleRate')+0.5))
+        self.project.SetValue('CalculationProperties.FrequencyPoints',int(nextHigher12458(self.project.GetValue('CalculationProperties.TimePoints')/2)))
         self.project.SetValue('CalculationProperties.FrequencyPoints',max(1,self.project.GetValue('CalculationProperties.FrequencyPoints')))                              
-        self.project.SetValue('CalculationProperties.TimePoints',self.project.GetValue(self.project.GetValue('CalculationProperties.FrequencyPoints'))*2)
+        self.project.SetValue('CalculationProperties.TimePoints',self.project.GetValue('CalculationProperties.FrequencyPoints')*2)
         self.project.SetValue('CalculationProperties.FrequencyResolution',self.project.GetValue('CalculationProperties.EndFrequency')/self.project.GetValue('CalculationProperties.FrequencyPoints'))
         self.project.SetValue('CalculationProperties.ImpulseResponseLength',1./self.project.GetValue('CalculationProperties.FrequencyResolution'))
         self.UpdateStrings()
