@@ -283,8 +283,8 @@ class DeviceProperties(Frame):
         import SignalIntegrity as si
         spnp=si.p.SystemSParametersNumericParser(
             si.fd.EvenlySpacedFrequencyList(
-                self.parent.parent.calculationProperties.endFrequency,
-                self.parent.parent.calculationProperties.frequencyPoints))
+                self.parent.parent.project.GetValue('CalculationProperties.EndFrequency'),
+                self.parent.parent.project.GetValue('CalculationProperties.FrequencyPoints')))
         spnp.AddLines(netList)
         try:
             sp=spnp.SParameters()
