@@ -339,6 +339,7 @@ class TheApp(Frame):
             return
         self.Drawing.stateMachine.Nothing()
         self.Drawing.schematic.Clear()
+        self.project=ProjectFile()
         self.Drawing.DrawSchematic()
         self.history.Event('new project')
         self.SaveProjectToFile(filename)
