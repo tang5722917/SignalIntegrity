@@ -207,7 +207,7 @@ class Wire(object):
         return self
     def InitFromProject(self,wireProject):
         self.__init__()
-        self.vertexList=[Vertex(eval(vertexProject.GetValue('Vertex'))) for vertexProject in wireProject.GetValue('Vertex')]
+        self.vertexList=[Vertex(eval(vertexProject.GetValue('Coord'))) for vertexProject in wireProject.GetValue('Vertex')]
         return self
     def CoordinateList(self):
         return [vertex.coord for vertex in self]
