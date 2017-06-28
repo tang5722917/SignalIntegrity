@@ -46,12 +46,13 @@ class DeviceConfiguration(XMLConfiguration):
 class VertexConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
-        self.dict['Vertex']=XMLPropertyDefaultString('Vertex')
+        self.dict['Coord']=XMLPropertyDefaultString('Vertex')
+        self.dict['Selected']=XMLPropertyDefaultBool('Selected',False)
 
 class WireConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
-        self.dict['Vertex']=XMLProperty('Vertex',[XMLPropertyDefaultString() for _ in range(0)],'string')
+        self.dict['Vertex']=XMLProperty('Vertex',[VertexConfiguration() for _ in range(0)],'string')
 
 class DrawingPropertiesConfiguration(XMLConfiguration):
     def __init__(self):
@@ -137,9 +138,13 @@ class ProjectFile(ProjectFileBase):
                 partPropertyProject.SetValue('Unit',partProperty.unit)
         self.SetValue('Drawing.Schematic.Wires',[WireConfiguration() for _ in range(len(app.Drawing.schematic.wireList))])
         for w in range(len(self.GetValue('Drawing.Schematic.Wires'))):
-            wireProject=self.GetValue('Drawing.Schematic.Wires')[w]
+            wireProject=self.GetValue('Drawing.Schematic.Wires')[w].GetValue('Wire')
             wire=app.Drawing.schematic.wireList[w]
-            wireProject.SetValue('Vertex',[XMLPropertyDefaultString('Vertex',str(vertex.coord)) for vertex in wire])
+            wireProject.SetValue('Vertex',[VertexConfiguration() for vertex in wire])
+            for v in range(len(wireProject.GetValue('Vertex'))):
+                vertexProject=wireProject.GetValue('Vertex')[v]
+                vertex=wire[v]
+                vertexProject.SetValue('Coord',vertex.coord)
         ProjectFileBase.Write(self,filename)
         return self
 
@@ -193,7 +198,11 @@ class App(TheApp):
         for w in range(len(project.GetValue('Drawing.Schematic.Wires'))):
             wireProject=project.GetValue('Drawing.Schematic.Wires')[w]
             wire=self.Drawing.schematic.wireList[w]
-            wireProject.SetValue('Vertex',[XMLPropertyDefaultString('Vertex',str(vertex.coord)) for vertex in wire])
+            wireProject.SetValue('Vertex',[VertexConfiguration() for vertex in wire])
+            for v in range(len(wireProject.GetValue('Vertex'))):
+                vertexProject=wireProject.GetValue('Vertex')[v]
+                vertex=wire[v]
+                vertexProject.SetValue('Vertex',vertex.coord)
         project.SetValue('CalculationProperties.EndFrequency',self.calculationProperties.endFrequency)
         project.SetValue('CalculationProperties.FrequencyPoints',self.calculationProperties.frequencyPoints)
         project.SetValue('CalculationProperties.UserSampleRate',self.calculationProperties.userSampleRate)

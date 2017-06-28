@@ -251,6 +251,7 @@ class WireList(object):
     def InitFromProject(self,wiresListProject):
         self.__init__()
         self.wires=[Wire().InitFromProject(wireProject) for wireProject in wiresListProject]
+        return self
     def xml(self):
         wiresElement=et.Element('wires')
         wireElements=[]

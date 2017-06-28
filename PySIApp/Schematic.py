@@ -23,7 +23,7 @@ from DeviceProperties import DevicePropertiesDialog
 class Schematic(object):
     def __init__(self):
         self.deviceList = []
-        self.wireList = WireList()
+        self.project=None
     def xml(self):
         schematicElement=et.Element('schematic')
         deviceElement=et.Element('devices')
@@ -47,6 +47,7 @@ class Schematic(object):
                 self.wireList.InitFromXml(child)
     def InitFromProject(self,project):
         self.__init__()
+        self.project=project
         deviceListProject=project.GetValue('Drawing.Schematic.Devices')
         for d in range(len(deviceListProject)):
             try:
@@ -55,7 +56,7 @@ class Schematic(object):
                 returnedDevice=None
             if not returnedDevice is None:
                 self.deviceList.append(returnedDevice)
-        self.wireList.InitFromProject(project.GetValue('Drawing.Schematic.Wires'))
+        #self.wireList.InitFromProject(project.GetValue('Drawing.Schematic.Wires'))
     def NetList(self):
         self.Consolidate()
         return NetList(self)
@@ -68,7 +69,9 @@ class Schematic(object):
         return inputWaveformList
     def Clear(self):
         self.deviceList = []
-        self.wireList = WireList()
+        if not self.project is None:
+            from ProjectFile import XMLProperty
+            self.project.SetValue('Drawing.Schematic.Wires',XMLProperty('Wires',[]))
     def NewUniqueReferenceDesignator(self,defaultDesignator):
         if defaultDesignator != None and '?' in defaultDesignator:
             referenceDesignatorList=[]
@@ -101,18 +104,27 @@ class Schematic(object):
                                 thisPinConnected=True
                                 break
                 if not thisPinConnected:
-                    for wire in self.wireList:
+                    for wire in self.project.GetValue('Drawing.Schematic.Wires'):
                         if thisPinConnected:
                             break
-                        for vertex in wire:
-                            if thisPinCoordinate == vertex.coord:
+                        for vertex in wire.GetValue('Vertex'):
+                            if thisPinCoordinate == vertex.GetValue('Coord'):
                                 thisPinConnected=True
                                 break
                 thisDeviceConnectedList.append(thisPinConnected)
             devicePinConnectedList.append(thisDeviceConnectedList)
         return devicePinConnectedList
     def Consolidate(self):
-        self.wireList.ConsolidateWires(self)
+        from ProjectFile import WireConfiguration,XMLPropertyDefaultString
+        if self.project is None:
+            return
+        wireList = WireList().InitFromProject(self.project.GetValue('Drawing.Schematic.Wires'))
+        wireList.ConsolidateWires(self)
+        self.project.SetValue('Drawing.Schematic.Wires',[WireConfiguration() for _ in range(len(wireList))])
+        for w in range(len(self.project.GetValue('Drawing.Schematic.Wires'))):
+            wireProject=self.project.GetValue('Drawing.Schematic.Wires')[w]
+            wire=wireList[w]
+            wireProject.SetValue('Vertex',[XMLPropertyDefaultString('Vertex',str(vertex.coord)) for vertex in wire])
     def DotList(self):
         dotList=[]
         # make a list of all coordinates
@@ -136,6 +148,13 @@ class DrawingStateMachine(object):
         for device in self.parent.schematic.deviceList:
             device.selected=False
     def UnselectAllWires(self):
+        if self.project is None:
+            return
+        wireListProject=self.project.GetValue('Drawing.Schematic.Wires')
+        for w in range(len(wireListProject)):
+            wireProject=wireListProject[w].GetValue('Wire')
+            for v in range(len(wireProject)):
+                wireProject.GetValue('Vertex')[v].SetValue('Selected',False)    
         self.parent.schematic.wireList.UnselectAll()
     def SaveButton1Coordinates(self,event):
         self.parent.Button1Coord=self.parent.NearestGridCoordinate(event.x,event.y)
@@ -246,6 +265,7 @@ class DrawingStateMachine(object):
         if not hasattr(self,'state'):
             self.state=''
         if self.state != 'NoProject' or force:
+            self.project=None
             self.parent.canvas.config(cursor='left_ptr')
             self.state='NoProject'
             self.parent.schematic.Consolidate()
