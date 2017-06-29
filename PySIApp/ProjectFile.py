@@ -149,6 +149,7 @@ class ProjectFile(ProjectFileBase):
         return self
 
 from PySIApp import TheApp
+
 class App(TheApp):
     def __init__(self):
         TheApp.__init__(self,False)

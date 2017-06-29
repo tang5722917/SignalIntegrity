@@ -40,6 +40,7 @@ from Preferences import Preferences
 from PreferencesDialog import PreferencesDialog
 from FilePicker import AskSaveAsFilename,AskOpenFileName
 from ProjectFile import ProjectFile
+from ProjectFile import VertexConfiguration, WireConfiguration
 
 class TheApp(Frame):
     def __init__(self,runMainLoop=True):
@@ -314,6 +315,19 @@ class TheApp(Frame):
         filename=str(filename)
         if filename=='':
             return
+
+        self.fileparts=FileParts(filename)
+        os.chdir(self.fileparts.AbsoluteFilePath())
+        self.fileparts=FileParts(filename)
+        self.project=ProjectFile().Read(self.fileparts.FullFilePathExtension('.pysi_project'),self.Drawing)
+
+        self.Drawing.stateMachine.Nothing()
+        self.Drawing.DrawSchematic()
+        self.history.Event('read project')
+        self.root.title('PySI: '+self.fileparts.FileNameTitle())
+        self.AnotherFileOpened(self.fileparts.FullFilePathExtension('.pysi_project'))
+        return
+
         try:
             self.fileparts=FileParts(filename)
             os.chdir(self.fileparts.AbsoluteFilePath())
@@ -322,6 +336,8 @@ class TheApp(Frame):
         except:
             tkMessageBox.showerror('read project file','file not found or unreadable')
             return
+        
+
         self.Drawing.stateMachine.Nothing()
         self.Drawing.DrawSchematic()
         self.history.Event('read project')
@@ -529,8 +545,16 @@ class TheApp(Frame):
     def onDuplicate(self):
         self.Drawing.DuplicateSelectedDevice()
     def onAddWire(self):
-        self.Drawing.wireLoaded=Wire([Vertex((0,0))])
-        self.Drawing.schematic.wireList.append(self.Drawing.wireLoaded)
+        vertexProject=VertexConfiguration()
+        vertexProject.SetValue('Coord', (0,0))
+        vertexProject.SetValue('Selected',False)
+        wireProject=WireConfiguration()
+        wireProject.SetValue('Vertex', [vertexProject])
+        self.Drawing.wireLoaded=wireProject
+        wireListProject=self.Drawing.schematic.project.GetValue('Drawing.Schematic.Wires')
+        wireListProject.append(self.Drawing.wireLoaded)
+#         self.Drawing.wireLoaded=Wire([Vertex((0,0))])
+#         self.Drawing.schematic.wireList.append(self.Drawing.wireLoaded)
         self.Drawing.stateMachine.WireLoaded()
     def onAddPort(self):
         self.Drawing.stateMachine.Nothing()
