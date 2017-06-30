@@ -436,12 +436,27 @@ class WireList(object):
                     del removeWireIndexList[wireIndex]
                     keepDeletingWires=True
                     break
+    def DotList(self,deviceList):
+        dotList=[]
+        # make a list of all coordinates
+        coordList=[]
+        for device in deviceList:
+            coordList=coordList+device.PinCoordinates()
+        for wire in self:
+            vertexCoordinates=[vertex.coord for vertex in wire]
+            #vertex coordinates count as two except for the endpoints
+            coordList=coordList+vertexCoordinates+vertexCoordinates[1:-1]
+        uniqueCoordList=list(set(coordList))
+        for coord in uniqueCoordList:
+            if coordList.count(coord)>2:
+                dotList.append(coord)
+        return dotList
     def ConsolidateWires(self,schematic):
         deviceList=schematic.deviceList
         self.RemoveEmptyWires()
         self.RemoveDuplicateVertices()
         self.InsertNeededVertices(deviceList)
-        dotList=schematic.DotList()
+        dotList=self.DotList(deviceList)
         self.SplitDottedWires(dotList)
         self.JoinUnDottedWires(dotList)
         self.RemoveUnneededVertices()
