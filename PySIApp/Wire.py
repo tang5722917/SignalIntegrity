@@ -7,7 +7,6 @@
  or do not agree to the terms in that file, then you are not licensed to use
  this material whatsoever.
 '''
-import xml.etree.ElementTree as et
 import copy
 import math
 
@@ -111,14 +110,6 @@ class Vertex(object):
         self.selected=selected
     def __getitem__(self,item):
         return self.coord[item]
-    def InitFromXml(self,vertexElement):
-        self.selected=False
-        self.coord = eval(vertexElement.text)
-        return self
-    def xml(self):
-        vertexElement=et.Element('vertex')
-        vertexElement.text=str(self.coord)
-        return vertexElement
     def IsAt(self,coord,augmentor,distanceAllowed):
         xc=float(coord[0]+augmentor[0])
         yc=float(coord[1]+augmentor[1])
@@ -197,28 +188,12 @@ class Wire(object):
             return Wire(self.vertexList+other.vertexList)
         elif isinstance(other,list):
             return Wire(self.vertexList+other)
-    def InitFromXml(self,wireElement):
-        self.__init__()
-        for child in wireElement:
-            if child.tag == 'vertex':
-                vertex=Vertex((0,0))
-                vertex.InitFromXml(child)
-                self.append(vertex)
-        return self
     def InitFromProject(self,wireProject):
         self.__init__()
         self.vertexList=[Vertex(eval(vertexProject.GetValue('Coord')),vertexProject.GetValue('Selected')) for vertexProject in wireProject.GetValue('Vertex')]
         return self
     def CoordinateList(self):
         return [vertex.coord for vertex in self]
-    def xml(self):
-        wireElement=et.Element('wire')
-        vertexElements=[]
-        for vertex in self:
-            vertexElement=vertex.xml()
-            vertexElements.append(vertexElement)
-        wireElement.extend(vertexElements)
-        return wireElement
 
 class WireList(object):
     def __init__(self):
@@ -237,29 +212,10 @@ class WireList(object):
         if not isinstance(item,Wire):
             raise ValueError
         self.wires.append(item)
-    def UnselectAll(self):
-        for wire in self:
-            for vertex in wire:
-                vertex.selected=False
-    def InitFromXml(self,wiresElement):
-        self.__init__()
-        for child in wiresElement:
-            if child.tag == 'wire':
-                wire=Wire()
-                wire.InitFromXml(child)
-                self.wires.append(wire)
     def InitFromProject(self,wiresListProject):
         self.__init__()
         self.wires=[Wire().InitFromProject(wireProject) for wireProject in wiresListProject]
         return self
-    def xml(self):
-        wiresElement=et.Element('wires')
-        wireElements=[]
-        for wire in self:
-            wireElement=wire.xml()
-            wireElements.append(wireElement)
-        wiresElement.extend(wireElements)
-        return wiresElement
     def RemoveEmptyWires(self):
         wiresNeedRemoval=False
         for wire in self:

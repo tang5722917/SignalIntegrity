@@ -46,7 +46,7 @@ class DeviceConfiguration(XMLConfiguration):
 class VertexConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
-        self.dict['Coord']=XMLPropertyDefaultString('Vertex')
+        self.dict['Coord']=XMLPropertyDefaultString('Coord')
         self.dict['Selected']=XMLPropertyDefaultBool('Selected',False)
 
 class WireConfiguration(XMLConfiguration):
@@ -136,15 +136,6 @@ class ProjectFile(ProjectFileBase):
                 partPropertyProject.SetValue('KeywordVisible',partProperty.keywordVisible)
                 partPropertyProject.SetValue('Type',partProperty.type)
                 partPropertyProject.SetValue('Unit',partProperty.unit)
-        self.SetValue('Drawing.Schematic.Wires',[WireConfiguration() for _ in range(len(app.Drawing.schematic.wireList))])
-        for w in range(len(self.GetValue('Drawing.Schematic.Wires'))):
-            wireProject=self.GetValue('Drawing.Schematic.Wires')[w].GetValue('Wire')
-            wire=app.Drawing.schematic.wireList[w]
-            wireProject.SetValue('Vertex',[VertexConfiguration() for vertex in wire])
-            for v in range(len(wireProject.GetValue('Vertex'))):
-                vertexProject=wireProject.GetValue('Vertex')[v]
-                vertex=wire[v]
-                vertexProject.SetValue('Coord',vertex.coord)
         ProjectFileBase.Write(self,filename)
         return self
 

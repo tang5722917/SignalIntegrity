@@ -25,7 +25,7 @@ from Device import DeviceList,DeviceListUnknown,DeviceListSystem
 from Device import DeviceOutput,DeviceMeasurement,Port,DeviceStim
 from DeviceProperties import DevicePropertiesDialog
 from DevicePicker import DevicePickerDialog
-from Schematic import Drawing,Wire,Vertex
+from Schematic import Drawing
 from CalculationPropertiesDialog import CalculationPropertiesDialog
 from Simulator import Simulator
 from NetList import NetListDialog
@@ -40,7 +40,6 @@ from Preferences import Preferences
 from PreferencesDialog import PreferencesDialog
 from FilePicker import AskSaveAsFilename,AskOpenFileName
 from ProjectFile import ProjectFile
-from ProjectFile import VertexConfiguration, WireConfiguration
 
 class TheApp(Frame):
     def __init__(self,runMainLoop=True):
@@ -268,7 +267,10 @@ class TheApp(Frame):
         projectFileName = self.preferences.GetLastFileOpened()
 
         if not projectFileName == None:
-            self.OpenProjectFile(projectFileName)
+            try:
+                self.OpenProjectFile(projectFileName)
+            except:
+                self.onClearSchematic()
 
         self.UpdateRecentProjectsMenu()
 
@@ -387,6 +389,7 @@ class TheApp(Frame):
         self.SaveProjectToFile(filename)
 
     def onClearSchematic(self):
+        self.project=None
         self.Drawing.stateMachine.Nothing()
         self.Drawing.schematic.Clear()
         self.history.Event('clear project')
@@ -545,6 +548,7 @@ class TheApp(Frame):
     def onDuplicate(self):
         self.Drawing.DuplicateSelectedDevice()
     def onAddWire(self):
+        from ProjectFile import VertexConfiguration,WireConfiguration
         vertexProject=VertexConfiguration()
         vertexProject.SetValue('Coord', (0,0))
         vertexProject.SetValue('Selected',False)
@@ -553,8 +557,6 @@ class TheApp(Frame):
         self.Drawing.wireLoaded=wireProject
         wireListProject=self.Drawing.schematic.project.GetValue('Drawing.Schematic.Wires')
         wireListProject.append(self.Drawing.wireLoaded)
-#         self.Drawing.wireLoaded=Wire([Vertex((0,0))])
-#         self.Drawing.schematic.wireList.append(self.Drawing.wireLoaded)
         self.Drawing.stateMachine.WireLoaded()
     def onAddPort(self):
         self.Drawing.stateMachine.Nothing()
