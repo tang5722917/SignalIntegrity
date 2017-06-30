@@ -596,10 +596,12 @@ class TheApp(Frame):
 
     def onZoomIn(self):
         self.Drawing.grid = self.Drawing.grid*2
+        self.Drawing.schematic.project.SetValue('Grid',self.Drawing.grid)
         self.Drawing.DrawSchematic()
 
     def onZoomOut(self):
         self.Drawing.grid = max(1,self.Drawing.grid/2)
+        self.Drawing.schematic.project.SetValue('Grid',self.Drawing.grid)
         self.Drawing.DrawSchematic()
 
     def onPan(self):

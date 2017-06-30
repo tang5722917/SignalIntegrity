@@ -754,6 +754,8 @@ class DrawingStateMachine(object):
         coord=self.parent.NearestGridCoordinate(event.x,event.y)
         self.parent.originx=self.parent.originx+coord[0]-self.parent.Button1Coord[0]
         self.parent.originy=self.parent.originy+coord[1]-self.parent.Button1Coord[1]
+        self.parent.schematic.project.SetValue('Drawing.Originx',self.parent.originx)
+        self.parent.schematic.project.SetValue('Drawing.Originy',self.parent.originy)
         self.parent.DrawSchematic()
     def onMouseButton1Release_Panning(self,event):
         self.Nothing()
