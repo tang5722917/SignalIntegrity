@@ -10,16 +10,17 @@
 import xml.etree.ElementTree as et
 
 class XMLProperty(object):
-    def __init__(self,propertyName,propertyValue=None,propertyType=None):
+    def __init__(self,propertyName,propertyValue=None,propertyType=None,write=True):
         self.dict={}
         if not propertyValue == None:
             if propertyType == None:
                 propertyType='string'
-        self.Default(propertyName,propertyValue,propertyType)
-    def Default(self,propertyName,propertyValue,propertyType):
+        self.Default(propertyName,propertyValue,propertyType,write)
+    def Default(self,propertyName,propertyValue,propertyType,write):
         self.dict['name']=propertyName
         self.dict['type']=propertyType
         self.dict['value']=propertyValue
+        self.dict['write']=write
         self.UpdateValue()
 
     def Changed(self,changed):
@@ -31,6 +32,9 @@ class XMLProperty(object):
 
     def OutputXML(self,indent):
         lines=[]
+        if 'write' in self.dict:
+            if not self.dict['write']:
+                return lines
         if 'type' in self.dict:
             elementPropertyType = self.dict['type']
         else:
@@ -130,31 +134,31 @@ class XMLProperty(object):
         else:
             self.dict['value']=str(value)
             self.UpdateValue()
-	self.changed=True
+        self.changed=True
 
 class XMLPropertyDefault(XMLProperty):
-    def __init__(self,name,typeString,value=None):
+    def __init__(self,name,typeString,value=None,write=True):
         if value==None:
             strValue='None'
         else:
             strValue = str(value)
-        XMLProperty.__init__(self,name,strValue,typeString)
+        XMLProperty.__init__(self,name,strValue,typeString,write)
 
 class XMLPropertyDefaultFloat(XMLPropertyDefault):
-    def __init__(self,name,value=None):
-        XMLPropertyDefault.__init__(self,name,'float',value)
+    def __init__(self,name,value=None,write=True):
+        XMLPropertyDefault.__init__(self,name,'float',value,write)
         
 class XMLPropertyDefaultInt(XMLPropertyDefault):
-    def __init__(self,name,value=None):
-        XMLPropertyDefault.__init__(self,name,'int',value)
+    def __init__(self,name,value=None,write=True):
+        XMLPropertyDefault.__init__(self,name,'int',value,write)
 
 class XMLPropertyDefaultString(XMLPropertyDefault):
-    def __init__(self,name,value=None):
-        XMLPropertyDefault.__init__(self,name,'string',value)
+    def __init__(self,name,value=None,write=True):
+        XMLPropertyDefault.__init__(self,name,'string',value,write)
 
 class XMLPropertyDefaultBool(XMLPropertyDefault):
-    def __init__(self,name,value=None):
-        XMLPropertyDefault.__init__(self,name,'bool',value)
+    def __init__(self,name,value=None,write=True):
+        XMLPropertyDefault.__init__(self,name,'bool',value,write)
 
 class XMLConfiguration(object):
     def __init__(self):

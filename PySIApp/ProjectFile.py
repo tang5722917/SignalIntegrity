@@ -30,7 +30,7 @@ class PartPictureConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
         self.dict['ClassNames']=XMLProperty('ClassNames',[XMLPropertyDefaultString('ClassName') for _ in range(0)],'string')
-        self.dict['Selected']=XMLPropertyDefaultBool('Selected',False)
+        self.dict['Selected']=XMLPropertyDefaultBool('Selected',False,write=False)
         self.dict['Origin']=XMLPropertyDefaultString('Origin')
         self.dict['Orientation']=XMLPropertyDefaultInt('Orientation')
         self.dict['MirroredVertically']=XMLPropertyDefaultBool('MirroredVertically',False)
@@ -47,7 +47,7 @@ class VertexConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
         self.dict['Coord']=XMLPropertyDefaultString('Coord')
-        self.dict['Selected']=XMLPropertyDefaultBool('Selected',False)
+        self.dict['Selected']=XMLPropertyDefaultBool('Selected',False,False)
 
 class WireConfiguration(XMLConfiguration):
     def __init__(self):
