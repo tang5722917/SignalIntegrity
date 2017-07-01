@@ -1251,10 +1251,9 @@ class Drawing(Frame):
             return
         if self.parent.project is None:
             return
-        wireList = WireList().InitFromProject(self.parent.project.GetValue('Drawing.Schematic.Wires'))
-        for wire in wireList:
+        for wireProject in self.parent.project.GetValue('Drawing.Schematic.Wires'):
             foundSomething=True
-            wire.DrawWire(canvas,self.grid,self.originx,self.originy)
+            Wire().InitFromProject(wireProject).DrawWire(canvas,self.grid,self.originx,self.originy)
         for dot in self.schematic.DotList():
             size=self.grid/8
             canvas.create_oval((dot[0]+self.originx)*self.grid-size,(dot[1]+self.originy)*self.grid-size,
