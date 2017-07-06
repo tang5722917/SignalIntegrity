@@ -175,14 +175,18 @@ class Wire(object):
             if selected:
                 for vertex in self:
                     size=max(1,grid/8)
-                    canvas.create_line((vertex[0]+x)*grid-size,(vertex[1]+y)*grid-size,
-                                        (vertex[0]+x)*grid+size,(vertex[1]+y)*grid+size,
-                                        fill=('blue' if vertex.selected else 'black'),
-                                        width=(2 if vertex.selected else 1))
-                    canvas.create_line((vertex[0]+x)*grid+size,(vertex[1]+y)*grid-size,
-                                        (vertex[0]+x)*grid-size,(vertex[1]+y)*grid+size,
-                                        fill=('blue' if vertex.selected else 'black'),
-                                        width=(2 if vertex.selected else 1))
+                    canvas.create_line((vertex[0]+x)*grid-size,
+                                       (vertex[1]+y)*grid-size,
+                                       (vertex[0]+x)*grid+size,
+                                       (vertex[1]+y)*grid+size,
+                                       fill=('blue' if vertex.selected else 'black'),
+                                       width=(2 if vertex.selected else 1))
+                    canvas.create_line((vertex[0]+x)*grid+size,
+                                       (vertex[1]+y)*grid-size,
+                                       (vertex[0]+x)*grid-size,
+                                       (vertex[1]+y)*grid+size,
+                                       fill=('blue' if vertex.selected else 'black'),
+                                       width=(2 if vertex.selected else 1))
     def __add__(self,other):
         if isinstance(other, Wire):
             return Wire(self.vertexList+other.vertexList)
