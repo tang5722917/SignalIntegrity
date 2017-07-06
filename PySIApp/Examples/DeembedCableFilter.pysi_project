@@ -1,10 +1,10 @@
 <Project>
   <DrawingConfiguration>
     <DrawingPropertiesConfiguration>
-      <Geometry>467x151+27+56</Geometry>
+      <Geometry>467x242+458+392</Geometry>
       <Originy>0</Originy>
       <Originx>5</Originx>
-      <Height>106</Height>
+      <Height>220</Height>
       <Width>467</Width>
       <Grid>16</Grid>
     </DrawingPropertiesConfiguration>
@@ -18,7 +18,7 @@
               <Origin>(2, 5)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureSpecifiedPorts</ClassName>
                   <ClassName>PartPictureSpecifiedPortsSide</ClassName>
@@ -111,7 +111,7 @@
               <Origin>(6, 5)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureUnknown</ClassName>
                   <ClassName>PartPictureUnknownSide</ClassName>
@@ -193,7 +193,7 @@
               <Origin>(-1, 5)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPicturePort</ClassName>
               </ClassNames>
@@ -263,7 +263,7 @@
               <Origin>(7, 5)</Origin>
               <MirroredHorizontally>True</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPicturePort</ClassName>
               </ClassNames>
@@ -333,7 +333,7 @@
               <Origin>(4, 9)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureSystem</ClassName>
                   <ClassName>PartPictureSystemSide</ClassName>
@@ -424,8 +424,12 @@
     </SchematicConfiguration>
   </DrawingConfiguration>
   <CalculationPropertiesConfiguration>
+    <BaseSampleRate>40000000000.0</BaseSampleRate>
+    <ImpulseResponseLength>5e-08</ImpulseResponseLength>
     <UserSampleRate>40000000000.0</UserSampleRate>
-    <FrequencyPoints>1000</FrequencyPoints>
+    <TimePoints>2000</TimePoints>
     <EndFrequency>20000000000.0</EndFrequency>
+    <FrequencyPoints>1000</FrequencyPoints>
+    <FrequencyResolution>20000000.0</FrequencyResolution>
   </CalculationPropertiesConfiguration>
 </Project>

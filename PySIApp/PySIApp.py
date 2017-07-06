@@ -19,16 +19,14 @@ import copy
 import os
 import sys
 
-import xml.etree.ElementTree as et
-
 from PartPicture import PartPicture
 from PartProperty import PartPropertyPartName,PartPropertyDefaultReferenceDesignator,PartPropertyReferenceDesignator
 from Device import DeviceList,DeviceListUnknown,DeviceListSystem
 from Device import DeviceOutput,DeviceMeasurement,Port,DeviceStim
 from DeviceProperties import DevicePropertiesDialog
 from DevicePicker import DevicePickerDialog
-from Schematic import Drawing,Wire,Vertex
-from CalculationProperties import CalculationProperties
+from Schematic import Drawing
+from CalculationPropertiesDialog import CalculationPropertiesDialog
 from Simulator import Simulator
 from NetList import NetListDialog
 from SParameterViewerWindow import SParametersDialog
@@ -67,25 +65,6 @@ class TheApp(Frame):
 
         img = PhotoImage(file=self.installdir+'/icons/png/AppIcon2.gif')
         self.root.tk.call('wm', 'iconphoto', self.root._w, '-default', img)
-
-        # I believe this is totally obsolete
-#         sys.path.append(self.installdir+'/..')
-#         foundSignalIntegrity=False
-#         while not foundSignalIntegrity:
-#             foundSignalIntegrity = True
-#             try:
-#                 import SignalIntegrity as si
-#             except ImportError:
-#                 foundSignalIntegrity = False
-#                 if tkMessageBox.askokcancel('SignalIntegrity Package',
-#                     'In order to run this application, I need to know where the '+\
-#                     'SignalIntegrity package is.  Please browse to the directory where '+\
-#                     'it\'s installed.\n'+'You should only need to do this once'):
-#                         dirname = askdirectory(parent=self.root,initialdir=os.path.dirname(os.path.abspath(__file__)),
-#                             title='Please select a directory')
-#                         sys.path.append(dirname)
-#                 else:
-#                     exit()
 
         self.helpSystemKeys = HelpSystemKeys(self.installdir)
         # status bar
@@ -266,9 +245,10 @@ class TheApp(Frame):
         self.statusbar.pack(side=BOTTOM,fill=X,expand=NO)
         self.root.bind('<Key>',self.onKey)
 
+        self.project=None
+
         # The Simulator Dialog
         self.simulator = Simulator(self)
-        self.calculationProperties=CalculationProperties(self)
         self.fileparts=FileParts()
 
         # The edit history (for undo)
@@ -287,7 +267,10 @@ class TheApp(Frame):
         projectFileName = self.preferences.GetLastFileOpened()
 
         if not projectFileName == None:
-            self.OpenProjectFile(projectFileName)
+            try:
+                self.OpenProjectFile(projectFileName)
+            except:
+                self.onClearSchematic()
 
         self.UpdateRecentProjectsMenu()
 
@@ -334,33 +317,47 @@ class TheApp(Frame):
         filename=str(filename)
         if filename=='':
             return
-        try:
-            self.fileparts=FileParts(filename)
-            os.chdir(self.fileparts.AbsoluteFilePath())
-            self.fileparts=FileParts(filename)
-            self.project=ProjectFile().Read(self.fileparts.FullFilePathExtension('.pysi_project'))
-            self.Drawing.InitFromProject(self.project)
-            self.calculationProperties.InitFromProject(self.project)
-        except:
-            tkMessageBox.showerror('read project file','file not found or unreadable')
-            return
+
+        self.fileparts=FileParts(filename)
+        os.chdir(self.fileparts.AbsoluteFilePath())
+        self.fileparts=FileParts(filename)
+        self.project=ProjectFile().Read(self.fileparts.FullFilePathExtension('.pysi_project'),self.Drawing)
+
         self.Drawing.stateMachine.Nothing()
         self.Drawing.DrawSchematic()
         self.history.Event('read project')
         self.root.title('PySI: '+self.fileparts.FileNameTitle())
-        self.AnotherFileOpened(self.fileparts.FullFilePathExtension('.xml'))
+        self.AnotherFileOpened(self.fileparts.FullFilePathExtension('.pysi_project'))
+        return
+
+        try:
+            self.fileparts=FileParts(filename)
+            os.chdir(self.fileparts.AbsoluteFilePath())
+            self.fileparts=FileParts(filename)
+            self.project=ProjectFile().Read(self.fileparts.FullFilePathExtension('.pysi_project'),self.Drawing)
+        except:
+            tkMessageBox.showerror('read project file','file not found or unreadable')
+            return
+        
+
+        self.Drawing.stateMachine.Nothing()
+        self.Drawing.DrawSchematic()
+        self.history.Event('read project')
+        self.root.title('PySI: '+self.fileparts.FileNameTitle())
+        self.AnotherFileOpened(self.fileparts.FullFilePathExtension('.pysi_project'))
 
     def onNewProject(self):
         if not self.CheckSaveCurrentProject():
             return
-        filename=AskSaveAsFilename(filetypes=[('xml', '.xml')],
-                                   defaultextension='.xml',
+        filename=AskSaveAsFilename(filetypes=[('pysi_project', '.pysi_project')],
+                                   defaultextension='.pysi_project',
                                    initialdir=self.fileparts.AbsoluteFilePath(),
                                    title='new project file')
         if filename is None:
             return
         self.Drawing.stateMachine.Nothing()
         self.Drawing.schematic.Clear()
+        self.project=ProjectFile()
         self.Drawing.DrawSchematic()
         self.history.Event('new project')
         self.SaveProjectToFile(filename)
@@ -370,11 +367,7 @@ class TheApp(Frame):
         self.fileparts=FileParts(filename)
         os.chdir(self.fileparts.AbsoluteFilePath())
         self.fileparts=FileParts(filename)
-        projectElement=et.Element('Project')
-        drawingElement=self.Drawing.xml()
-        calculationPropertiesElement=self.calculationProperties.xml()
-        projectElement.extend([drawingElement,calculationPropertiesElement])
-        et.ElementTree(projectElement).write(filename)
+        self.project.Write(filename,self)
         filename=ConvertFileNameToRelativePath(filename)
         self.AnotherFileOpened(filename)
         self.root.title("PySI: "+self.fileparts.FileNameTitle())
@@ -383,19 +376,20 @@ class TheApp(Frame):
     def onSaveProject(self):
         if self.fileparts.filename=='':
             return
-        filename=self.fileparts.AbsoluteFilePath()+'/'+self.fileparts.FileNameWithExtension(ext='.xml')
+        filename=self.fileparts.AbsoluteFilePath()+'/'+self.fileparts.FileNameWithExtension(ext='.pysi_project')
         self.SaveProjectToFile(filename)
 
     def onSaveAsProject(self):
-        filename=AskSaveAsFilename(filetypes=[('xml', '.xml')],
-                                   defaultextension='.xml',
-                                   initialfile=self.fileparts.FileNameWithExtension('.xml'),
+        filename=AskSaveAsFilename(filetypes=[('pysi_project', '.pysi_project')],
+                                   defaultextension='.pysi_project',
+                                   initialfile=self.fileparts.FileNameWithExtension('.pysi_project'),
                                    initialdir=self.fileparts.AbsoluteFilePath())
         if filename is None:
             return
         self.SaveProjectToFile(filename)
 
     def onClearSchematic(self):
+        self.project=None
         self.Drawing.stateMachine.Nothing()
         self.Drawing.schematic.Clear()
         self.history.Event('clear project')
@@ -554,8 +548,15 @@ class TheApp(Frame):
     def onDuplicate(self):
         self.Drawing.DuplicateSelectedDevice()
     def onAddWire(self):
-        self.Drawing.wireLoaded=Wire([Vertex((0,0))])
-        self.Drawing.schematic.wireList.append(self.Drawing.wireLoaded)
+        from ProjectFile import VertexConfiguration,WireConfiguration
+        vertexProject=VertexConfiguration()
+        vertexProject.SetValue('Coord', (0,0))
+        vertexProject.SetValue('Selected',False)
+        wireProject=WireConfiguration()
+        wireProject.SetValue('Vertex', [vertexProject])
+        self.Drawing.wireLoaded=wireProject
+        wireListProject=self.Drawing.schematic.project.GetValue('Drawing.Schematic.Wires')
+        wireListProject.append(self.Drawing.wireLoaded)
         self.Drawing.stateMachine.WireLoaded()
     def onAddPort(self):
         self.Drawing.stateMachine.Nothing()
@@ -595,10 +596,12 @@ class TheApp(Frame):
 
     def onZoomIn(self):
         self.Drawing.grid = self.Drawing.grid*2
+        self.Drawing.schematic.project.SetValue('Grid',self.Drawing.grid)
         self.Drawing.DrawSchematic()
 
     def onZoomOut(self):
         self.Drawing.grid = max(1,self.Drawing.grid/2)
+        self.Drawing.schematic.project.SetValue('Grid',self.Drawing.grid)
         self.Drawing.DrawSchematic()
 
     def onPan(self):
@@ -619,8 +622,8 @@ class TheApp(Frame):
         import SignalIntegrity as si
         spnp=si.p.SystemSParametersNumericParser(
             si.fd.EvenlySpacedFrequencyList(
-                self.calculationProperties.endFrequency,
-                self.calculationProperties.frequencyPoints))
+                self.project.GetValue('CalculationProperties.EndFrequency'),
+                self.project.GetValue('CalculationProperties.FrequencyPoints')))
         spnp.AddLines(netList)
         progressDialog = ProgressDialog(self,self.installdir,"Calculating S-parameters",spnp,spnp.SParameters,granularity=10.0)
         try:
@@ -632,8 +635,14 @@ class TheApp(Frame):
 
     def onCalculationProperties(self):
         self.Drawing.stateMachine.Nothing()
-        self.calculationProperties.ShowCalculationPropertiesDialog()
-        self.calculationProperties.CalculationPropertiesDialog().grab_set()
+        if not hasattr(self, 'calculationPropertiesDialog'):
+            self.calculationPropertiesDialog = CalculationPropertiesDialog(self)
+        if self.calculationPropertiesDialog == None:
+            self.calculationPropertiesDialog= CalculationPropertiesDialog(self)
+        else:
+            if not self.calculationPropertiesDialog.winfo_exists():
+                self.calculationPropertiesDialog=CalculationPropertiesDialog(self)
+        self.calculationPropertiesDialog.grab_set()
 
     def onSimulate(self):
         self.Drawing.stateMachine.Nothing()
@@ -649,8 +658,8 @@ class TheApp(Frame):
         import SignalIntegrity as si
         dnp=si.p.DeembedderNumericParser(
             si.fd.EvenlySpacedFrequencyList(
-                self.calculationProperties.endFrequency,
-                self.calculationProperties.frequencyPoints))
+                self.project.GetValue('CalculationProperties.EndFrequency'),
+                self.project.GetValue('CalculationProperties.FrequencyPoints')))
         dnp.AddLines(netList)
         
         progressDialog = ProgressDialog(self,self.installdir,"Calculating De-embedded S-parameters",dnp,dnp.Deembed,granularity=10.0)

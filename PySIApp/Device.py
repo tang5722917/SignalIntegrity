@@ -82,7 +82,7 @@ class DeviceFromProject(object):
         for partProperty in propertiesList:
             if partProperty.propertyName == 'ports':
                 ports=partProperty.GetValue()
-        partPicture=PartPictureFromProject(deviceProject.GetValue('PartPicture'),ports)
+        partPicture=PartPictureFromProject(deviceProject.GetValue('PartPicture'),ports).result
         try:
             self.result=eval(className).__new__(eval(className))
             Device.__init__(self.result,propertiesList,partPicture)

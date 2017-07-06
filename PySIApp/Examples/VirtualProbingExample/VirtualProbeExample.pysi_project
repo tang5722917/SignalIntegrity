@@ -1,11 +1,11 @@
 <Project>
   <DrawingConfiguration>
     <DrawingPropertiesConfiguration>
-      <Geometry>696x435+27+56</Geometry>
-      <Originy>-9</Originy>
-      <Originx>3</Originx>
-      <Height>390</Height>
-      <Width>696</Width>
+      <Geometry>743x480+234+217</Geometry>
+      <Originy>-8</Originy>
+      <Originx>9</Originx>
+      <Height>458</Height>
+      <Width>743</Width>
       <Grid>16</Grid>
     </DrawingPropertiesConfiguration>
     <SchematicConfiguration>
@@ -190,7 +190,7 @@
               <Origin>(16, 11)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureInductorTwoPort</ClassName>
               </ClassNames>
@@ -282,7 +282,7 @@
               <Origin>(16, 15)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureInductorTwoPort</ClassName>
               </ClassNames>
@@ -374,7 +374,7 @@
               <Origin>(19, 13)</Origin>
               <MirroredHorizontally>True</MirroredHorizontally>
               <Orientation>90</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureCapacitorTwoPort</ClassName>
               </ClassNames>
@@ -466,7 +466,7 @@
               <Origin>(24, 13)</Origin>
               <MirroredHorizontally>True</MirroredHorizontally>
               <Orientation>90</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureResistorTwoPort</ClassName>
               </ClassNames>
@@ -558,7 +558,7 @@
               <Origin>(15, 16)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureGround</ClassName>
               </ClassNames>
@@ -639,7 +639,7 @@
               <Origin>(17, 20)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureSpecifiedPorts</ClassName>
                   <ClassName>PartPictureSpecifiedPortsSide</ClassName>
@@ -732,7 +732,7 @@
               <Origin>(9, 20)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureResistorTwoPort</ClassName>
               </ClassNames>
@@ -824,7 +824,7 @@
               <Origin>(9, 22)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureResistorTwoPort</ClassName>
               </ClassNames>
@@ -916,7 +916,7 @@
               <Origin>(7, 21)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>270</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureGround</ClassName>
               </ClassNames>
@@ -997,7 +997,7 @@
               <Origin>(27, 24)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>90</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureResistorOnePort</ClassName>
               </ClassNames>
@@ -1089,7 +1089,7 @@
               <Origin>(27, 20)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>90</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureResistorOnePort</ClassName>
               </ClassNames>
@@ -1181,7 +1181,7 @@
               <Origin>(7, 23)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>270</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureGround</ClassName>
               </ClassNames>
@@ -1262,7 +1262,7 @@
               <Origin>(6, 20)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureStim</ClassName>
               </ClassNames>
@@ -1311,7 +1311,7 @@
                   <KeywordVisible>True</KeywordVisible>
                   <Hidden>False</Hidden>
                   <Type>float</Type>
-                  <Unit>None</Unit>
+                  <Unit></Unit>
                 </PartPropertyConfiguration>
                 <PartPropertyConfiguration>
                   <Description>part description</Description>
@@ -1343,7 +1343,7 @@
               <Origin>(6, 22)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureStim</ClassName>
               </ClassNames>
@@ -1392,7 +1392,7 @@
                   <KeywordVisible>False</KeywordVisible>
                   <Hidden>False</Hidden>
                   <Type>float</Type>
-                  <Unit>None</Unit>
+                  <Unit></Unit>
                 </PartPropertyConfiguration>
                 <PartPropertyConfiguration>
                   <Description>part description</Description>
@@ -1424,7 +1424,7 @@
               <Origin>(2, 25)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureStim</ClassName>
               </ClassNames>
@@ -1473,7 +1473,7 @@
                   <KeywordVisible>True</KeywordVisible>
                   <Hidden>False</Hidden>
                   <Type>float</Type>
-                  <Unit>None</Unit>
+                  <Unit></Unit>
                 </PartPropertyConfiguration>
                 <PartPropertyConfiguration>
                   <Description>part description</Description>
@@ -1505,7 +1505,7 @@
               <Origin>(17, 29)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureSpecifiedPorts</ClassName>
                   <ClassName>PartPictureSpecifiedPortsSide</ClassName>
@@ -1598,7 +1598,7 @@
               <Origin>(27, 33)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>90</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureResistorOnePort</ClassName>
               </ClassNames>
@@ -1690,7 +1690,7 @@
               <Origin>(27, 29)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>90</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureResistorOnePort</ClassName>
               </ClassNames>
@@ -1782,7 +1782,7 @@
               <Origin>(9, 29)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureResistorTwoPort</ClassName>
               </ClassNames>
@@ -1874,7 +1874,7 @@
               <Origin>(9, 31)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureResistorTwoPort</ClassName>
               </ClassNames>
@@ -1966,7 +1966,7 @@
               <Origin>(7, 30)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>270</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureGround</ClassName>
               </ClassNames>
@@ -2047,7 +2047,7 @@
               <Origin>(7, 32)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>270</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureGround</ClassName>
               </ClassNames>
@@ -2128,7 +2128,7 @@
               <Origin>(6, 29)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureStim</ClassName>
               </ClassNames>
@@ -2177,7 +2177,7 @@
                   <KeywordVisible>True</KeywordVisible>
                   <Hidden>False</Hidden>
                   <Type>float</Type>
-                  <Unit>None</Unit>
+                  <Unit></Unit>
                 </PartPropertyConfiguration>
                 <PartPropertyConfiguration>
                   <Description>part description</Description>
@@ -2209,7 +2209,7 @@
               <Origin>(6, 31)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureStim</ClassName>
               </ClassNames>
@@ -2258,7 +2258,7 @@
                   <KeywordVisible>False</KeywordVisible>
                   <Hidden>False</Hidden>
                   <Type>float</Type>
-                  <Unit>None</Unit>
+                  <Unit></Unit>
                 </PartPropertyConfiguration>
                 <PartPropertyConfiguration>
                   <Description>part description</Description>
@@ -2290,7 +2290,7 @@
               <Origin>(16, 29)</Origin>
               <MirroredHorizontally>True</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureProbe</ClassName>
               </ClassNames>
@@ -2350,7 +2350,7 @@
                   <KeywordVisible>True</KeywordVisible>
                   <Hidden>False</Hidden>
                   <Type>float</Type>
-                  <Unit>None</Unit>
+                  <Unit></Unit>
                 </PartPropertyConfiguration>
                 <PartPropertyConfiguration>
                   <Description>voltage offset (V)</Description>
@@ -2393,7 +2393,7 @@
               <Origin>(13, 16)</Origin>
               <MirroredHorizontally>True</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureProbe</ClassName>
               </ClassNames>
@@ -2453,7 +2453,7 @@
                   <KeywordVisible>True</KeywordVisible>
                   <Hidden>False</Hidden>
                   <Type>float</Type>
-                  <Unit>None</Unit>
+                  <Unit></Unit>
                 </PartPropertyConfiguration>
                 <PartPropertyConfiguration>
                   <Description>voltage offset (V)</Description>
@@ -2496,7 +2496,7 @@
               <Origin>(13, 11)</Origin>
               <MirroredHorizontally>False</MirroredHorizontally>
               <Orientation>90</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureMeasureProbe</ClassName>
               </ClassNames>
@@ -2577,7 +2577,7 @@
               <Origin>(22, 29)</Origin>
               <MirroredHorizontally>True</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureVoltageProbe</ClassName>
               </ClassNames>
@@ -2648,7 +2648,7 @@
                   <KeywordVisible>True</KeywordVisible>
                   <Hidden>False</Hidden>
                   <Type>float</Type>
-                  <Unit>None</Unit>
+                  <Unit></Unit>
                 </PartPropertyConfiguration>
                 <PartPropertyConfiguration>
                   <Description>voltage offset (V)</Description>
@@ -2691,7 +2691,7 @@
               <Origin>(22, 20)</Origin>
               <MirroredHorizontally>True</MirroredHorizontally>
               <Orientation>0</Orientation>
-              <Selected>0</Selected>
+              <Selected>False</Selected>
               <ClassNames>
                   <ClassName>PartPictureVoltageProbe</ClassName>
               </ClassNames>
@@ -2762,7 +2762,7 @@
                   <KeywordVisible>True</KeywordVisible>
                   <Hidden>False</Hidden>
                   <Type>float</Type>
-                  <Unit>None</Unit>
+                  <Unit></Unit>
                 </PartPropertyConfiguration>
                 <PartPropertyConfiguration>
                   <Description>voltage offset (V)</Description>
@@ -2803,8 +2803,12 @@
     </SchematicConfiguration>
   </DrawingConfiguration>
   <CalculationPropertiesConfiguration>
+    <BaseSampleRate>40000000000.0</BaseSampleRate>
+    <ImpulseResponseLength>2e-08</ImpulseResponseLength>
     <UserSampleRate>40000000000.0</UserSampleRate>
-    <FrequencyPoints>400</FrequencyPoints>
+    <TimePoints>800</TimePoints>
     <EndFrequency>20000000000.0</EndFrequency>
+    <FrequencyPoints>400</FrequencyPoints>
+    <FrequencyResolution>50000000.0</FrequencyResolution>
   </CalculationPropertiesConfiguration>
 </Project>

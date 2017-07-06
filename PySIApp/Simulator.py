@@ -195,7 +195,6 @@ class SimulatorDialog(Toplevel):
         pass
     def onCalculationProperties(self):
         self.parent.parent.onCalculationProperties()
-        #self.parent.parent.calculationProperties.CalculationPropertiesDialog().lift(self)
 
     def onExamineTransferMatrices(self):
         buttonLabelList=[[out+' due to '+inp for inp in self.parent.sourceNames] for out in self.parent.outputWaveformLabels]
@@ -267,8 +266,9 @@ class Simulator(object):
         netListText=netList.Text()
         import SignalIntegrity as si
         fd=si.fd.EvenlySpacedFrequencyList(
-            self.parent.calculationProperties.endFrequency,
-            self.parent.calculationProperties.frequencyPoints)
+            self.parent.project.GetValue('CalculationProperties.EndFrequency'),
+            self.parent.project.GetValue('CalculationProperties.FrequencyPoints')
+            )
         snp=si.p.SimulatorNumericParser(fd)
         snp.AddLines(netListText)
         progressDialog=ProgressDialog(self.parent,self.parent.installdir,"Transfer Parameters",snp,snp.TransferMatrices, granularity=10.0)
@@ -331,7 +331,7 @@ class Simulator(object):
                         outputWaveformList[outputWaveformIndex]=outputWaveform
                         break
         outputWaveformList = [wf.Adapt(
-            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.parent.calculationProperties.userSampleRate))
+            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.parent.project.GetValue('CalculationProperties.UserSampleRate')))
                 for wf in outputWaveformList]
         self.SimulatorDialog().title('PySI Sim: '+self.parent.fileparts.FileNameTitle())
         self.SimulatorDialog().ExamineTransferMatricesDoer.Activate(True)
@@ -344,8 +344,8 @@ class Simulator(object):
         import SignalIntegrity as si
         snp=si.p.VirtualProbeNumericParser(
             si.fd.EvenlySpacedFrequencyList(
-                self.parent.calculationProperties.endFrequency,
-                self.parent.calculationProperties.frequencyPoints))
+                self.parent.project.GetValue('CalculationProperties.EndFrequency'),
+                self.parent.project.GetValue('CalculationProperties.FrequencyPoints')))
         snp.AddLines(netListText)       
         progressDialog=ProgressDialog(self.parent,self.parent.installdir,"Transfer Parameters",snp,snp.TransferMatrices, granularity=10.0)
         try:
@@ -391,7 +391,7 @@ class Simulator(object):
                         outputWaveformList[outputWaveformIndex]=outputWaveform
                         break
         outputWaveformList = [wf.Adapt(
-            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.parent.calculationProperties.userSampleRate))
+            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.parent.project.GetValue('CalculationProperties.UserSampleRate')))
                 for wf in outputWaveformList]
         self.SimulatorDialog().title('PySI Virtual Probe: '+self.parent.fileparts.FileNameTitle())
         self.SimulatorDialog().ExamineTransferMatricesDoer.Activate(True)

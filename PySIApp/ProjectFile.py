@@ -30,7 +30,7 @@ class PartPictureConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
         self.dict['ClassNames']=XMLProperty('ClassNames',[XMLPropertyDefaultString('ClassName') for _ in range(0)],'string')
-        self.dict['Selected']=XMLPropertyDefaultBool('Selected',False)
+        self.dict['Selected']=XMLPropertyDefaultBool('Selected',False,write=False)
         self.dict['Origin']=XMLPropertyDefaultString('Origin')
         self.dict['Orientation']=XMLPropertyDefaultInt('Orientation')
         self.dict['MirroredVertically']=XMLPropertyDefaultBool('MirroredVertically',False)
@@ -46,12 +46,13 @@ class DeviceConfiguration(XMLConfiguration):
 class VertexConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
-        self.dict['Vertex']=XMLPropertyDefaultString('Vertex')
+        self.dict['Coord']=XMLPropertyDefaultString('Coord')
+        self.dict['Selected']=XMLPropertyDefaultBool('Selected',False,False)
 
 class WireConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
-        self.dict['Vertex']=XMLProperty('Vertex',[XMLPropertyDefaultString() for _ in range(0)],'string')
+        self.dict['Vertex']=XMLProperty('Vertex',[VertexConfiguration() for _ in range(0)],'string')
 
 class DrawingPropertiesConfiguration(XMLConfiguration):
     def __init__(self):
@@ -81,6 +82,10 @@ class CalculationPropertiesConfiguration(XMLConfiguration):
         self.dict['EndFrequency']=XMLPropertyDefaultFloat('EndFrequency',20e9)
         self.dict['FrequencyPoints']=XMLPropertyDefaultInt('FrequencyPoints',2000)
         self.dict['UserSampleRate']=XMLPropertyDefaultFloat('UserSampleRate',40e9)
+        self.dict['BaseSampleRate']=XMLPropertyDefaultFloat('BaseSampleRate')
+        self.dict['TimePoints']=XMLPropertyDefaultInt('TimePoints')
+        self.dict['FrequencyResolution']=XMLPropertyDefaultFloat('FrequencyResolution')
+        self.dict['ImpulseResponseLength']=XMLPropertyDefaultFloat('ImpulseResponseLength')
 
 class ProjectFile(ProjectFileBase):
     def __init__(self):
@@ -88,7 +93,54 @@ class ProjectFile(ProjectFileBase):
         self.dict['Drawing']=DrawingConfiguration()
         self.dict['CalculationProperties']=CalculationPropertiesConfiguration()
 
+    def Read(self, filename,drawing):
+        ProjectFileBase.Read(self, filename)
+        # calculate certain calculation properties
+        self.SetValue('CalculationProperties.BaseSampleRate', self.GetValue('CalculationProperties.EndFrequency')*2)
+        self.SetValue('CalculationProperties.TimePoints',self.GetValue('CalculationProperties.FrequencyPoints')*2)
+        self.SetValue('CalculationProperties.FrequencyResolution', self.GetValue('CalculationProperties.EndFrequency')/self.GetValue('CalculationProperties.FrequencyPoints'))
+        self.SetValue('CalculationProperties.ImpulseResponseLength',1./self.GetValue('CalculationProperties.FrequencyResolution'))
+        drawing.InitFromProject(self)
+        return self
+
+    def Write(self,filename,app):
+        self.SetValue('Drawing.DrawingProperties.Grid',app.Drawing.grid)
+        self.SetValue('Drawing.DrawingProperties.Originx',app.Drawing.originx)
+        self.SetValue('Drawing.DrawingProperties.Originy',app.Drawing.originy)
+        self.SetValue('Drawing.DrawingProperties.Width',app.Drawing.canvas.winfo_width())
+        self.SetValue('Drawing.DrawingProperties.Height',app.Drawing.canvas.winfo_height())
+        self.SetValue('Drawing.DrawingProperties.Geometry',app.root.geometry())
+        self.SetValue('Drawing.Schematic.Devices',[DeviceConfiguration() for _ in range(len(app.Drawing.schematic.deviceList))])
+        for d in range(len(self.GetValue('Drawing.Schematic.Devices'))):
+            deviceProject=self.GetValue('Drawing.Schematic.Devices')[d]
+            device=app.Drawing.schematic.deviceList[d]
+            deviceProject.SetValue('ClassName',device.__class__.__name__)
+            partPictureProject=deviceProject.GetValue('PartPicture')
+            partPicture=device.partPicture
+            partPictureProject.SetValue('ClassNames',[XMLPropertyDefaultString('ClassName',name) for name in partPicture.partPictureClassList])
+            partPictureProject.SetValue('Selected',partPicture.partPictureSelected)
+            partPictureProject.SetValue('Origin',partPicture.current.origin)
+            partPictureProject.SetValue('Orientation',partPicture.current.orientation)
+            partPictureProject.SetValue('MirroredVertically',partPicture.current.mirroredVertically)
+            partPictureProject.SetValue('MirroredHorizontally',partPicture.current.mirroredHorizontally)
+            deviceProject.SetValue('PartProperties',[PartPropertyConfiguration() for _ in range(len(device.propertiesList))])
+            for p in range(len(deviceProject.GetValue('PartProperties'))):
+                partPropertyProject=deviceProject.GetValue('PartProperties')[p]
+                partProperty=device.propertiesList[p]
+                partPropertyProject.SetValue('Keyword',partProperty.keyword)
+                partPropertyProject.SetValue('PropertyName',partProperty.propertyName)
+                partPropertyProject.SetValue('Description',partProperty.description)
+                partPropertyProject.SetValue('Value',partProperty.PropertyString(stype='raw'))
+                partPropertyProject.SetValue('Hidden',partProperty.hidden)
+                partPropertyProject.SetValue('Visible',partProperty.visible)
+                partPropertyProject.SetValue('KeywordVisible',partProperty.keywordVisible)
+                partPropertyProject.SetValue('Type',partProperty.type)
+                partPropertyProject.SetValue('Unit',partProperty.unit)
+        ProjectFileBase.Write(self,filename)
+        return self
+
 from PySIApp import TheApp
+
 class App(TheApp):
     def __init__(self):
         TheApp.__init__(self,False)
@@ -138,7 +190,11 @@ class App(TheApp):
         for w in range(len(project.GetValue('Drawing.Schematic.Wires'))):
             wireProject=project.GetValue('Drawing.Schematic.Wires')[w]
             wire=self.Drawing.schematic.wireList[w]
-            wireProject.SetValue('Vertex',[XMLPropertyDefaultString('Vertex',str(vertex.coord)) for vertex in wire])
+            wireProject.SetValue('Vertex',[VertexConfiguration() for vertex in wire])
+            for v in range(len(wireProject.GetValue('Vertex'))):
+                vertexProject=wireProject.GetValue('Vertex')[v]
+                vertex=wire[v]
+                vertexProject.SetValue('Vertex',vertex.coord)
         project.SetValue('CalculationProperties.EndFrequency',self.calculationProperties.endFrequency)
         project.SetValue('CalculationProperties.FrequencyPoints',self.calculationProperties.frequencyPoints)
         project.SetValue('CalculationProperties.UserSampleRate',self.calculationProperties.userSampleRate)

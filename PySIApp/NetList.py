@@ -13,7 +13,7 @@ from ScrolledText import ScrolledText
 
 from FilePicker import AskSaveAsFilename
 from PartProperty import PartPropertyPartName,PartPropertyReferenceDesignator,PartPropertyWeight
-#from Wire import *
+from Wire import WireList
 
 class NetList(object):
     def __init__(self,schematic):
@@ -24,7 +24,7 @@ class NetList(object):
         self.stimNames=[]
         self.definingStimList=[]
         deviceList = schematic.deviceList
-        wireList = schematic.wireList.EquiPotentialWireList()
+        equiPotentialWireList=WireList().InitFromProject(schematic.project.GetValue('Drawing.Schematic.Wires')).EquiPotentialWireList()
         # put all devices in the net list
         for device in deviceList:
             deviceType = device[PartPropertyPartName().propertyName].GetValue()
@@ -50,7 +50,7 @@ class NetList(object):
                             thisDevicePinCheckCoordinate = devicePinCoordinateList[deviceCheckIndex][pinCheckIndex]
                             if thisDevicePinCoordinate == thisDevicePinCheckCoordinate:
                                 thisListOfConnectedDevicePins.append((deviceCheckIndex,pinCheckIndex))
-                    for wire in wireList:
+                    for wire in equiPotentialWireList:
                         thisWireConnectedToThisDevicePin = False
                         for vertex in wire:
                             if vertex.coord == thisDevicePinCoordinate:
