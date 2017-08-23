@@ -29,7 +29,7 @@ class TestWriteClass(unittest.TestCase,RoutineWriterTesterHelper):
         defName=['_DelayBy','_FractionalDelayTime']
         self.WriteClassCode(fileName,className,defName)
     def testWriteFrequencyResponse_Rat(self):
-        fileName="../SignalIntegrity/FrequencyDomain/FrequencyResponse.py"
+        fileName="../SignalIntegrity/Rat/Rat.py"
         className=''
         defName=['Rat']
         self.WriteClassCode(fileName,className,defName)
@@ -519,6 +519,14 @@ class TestWriteClass(unittest.TestCase,RoutineWriterTesterHelper):
     def testWriteWaveformTrimmer(self):
         fileName="../SignalIntegrity/TimeDomain/Filters/WaveformTrimmer.py"
         className='WaveformTrimmer'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName,lineDefs=True)
+    def testWriteWaveformDecimator(self):
+        fileName="../SignalIntegrity/TimeDomain/Filters/WaveformDecimator.py"
+        className='WaveformDecimator'
         firstDef='__init__'
         allfuncs=self.EntireListOfClassFunctions(fileName,className)
         allfuncs.remove(firstDef)

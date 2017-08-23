@@ -12,4 +12,3 @@ def Rat(R,tol=0.0001):
     for n in range(N+1):
         R=(R[0]*D[N-n]+R[1],R[0])
     return R
-

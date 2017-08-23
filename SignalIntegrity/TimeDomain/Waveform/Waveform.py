@@ -73,11 +73,14 @@ class Waveform(object):
         # pragma: silent exclude
         from SignalIntegrity.TimeDomain.Filters.FirFilter import FirFilter
         from SignalIntegrity.TimeDomain.Filters.WaveformTrimmer import WaveformTrimmer
+        from SignalIntegrity.TimeDomain.Filters.WaveformDecimator import WaveformDecimator
         # pragma: include
         if isinstance(other,FirFilter):
             return other.FilterWaveform(self)
         elif isinstance(other,WaveformTrimmer):
             return other.TrimWaveform(self)
+        elif isinstance(other,WaveformDecimator):
+            return other.DecimateWaveform(self)
         elif isinstance(other,float):
             return Waveform(self.m_t,[v*other for v in self.Values()])
     def ReadFromFile(self,fileName):
@@ -124,18 +127,24 @@ class Waveform(object):
         from SignalIntegrity.TimeDomain.Filters.InterpolatorLinear import InterpolatorLinear
         from SignalIntegrity.TimeDomain.Filters.InterpolatorLinear import FractionalDelayFilterLinear
         from SignalIntegrity.TimeDomain.Filters.WaveformTrimmer import WaveformTrimmer
+        from SignalIntegrity.TimeDomain.Filters.WaveformDecimator import WaveformDecimator
+        from SignalIntegrity.Rat import Rat
         # pragma: include
         wf=self
-        u=int(round(td.Fs/wf.TimeDescriptor().Fs))
-        if not u==1:
-            wf=wf*(InterpolatorSinX(u) if wf.adaptionStrategy=='SinX'
-                else InterpolatorLinear(u))
+        (upsampleFactor,decimationFactor)=Rat(td.Fs/wf.TimeDescriptor().Fs)
+        if upsampleFactor>1:
+            wf=wf*(InterpolatorSinX(upsampleFactor) if wf.adaptionStrategy=='SinX'
+                else InterpolatorLinear(upsampleFactor))
         ad=td/wf.TimeDescriptor()
         f=ad.D-int(ad.D)
         if not f==0.0:
             wf=wf*(FractionalDelayFilterSinX(f,True) if wf.adaptionStrategy=='SinX'
                 else FractionalDelayFilterLinear(f,True))
-        ad=td/wf.TimeDescriptor()
+            ad=td/wf.TimeDescriptor()
+        if decimationFactor>1:
+            decimationPhase=int(round(ad.TrimLeft())) % decimationFactor
+            wf=wf*WaveformDecimator(decimationFactor,decimationPhase)
+            ad=td/wf.TimeDescriptor()
         tr=WaveformTrimmer(max(0,int(round(ad.TrimLeft()))),
                            max(0,int(round(ad.TrimRight()))))
         wf=wf*tr
