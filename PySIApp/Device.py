@@ -76,7 +76,7 @@ class Device(object):
 class DeviceFromProject(object):
     def __init__(self,deviceProject):
         devicePartPropertiesProjectList=deviceProject.GetValue('PartProperties')
-        propertiesList=[PartPropertyFromProject(devicePartPropertiesProjectList[p]).result for p in range(len(devicePartPropertiesProjectList))]
+        propertiesList=[PartPropertyFromProject(devicePartPropertiesProject).result for devicePartPropertiesProject in devicePartPropertiesProjectList]
         className=deviceProject.GetValue('ClassName')
         ports=None
         for partProperty in propertiesList:
