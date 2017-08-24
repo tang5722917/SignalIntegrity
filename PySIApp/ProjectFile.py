@@ -29,8 +29,7 @@ class PartPropertyConfiguration(XMLConfiguration):
 class PartPictureConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
-        self.dict['ClassNames']=XMLProperty('ClassNames',[XMLPropertyDefaultString('ClassName') for _ in range(0)],'string')
-        self.dict['Selected']=XMLPropertyDefaultInt('Selected',0)
+        self.dict['ClassName']=XMLPropertyDefaultString('ClassName')
         self.dict['Origin']=XMLPropertyDefaultString('Origin')
         self.dict['Orientation']=XMLPropertyDefaultInt('Orientation')
         self.dict['MirroredVertically']=XMLPropertyDefaultBool('MirroredVertically',False)
@@ -119,8 +118,7 @@ class ProjectFile(ProjectFileBase):
             deviceProject.SetValue('ClassName',device.__class__.__name__)
             partPictureProject=deviceProject.GetValue('PartPicture')
             partPicture=device.partPicture
-            partPictureProject.SetValue('ClassNames',[XMLPropertyDefaultString('ClassName',name) for name in partPicture.partPictureClassList])
-            partPictureProject.SetValue('Selected',partPicture.partPictureSelected)
+            partPictureProject.SetValue('ClassName',partPicture.partPictureClassList[partPicture.partPictureSelected])
             partPictureProject.SetValue('Origin',partPicture.current.origin)
             partPictureProject.SetValue('Orientation',partPicture.current.orientation)
             partPictureProject.SetValue('MirroredVertically',partPicture.current.mirroredVertically)

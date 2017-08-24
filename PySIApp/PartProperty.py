@@ -92,38 +92,6 @@ class PartProperty(object):
         return self
     def GetValue(self):
         return self._value
-    def xml(self):
-        pp = et.Element('part_property')
-        pList=[]
-        p=et.Element('keyword')
-        p.text=str(self.keyword)
-        pList.append(p)
-        p=et.Element('property_name')
-        p.text=str(self.propertyName)
-        pList.append(p)
-        p=et.Element('description')
-        p.text=str(self.description)
-        pList.append(p)
-        p=et.Element('value')
-        p.text=self.PropertyString(stype='raw')
-        pList.append(p)
-        p=et.Element('hidden')
-        p.text=str(self.hidden)
-        pList.append(p)
-        p=et.Element('visible')
-        p.text=str(self.visible)
-        pList.append(p)
-        p=et.Element('keyword_visible')
-        p.text=str(self.keywordVisible)
-        pList.append(p)
-        p=et.Element('type')
-        p.text=str(self.type)
-        pList.append(p)
-        p=et.Element('unit')
-        p.text=str(self.unit)
-        pList.append(p)
-        pp.extend(pList)
-        return pp
 
 class PartPropertyXMLClassFactory(PartProperty):
     def __init__(self,xml):

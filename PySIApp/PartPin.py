@@ -52,26 +52,6 @@ class PartPin(object):
         #    self.pinNumberVisible=True
         if self.pinNumberVisible:
             canvas.create_text(textx,texty,text=str(self.pinNumber),fill=color)
-    def xml(self):
-        pp = et.Element('pin')
-        pList=[]
-        p=et.Element('number')
-        p.text=str(self.pinNumber)
-        pList.append(p)
-        p=et.Element('connection_point')
-        p.text=str(self.pinConnectionPoint)
-        pList.append(p)
-        p=et.Element('orientation')
-        p.text=str(self.pinOrientation)
-        pList.append(p)
-        p=et.Element('number_visible')
-        p.text=str(self.pinNumberVisible)
-        pList.append(p)
-        p=et.Element('pin_visible')
-        p.text=str(self.pinVisible)
-        pList.append(p)
-        pp.extend(pList)
-        return pp
 
 class PartPinXMLClassFactory(PartPin):
     def __init__(self,xml):

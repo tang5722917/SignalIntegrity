@@ -61,15 +61,6 @@ class Device(object):
             if propertyString != '':
                 visiblePartPropertyList.append(propertyString)
         self.partPicture.current.InsertVisiblePartProperties(visiblePartPropertyList)
-    def xml(self):
-        dev = et.Element('device')
-        classNameElement = et.Element('class_name')
-        classNameElement.text = self.__class__.__name__
-        pprope = et.Element('part_properties')
-        props = [partProperty.xml() for partProperty in self.propertiesList]
-        pprope.extend(props)
-        dev.extend([classNameElement,pprope,self.partPicture.xml()])
-        return dev
     def Waveform(self):
         return None
 
@@ -82,7 +73,21 @@ class DeviceFromProject(object):
         for partProperty in propertiesList:
             if partProperty.propertyName == 'ports':
                 ports=partProperty.GetValue()
-        partPicture=PartPictureFromProject(deviceProject.GetValue('PartPicture'),ports).result
+        for device in DeviceList+DeviceListSystem+DeviceListUnknown:
+            if (str(device.__class__).split('.')[-1].strip('\'>') == className):
+                devicePorts = device.PartPropertyByName('ports')
+                if (devicePorts is None):
+                    match=True
+                elif (devicePorts.GetValue() == ports):
+                    match=True
+                else:
+                    match=False
+                if match:
+                    partPictureList = device.partPicture.partPictureClassList
+                    break
+        if partPictureList is None:
+            raise
+        partPicture=PartPictureFromProject(partPictureList,deviceProject.GetValue('PartPicture'),ports).result
         try:
             self.result=eval(className).__new__(eval(className))
             Device.__init__(self.result,propertiesList,partPicture)
@@ -104,9 +109,21 @@ class DeviceXMLClassFactory(object):
                     propertiesList.append(partProperty)
                     if partProperty.propertyName=='ports':
                         ports=partProperty.GetValue()
+        for device in DeviceList+DeviceListSystem+DeviceListUnknown:
+            if (str(device.__class__).split('.')[-1].strip('\'>') == className):
+                devicePorts = device.PartPropertyByName('ports')
+                if (devicePorts is None):
+                    match=True
+                elif (devicePorts.GetValue() == ports):
+                    match=True
+                else:
+                    match=False
+                if match:
+                    partPictureList = device.partPicture.partPictureClassList
+                    break
         for child in xml:
             if child.tag == 'part_picture':
-                partPicture=PartPictureXMLClassFactory(child,ports).result
+                partPicture=PartPictureXMLClassFactory(partPictureList,child,ports).result
         try:
             self.result=eval(className).__new__(eval(className))
             Device.__init__(self.result,propertiesList,partPicture)

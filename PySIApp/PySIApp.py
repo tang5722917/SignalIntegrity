@@ -338,8 +338,7 @@ class TheApp(Frame):
                 partPictureProject=deviceProject.GetValue('PartPicture')
                 partPicture=device.partPicture
                 from ProjectFile import XMLPropertyDefaultString
-                partPictureProject.SetValue('ClassNames',[XMLPropertyDefaultString('ClassName',name) for name in partPicture.partPictureClassList])
-                partPictureProject.SetValue('Selected',partPicture.partPictureSelected)
+                partPictureProject.SetValue('ClassName',partPicture.partPictureClassList[partPicture.partPictureSelected])
                 partPictureProject.SetValue('Origin',partPicture.current.origin)
                 partPictureProject.SetValue('Orientation',partPicture.current.orientation)
                 partPictureProject.SetValue('MirroredVertically',partPicture.current.mirroredVertically)

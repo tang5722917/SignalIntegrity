@@ -170,20 +170,6 @@ class CalculationProperties(object):
             if not self.calculationPropertiesDialog.winfo_exists():
                 self.calculationPropertiesDialog=CalculationPropertiesDialog(self.parent,self)
         return self.calculationPropertiesDialog
-    def xml(self):
-        calculationPropertiesElement=et.Element('calculation_properties')
-        calculationPropertiesElementList=[]
-        calculationProperty=et.Element('end_frequency')
-        calculationProperty.text=str(self.endFrequency)
-        calculationPropertiesElementList.append(calculationProperty)
-        calculationProperty=et.Element('frequency_points')
-        calculationProperty.text=str(self.frequencyPoints)
-        calculationPropertiesElementList.append(calculationProperty)
-        calculationProperty=et.Element('user_samplerate')
-        calculationProperty.text=str(self.userSampleRate)
-        calculationPropertiesElementList.append(calculationProperty)
-        calculationPropertiesElement.extend(calculationPropertiesElementList)
-        return calculationPropertiesElement
     def InitFromXml(self,calculationPropertiesElement,parent):
         endFrequency=20e9
         frequencyPoints=400
