@@ -30,7 +30,7 @@ class PartPictureConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self)
         self.dict['ClassNames']=XMLProperty('ClassNames',[XMLPropertyDefaultString('ClassName') for _ in range(0)],'string')
-        self.dict['Selected']=XMLPropertyDefaultBool('Selected',False,write=False)
+        self.dict['Selected']=XMLPropertyDefaultInt('Selected',0)
         self.dict['Origin']=XMLPropertyDefaultString('Origin')
         self.dict['Orientation']=XMLPropertyDefaultInt('Orientation')
         self.dict['MirroredVertically']=XMLPropertyDefaultBool('MirroredVertically',False)
@@ -48,6 +48,8 @@ class VertexConfiguration(XMLConfiguration):
         XMLConfiguration.__init__(self)
         self.dict['Coord']=XMLPropertyDefaultString('Coord')
         self.dict['Selected']=XMLPropertyDefaultBool('Selected',False,False)
+    def OutputXML(self,indent):
+        return [indent+'<Vertex>'+str(self.dict['Coord'].dict['value'])+'</Vertex>']
 
 class WireConfiguration(XMLConfiguration):
     def __init__(self):
@@ -139,72 +141,75 @@ class ProjectFile(ProjectFileBase):
         ProjectFileBase.Write(self,filename)
         return self
 
-from PySIApp import TheApp
-
-class App(TheApp):
-    def __init__(self):
-        TheApp.__init__(self,False)
-    def ConvertOldProjectToNew(self,oldfilename,newfilename):
-        import xml.etree.ElementTree as et
-        tree=et.parse(oldfilename)
-        root=tree.getroot()
-        for child in root:
-            if child.tag == 'drawing':
-                self.Drawing.InitFromXml(child)
-            elif child.tag == 'calculation_properties':
-                self.calculationProperties.InitFromXml(child, self)
-        project=ProjectFile()
-        project.SetValue('Drawing.DrawingProperties.Grid',self.Drawing.grid)
-        project.SetValue('Drawing.DrawingProperties.Originx',self.Drawing.originx)
-        project.SetValue('Drawing.DrawingProperties.Originy',self.Drawing.originy)
-        project.SetValue('Drawing.DrawingProperties.Width',self.Drawing.canvas.winfo_width())
-        project.SetValue('Drawing.DrawingProperties.Height',self.Drawing.canvas.winfo_height())
-        project.SetValue('Drawing.DrawingProperties.Geometry',self.root.geometry())
-        project.SetValue('Drawing.Schematic.Devices',[DeviceConfiguration() for _ in range(len(self.Drawing.schematic.deviceList))])
-        for d in range(len(project.GetValue('Drawing.Schematic.Devices'))):
-            deviceProject=project.GetValue('Drawing.Schematic.Devices')[d]
-            device=self.Drawing.schematic.deviceList[d]
-            deviceProject.SetValue('ClassName',device.__class__.__name__)
-            partPictureProject=deviceProject.GetValue('PartPicture')
-            partPicture=device.partPicture
-            partPictureProject.SetValue('ClassNames',[XMLPropertyDefaultString('ClassName',name) for name in partPicture.partPictureClassList])
-            partPictureProject.SetValue('Selected',partPicture.partPictureSelected)
-            partPictureProject.SetValue('Origin',partPicture.current.origin)
-            partPictureProject.SetValue('Orientation',partPicture.current.orientation)
-            partPictureProject.SetValue('MirroredVertically',partPicture.current.mirroredVertically)
-            partPictureProject.SetValue('MirroredHorizontally',partPicture.current.mirroredHorizontally)
-            deviceProject.SetValue('PartProperties',[PartPropertyConfiguration() for _ in range(len(device.propertiesList))])
-            for p in range(len(deviceProject.GetValue('PartProperties'))):
-                partPropertyProject=deviceProject.GetValue('PartProperties')[p]
-                partProperty=device.propertiesList[p]
-                partPropertyProject.SetValue('Keyword',partProperty.keyword)
-                partPropertyProject.SetValue('PropertyName',partProperty.propertyName)
-                partPropertyProject.SetValue('Description',partProperty.description)
-                partPropertyProject.SetValue('Value',partProperty.PropertyString(stype='raw'))
-                partPropertyProject.SetValue('Hidden',partProperty.hidden)
-                partPropertyProject.SetValue('Visible',partProperty.visible)
-                partPropertyProject.SetValue('KeywordVisible',partProperty.keywordVisible)
-                partPropertyProject.SetValue('Type',partProperty.type)
-                partPropertyProject.SetValue('Unit',partProperty.unit)
-        project.SetValue('Drawing.Schematic.Wires',[WireConfiguration() for _ in range(len(self.Drawing.schematic.wireList))])
-        for w in range(len(project.GetValue('Drawing.Schematic.Wires'))):
-            wireProject=project.GetValue('Drawing.Schematic.Wires')[w]
-            wire=self.Drawing.schematic.wireList[w]
-            wireProject.SetValue('Vertex',[VertexConfiguration() for vertex in wire])
-            for v in range(len(wireProject.GetValue('Vertex'))):
-                vertexProject=wireProject.GetValue('Vertex')[v]
-                vertex=wire[v]
-                vertexProject.SetValue('Vertex',vertex.coord)
-        project.SetValue('CalculationProperties.EndFrequency',self.calculationProperties.endFrequency)
-        project.SetValue('CalculationProperties.FrequencyPoints',self.calculationProperties.frequencyPoints)
-        project.SetValue('CalculationProperties.UserSampleRate',self.calculationProperties.userSampleRate)
-        project.Write(newfilename)
-        project.Read(newfilename)
-        project.Write(newfilename)
-        #project.PrintFullInformation()
-            
- 
+# Legacy File Format
 if __name__ == '__main__':
+
+    from PySIApp import TheApp
+
+    class App(TheApp):
+        def __init__(self):
+            TheApp.__init__(self,False)
+        def ConvertOldProjectToNew(self,oldfilename,newfilename):
+            import xml.etree.ElementTree as et
+            tree=et.parse(oldfilename)
+            root=tree.getroot()
+            for child in root:
+                if child.tag == 'drawing':
+                    self.Drawing.InitFromXml(child)
+                elif child.tag == 'calculation_properties':
+                    from CalculationProperties import CalculationProperties
+                    self.calculationProperties=CalculationProperties(self)
+                    self.calculationProperties.InitFromXml(child, self)
+            project=ProjectFile()
+            project.SetValue('Drawing.DrawingProperties.Grid',self.Drawing.grid)
+            project.SetValue('Drawing.DrawingProperties.Originx',self.Drawing.originx)
+            project.SetValue('Drawing.DrawingProperties.Originy',self.Drawing.originy)
+            project.SetValue('Drawing.DrawingProperties.Width',self.Drawing.canvas.winfo_width())
+            project.SetValue('Drawing.DrawingProperties.Height',self.Drawing.canvas.winfo_height())
+            project.SetValue('Drawing.DrawingProperties.Geometry',self.root.geometry())
+            project.SetValue('Drawing.Schematic.Devices',[DeviceConfiguration() for _ in range(len(self.Drawing.schematic.deviceList))])
+            for d in range(len(project.GetValue('Drawing.Schematic.Devices'))):
+                deviceProject=project.GetValue('Drawing.Schematic.Devices')[d]
+                device=self.Drawing.schematic.deviceList[d]
+                deviceProject.SetValue('ClassName',device.__class__.__name__)
+                partPictureProject=deviceProject.GetValue('PartPicture')
+                partPicture=device.partPicture
+                partPictureProject.SetValue('ClassNames',[XMLPropertyDefaultString('ClassName',name) for name in partPicture.partPictureClassList])
+                partPictureProject.SetValue('Selected',partPicture.partPictureSelected)
+                partPictureProject.SetValue('Origin',partPicture.current.origin)
+                partPictureProject.SetValue('Orientation',partPicture.current.orientation)
+                partPictureProject.SetValue('MirroredVertically',partPicture.current.mirroredVertically)
+                partPictureProject.SetValue('MirroredHorizontally',partPicture.current.mirroredHorizontally)
+                deviceProject.SetValue('PartProperties',[PartPropertyConfiguration() for _ in range(len(device.propertiesList))])
+                for p in range(len(deviceProject.GetValue('PartProperties'))):
+                    partPropertyProject=deviceProject.GetValue('PartProperties')[p]
+                    partProperty=device.propertiesList[p]
+                    partPropertyProject.SetValue('Keyword',partProperty.keyword)
+                    partPropertyProject.SetValue('PropertyName',partProperty.propertyName)
+                    partPropertyProject.SetValue('Description',partProperty.description)
+                    partPropertyProject.SetValue('Value',partProperty.PropertyString(stype='raw'))
+                    partPropertyProject.SetValue('Hidden',partProperty.hidden)
+                    partPropertyProject.SetValue('Visible',partProperty.visible)
+                    partPropertyProject.SetValue('KeywordVisible',partProperty.keywordVisible)
+                    partPropertyProject.SetValue('Type',partProperty.type)
+                    partPropertyProject.SetValue('Unit',partProperty.unit)
+            project.SetValue('Drawing.Schematic.Wires',[WireConfiguration() for _ in range(len(self.Drawing.schematic.wireList))])
+            for w in range(len(project.GetValue('Drawing.Schematic.Wires'))):
+                wireProject=project.GetValue('Drawing.Schematic.Wires')[w]
+                wire=self.Drawing.schematic.wireList[w]
+                wireProject.SetValue('Vertex',[VertexConfiguration() for vertex in wire])
+                for v in range(len(wireProject.GetValue('Vertex'))):
+                    vertexProject=wireProject.GetValue('Vertex')[v]
+                    vertex=wire[v]
+                    vertexProject.SetValue('Coord',vertex.coord)
+            project.SetValue('CalculationProperties.EndFrequency',self.calculationProperties.endFrequency)
+            project.SetValue('CalculationProperties.FrequencyPoints',self.calculationProperties.frequencyPoints)
+            project.SetValue('CalculationProperties.UserSampleRate',self.calculationProperties.userSampleRate)
+            project.Write(newfilename,self)
+            project.Read(newfilename,self.Drawing)
+            project.Write(newfilename,self)
+            #project.PrintFullInformation()
+
 
     filesList=[
         '/home/peterp/Work/PySI/TestPySIApp/FilterTest.xml',
@@ -339,26 +344,3 @@ if __name__ == '__main__':
         
         print 'oldfile: '+oldfile+' -> newfile: '+newfile
         app.ConvertOldProjectToNew(oldfile,newfile)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-#     installdir=os.path.dirname(os.path.abspath(__file__))
-#     if len(sys.argv) < 3:
-#         print 'no project file provided'
-#         raise
-#     
-#     oldProjectFileName=sys.argv[1]
-#     newProjectFileName=sys.argv[2]
-#     
-#     pf=ProjectFile().Read(installdir+'\\'+projectFileName)
-#     pf.PrintFullInformation()
-#     #pf.OutputXML()
-#     pf.Write(installdir+'\\'+projectFileName)
-    #print pf.GetValue('Instrument.AWG.SerialNumber')

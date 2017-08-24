@@ -110,6 +110,11 @@ class Vertex(object):
         self.selected=selected
     def __getitem__(self,item):
         return self.coord[item]
+    # Legacy File Format
+    def InitFromXml(self,vertexElement):
+        self.selected=False
+        self.coord = eval(vertexElement.text)
+        return self
     def IsAt(self,coord,augmentor,distanceAllowed):
         xc=float(coord[0]+augmentor[0])
         yc=float(coord[1]+augmentor[1])
@@ -196,6 +201,15 @@ class Wire(object):
         self.__init__()
         self.vertexList=[Vertex(eval(vertexProject.GetValue('Coord')),vertexProject.GetValue('Selected')) for vertexProject in wireProject.GetValue('Vertex')]
         return self
+    # Legacy File Format
+    def InitFromXml(self,wireElement):
+        self.__init__()
+        for child in wireElement:
+            if child.tag == 'vertex':
+                vertex=Vertex((0,0))
+                vertex.InitFromXml(child)
+                self.append(vertex)
+        return self
     def CoordinateList(self):
         return [vertex.coord for vertex in self]
 
@@ -220,6 +234,14 @@ class WireList(object):
         self.__init__()
         self.wires=[Wire().InitFromProject(wireProject) for wireProject in wiresListProject]
         return self
+    # Legacy File Format
+    def InitFromXml(self,wiresElement):
+        self.__init__()
+        for child in wiresElement:
+            if child.tag == 'wire':
+                wire=Wire()
+                wire.InitFromXml(child)
+                self.wires.append(wire)
     def RemoveEmptyWires(self):
         wiresNeedRemoval=False
         for wire in self:

@@ -35,6 +35,21 @@ class Schematic(object):
                 returnedDevice=None
             if not returnedDevice is None:
                 self.deviceList.append(returnedDevice)
+    # Legacy File Format
+    def InitFromXml(self,schematicElement):
+        self.__init__()
+        self.wireList = WireList()
+        for child in schematicElement:
+            if child.tag == 'devices':
+                for deviceElement in child:
+                    try:
+                        returnedDevice=DeviceXMLClassFactory(deviceElement).result
+                    except NameError: # part picture doesn't exist
+                        returnedDevice=None
+                    if not returnedDevice is None:
+                        self.deviceList.append(returnedDevice)
+            elif child.tag == 'wires':
+                self.wireList.InitFromXml(child)
     def NetList(self):
         self.Consolidate()
         return NetList(self)
@@ -1431,4 +1446,32 @@ class Drawing(Frame):
         self.schematic = Schematic()
         self.stateMachine = DrawingStateMachine(self)
         self.schematic.InitFromProject(project)
-
+    # Legacy File Format
+    def InitFromXml(self,drawingElement):
+        self.grid=32
+        self.originx=0
+        self.originy=0
+        self.schematic = Schematic()
+        self.stateMachine = DrawingStateMachine(self)
+        canvasWidth=600
+        canvasHeight=600
+        geometry='600x600'
+        for child in drawingElement:
+            if child.tag == 'schematic':
+                self.schematic.InitFromXml(child)
+            elif child.tag == 'drawing_properties':
+                for drawingPropertyElement in child:
+                    if drawingPropertyElement.tag == 'grid':
+                        self.grid = int(drawingPropertyElement.text)
+                    elif drawingPropertyElement.tag == 'originx':
+                        self.originx = int(drawingPropertyElement.text)
+                    elif drawingPropertyElement.tag == 'originy':
+                        self.originy = int(drawingPropertyElement.text)
+                    elif drawingPropertyElement.tag == 'width':
+                        canvasWidth = int(drawingPropertyElement.text)
+                    elif drawingPropertyElement.tag == 'height':
+                        canvasHeight = int(drawingPropertyElement.text)
+                    elif drawingPropertyElement.tag == 'geometry':
+                        geometry = drawingPropertyElement.text
+                self.canvas.config(width=canvasWidth,height=canvasHeight)
+                self.parent.root.geometry(geometry.split('+')[0])
