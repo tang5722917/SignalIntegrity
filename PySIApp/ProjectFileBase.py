@@ -161,17 +161,17 @@ class XMLPropertyDefaultBool(XMLPropertyDefault):
         XMLPropertyDefault.__init__(self,name,'bool',value,write)
 
 class XMLConfiguration(object):
-    def __init__(self):
+    def __init__(self,name):
         self.dict={}
+        self.name=name
     def InterceptProperty(self,element):
         return False
     def OutputXML(self,indent):
         lines=[]
-        name=str(self.__class__).split('.')[-1].strip('>\'')
-        lines=lines+[indent+'<'+name+'>']
+        lines=lines+[indent+'<'+self.name+'>']
         for item in self.dict:
             lines=lines+self.dict[item].OutputXML(indent+ProjectFileBase.indent)
-        lines=lines+[indent+'</'+name+'>']
+        lines=lines+[indent+'</'+self.name+'>']
         return lines
 
     def Changed(self,changed):

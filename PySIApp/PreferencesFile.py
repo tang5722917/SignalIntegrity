@@ -14,7 +14,7 @@ import os
 
 class ColorConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'ColorConfiguration')
         self.dict['Background']=XMLPropertyDefaultString('Background')
         self.dict['Foreground']=XMLPropertyDefaultString('Foreground')
         self.dict['ActiveBackground']=XMLPropertyDefaultString('ActiveBackground')
@@ -24,19 +24,19 @@ class ColorConfiguration(XMLConfiguration):
 
 class AppearanceConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'AppearanceConfiguration')
         self.dict['FontSize']=XMLPropertyDefaultInt('FontSize',12)
         self.dict['Color']=ColorConfiguration()
 
 class LastFilesConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'LastFilesConfiguration')
         self.dict['Name']=XMLPropertyDefaultString('Name')
         self.dict['Directory']=XMLPropertyDefaultString('Directory')
         
 class ProjectFilesConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'ProjectFilesConfiguration')
         self.dict['OpenLastFile']=XMLPropertyDefaultBool('OpenLastFile',True)
         self.dict['RetainLastFilesOpened']=XMLPropertyDefaultBool('RetainLastFilesOpened',True)
         self.dict['LastFile']=XMLProperty('LastFile',[LastFilesConfiguration() for _ in range(4)])

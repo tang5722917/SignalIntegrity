@@ -337,26 +337,12 @@ class TheApp(Frame):
                 deviceProject.SetValue('ClassName',device.__class__.__name__)
                 partPictureProject=deviceProject.GetValue('PartPicture')
                 partPicture=device.partPicture
-                from ProjectFile import XMLPropertyDefaultString
                 partPictureProject.SetValue('ClassName',partPicture.partPictureClassList[partPicture.partPictureSelected])
                 partPictureProject.SetValue('Origin',partPicture.current.origin)
                 partPictureProject.SetValue('Orientation',partPicture.current.orientation)
                 partPictureProject.SetValue('MirroredVertically',partPicture.current.mirroredVertically)
                 partPictureProject.SetValue('MirroredHorizontally',partPicture.current.mirroredHorizontally)
-                from ProjectFile import PartPropertyConfiguration
-                deviceProject.SetValue('PartProperties',[PartPropertyConfiguration() for _ in range(len(device.propertiesList))])
-                for p in range(len(deviceProject.GetValue('PartProperties'))):
-                    partPropertyProject=deviceProject.GetValue('PartProperties')[p]
-                    partProperty=device.propertiesList[p]
-                    partPropertyProject.SetValue('Keyword',partProperty.keyword)
-                    partPropertyProject.SetValue('PropertyName',partProperty.propertyName)
-                    partPropertyProject.SetValue('Description',partProperty.description)
-                    partPropertyProject.SetValue('Value',partProperty.PropertyString(stype='raw'))
-                    partPropertyProject.SetValue('Hidden',partProperty.hidden)
-                    partPropertyProject.SetValue('Visible',partProperty.visible)
-                    partPropertyProject.SetValue('KeywordVisible',partProperty.keywordVisible)
-                    partPropertyProject.SetValue('Type',partProperty.type)
-                    partPropertyProject.SetValue('Unit',partProperty.unit)
+                deviceProject.SetValue('PartProperties',device.propertiesList)
             from ProjectFile import WireConfiguration
             project.SetValue('Drawing.Schematic.Wires',[WireConfiguration() for _ in range(len(self.Drawing.schematic.wireList))])
             for w in range(len(project.GetValue('Drawing.Schematic.Wires'))):
@@ -557,18 +543,18 @@ class TheApp(Frame):
         self.Drawing.stateMachine.Nothing()
         dpd=DevicePickerDialog(self,deviceList)
         if dpd.result != None:
-            if deviceList[dpd.result][PartPropertyPartName().propertyName].GetValue() == 'Port':
+            if deviceList[dpd.result]['type'].GetValue() == 'Port':
                 self.onAddPort()
                 return
             else:
                 devicePicked=copy.deepcopy(deviceList[dpd.result])
                 devicePicked.AddPartProperty(PartPropertyReferenceDesignator(''))
-                defaultProperty = devicePicked[PartPropertyDefaultReferenceDesignator().propertyName]
+                defaultProperty = devicePicked['defaultreference']
                 if defaultProperty != None:
                     defaultPropertyValue = defaultProperty.GetValue()
                     uniqueReferenceDesignator = self.Drawing.schematic.NewUniqueReferenceDesignator(defaultPropertyValue)
                     if uniqueReferenceDesignator != None:
-                        devicePicked[PartPropertyReferenceDesignator().propertyName].SetValueFromString(uniqueReferenceDesignator)
+                        devicePicked['reference'].SetValueFromString(uniqueReferenceDesignator)
                 dpe=DevicePropertiesDialog(self,devicePicked)
             if dpe.result != None:
                 self.Drawing.partLoaded = dpe.result
@@ -643,12 +629,12 @@ class TheApp(Frame):
         self.Drawing.stateMachine.Nothing()
         devicePicked=part
         devicePicked.AddPartProperty(PartPropertyReferenceDesignator(''))
-        defaultProperty = devicePicked[PartPropertyDefaultReferenceDesignator().propertyName]
+        defaultProperty = devicePicked['defaultreference']
         if defaultProperty != None:
             defaultPropertyValue = defaultProperty.GetValue()
             uniqueReferenceDesignator = self.Drawing.schematic.NewUniqueReferenceDesignator(defaultPropertyValue)
             if uniqueReferenceDesignator != None:
-                devicePicked[PartPropertyReferenceDesignator().propertyName].SetValueFromString(uniqueReferenceDesignator)
+                devicePicked['reference'].SetValueFromString(uniqueReferenceDesignator)
         dpe=DevicePropertiesDialog(self,devicePicked)
         if dpe.result != None:
             self.Drawing.partLoaded = dpe.result

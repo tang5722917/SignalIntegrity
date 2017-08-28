@@ -10,88 +10,96 @@
 import xml.etree.ElementTree as et
 
 from ToSI import ToSI,FromSI
+from ProjectFile import PartPropertyConfiguration
 
-class PartProperty(object):
+class PartProperty(PartPropertyConfiguration):
     def __init__(self,propertyName,type=None,unit=None,keyword=None,description=None,value=None,hidden=False,visible=False,keywordVisible=True):
-        self.keyword=keyword
-        self.propertyName=propertyName
-        self.description=description
-        self._value=value
-        self.hidden=hidden
-        self.visible=visible
-        self.keywordVisible=keywordVisible
-        self.type=type
-        self.unit=unit
-        if isinstance(value,str):
-            self.SetValueFromString(value)
+        PartPropertyConfiguration.__init__(self)
+        self.SetValue('Keyword', keyword)
+        self.SetValue('PropertyName',propertyName)
+        self.SetValue('Description', description)
+        self.SetValue('Value',value)
+        self.SetValue('Hidden',hidden)
+        self.SetValue('Visible', visible)
+        self.SetValue('KeywordVisible', keywordVisible)
+        self.SetValue('Type', type)
+        self.SetValue('Unit',unit)
     def NetListProperty(self):
         return self.keyword + ' ' + self.PropertyString(stype='raw')
     def PropertyString(self,stype='raw'):
         if stype=='attr':
             result=''
-            if self.visible:
-                if self.keywordVisible:
-                    if self.keyword != None and self.keyword != 'None':
-                        result=result+self.keyword+' '
-                if self.type=='string':
-                    value = str(self._value)
-                elif self.type=='file':
-                    value=('/'.join(str(self._value).split('\\'))).split('/')[-1]
-                elif self.type=='int':
-                    value = str(self._value)
-                elif self.type=='float':
-                    value = str(ToSI(float(self._value),self.unit))
+            if self.GetValue('Visible'):
+                if self.GetValue('KeywordVisible'):
+                    if self.GetValue('Keyword') != None and self.GetValue('Keyword') != 'None':
+                        result=result+self.GetValue('Keyword')+' '
+                if self.GetValue('Type')=='string':
+                    value = self.GetValue('Value')
+                elif self.GetValue('Type')=='file':
+                    value=('/'.join(str(self.GetValue('Value')).split('\\'))).split('/')[-1]
+                elif self.GetValue('Type')=='int':
+                    value = self.GetValue('Value')
+                elif self.GetValue('Type')=='float':
+                    value = str(ToSI(float(self.GetValue('Value')),self.GetValue('Unit')))
                 else:
-                    value = str(self._value)
+                    value = str(self.GetValue('Value'))
                 result=result+value
             return result
         elif stype == 'raw':
-            if self.type=='string':
-                value = str(self._value)
-            elif self.type=='file':
-                value = str(self._value)
-            elif self.type=='int':
-                value = str(self._value)
-            elif self.type=='float':
-                value = str(float(self._value))
+            if self.GetValue('Type')=='string':
+                value = self.GetValue('Value')
+            elif self.GetValue('Type')=='file':
+                value = self.GetValue('Value')
+            elif self.GetValue('Type')=='int':
+                value = self.GetValue('Value')
+            elif self.GetValue('Type')=='float':
+                value = str(float(self.GetValue('Value')))
             else:
-                value = str(self._value)
+                value = str(self.GetValue('Value'))
             return value
         elif stype == 'entry':
-            if self.type=='string':
-                value = str(self._value)
-            elif self.type=='file':
-                value = str(self._value)
-            elif self.type=='int':
-                value = str(self._value)
-            elif self.type=='float':
-                value = str(ToSI(float(self._value),self.unit))
+            if self.GetValue('Type')=='string':
+                value = str(self.GetValue('Value'))
+            elif self.GetValue('Type')=='file':
+                value = str(self.GetValue('Value'))
+            elif self.GetValue('Type')=='int':
+                value = str(self.GetValue('Value'))
+            elif self.GetValue('Type')=='float':
+                value = str(ToSI(float(self.GetValue('Value')),self.GetValue('Unit')))
             else:
-                value = str(self._value)
+                value = str(self.GetValue('Value'))
             return value
         else:
             raise ValueError
-            return str(self._value)
+            return str(self.GetValue('Value'))
     def SetValueFromString(self,string):
-        if self.type=='string':
-            self._value = str(string)
-        elif self.type=='file':
-            self._value = str(string)
-        elif self.type=='int':
+        if self.GetValue('Type')=='string':
+            self.SetValue('Value', str(string))
+        elif self.GetValue('Type')=='file':
+            self.SetValue('Value',str(string))
+        elif self.GetValue('Type')=='int':
             try:
-                self._value = int(string)
+                self.SetValue('Value',int(string))
             except ValueError:
-                self._value = 0
-        elif self.type=='float':
-            value = FromSI(string,self.unit)
+                self.SetValue('Value',0)
+        elif self.GetValue('Type')=='float':
+            value = FromSI(string,self.GetValue('Unit'))
             if value is not None:
-                self._value=value
+                self.SetValue('Value',value)
         else:
             raise ValueError
-            self._value = str(string)
+            self.SetValue('Value', str(string))
         return self
-    def GetValue(self):
-        return self._value
+    def GetValue(self,name=None):
+        if not name is None:
+            return PartPropertyConfiguration.GetValue(self,name)
+
+        if self.GetValue('Type')=='int':
+            return int(self.GetValue('Value'))
+        elif self.GetValue('Type')=='float':
+            return float(self.GetValue('Value'))
+        else:
+            return self.GetValue('Value')
 
 class PartPropertyXMLClassFactory(PartProperty):
     def __init__(self,xml):

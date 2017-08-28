@@ -15,7 +15,7 @@ import sys
 
 class PartPropertyConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'PartPropertyConfiguration')
         self.dict['Keyword']=XMLPropertyDefaultString('Keyword')
         self.dict['PropertyName']=XMLPropertyDefaultString('PropertyName')
         self.dict['Description']=XMLPropertyDefaultString('Description')
@@ -28,7 +28,7 @@ class PartPropertyConfiguration(XMLConfiguration):
 
 class PartPictureConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'PartPictureConfiguration')
         self.dict['ClassName']=XMLPropertyDefaultString('ClassName')
         self.dict['Origin']=XMLPropertyDefaultString('Origin')
         self.dict['Orientation']=XMLPropertyDefaultInt('Orientation')
@@ -37,14 +37,14 @@ class PartPictureConfiguration(XMLConfiguration):
 
 class DeviceConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'DeviceConfiguration')
         self.dict['ClassName']=XMLPropertyDefaultString('ClassName')
         self.dict['PartPicture']=PartPictureConfiguration()
         self.dict['PartProperties']=XMLProperty('PartProperties',[PartPropertyConfiguration() for _ in range(0)])
 
 class VertexConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'VertexConfiguration')
         self.dict['Coord']=XMLPropertyDefaultString('Coord')
         self.dict['Selected']=XMLPropertyDefaultBool('Selected',False,False)
     def OutputXML(self,indent):
@@ -52,12 +52,12 @@ class VertexConfiguration(XMLConfiguration):
 
 class WireConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'WireConfiguration')
         self.dict['Vertex']=XMLProperty('Vertex',[VertexConfiguration() for _ in range(0)],'string')
 
 class DrawingPropertiesConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'DrawingPropertiesConfiguration')
         self.dict['Grid']=XMLPropertyDefaultInt('Grid',32)
         self.dict['Originx']=XMLPropertyDefaultInt('Originx',1)
         self.dict['Originy']=XMLPropertyDefaultInt('Originy',4)
@@ -67,19 +67,19 @@ class DrawingPropertiesConfiguration(XMLConfiguration):
 
 class SchematicConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'SchematicConfiguration')
         self.dict['Devices']=XMLProperty('Devices',[DeviceConfiguration() for _ in range(0)])
         self.dict['Wires']=XMLProperty('Wires',[WireConfiguration() for _ in range(0)])
 
 class DrawingConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'DrawingConfiguration')
         self.dict['DrawingProperties']=DrawingPropertiesConfiguration()
         self.dict['Schematic']=SchematicConfiguration()
 
 class CalculationPropertiesConfiguration(XMLConfiguration):
     def __init__(self):
-        XMLConfiguration.__init__(self)
+        XMLConfiguration.__init__(self,'CalculationPropertiesConfiguration')
         self.dict['EndFrequency']=XMLPropertyDefaultFloat('EndFrequency',20e9)
         self.dict['FrequencyPoints']=XMLPropertyDefaultInt('FrequencyPoints',2000)
         self.dict['UserSampleRate']=XMLPropertyDefaultFloat('UserSampleRate',40e9)
@@ -123,19 +123,7 @@ class ProjectFile(ProjectFileBase):
             partPictureProject.SetValue('Orientation',partPicture.current.orientation)
             partPictureProject.SetValue('MirroredVertically',partPicture.current.mirroredVertically)
             partPictureProject.SetValue('MirroredHorizontally',partPicture.current.mirroredHorizontally)
-            deviceProject.SetValue('PartProperties',[PartPropertyConfiguration() for _ in range(len(device.propertiesList))])
-            for p in range(len(deviceProject.GetValue('PartProperties'))):
-                partPropertyProject=deviceProject.GetValue('PartProperties')[p]
-                partProperty=device.propertiesList[p]
-                partPropertyProject.SetValue('Keyword',partProperty.keyword)
-                partPropertyProject.SetValue('PropertyName',partProperty.propertyName)
-                partPropertyProject.SetValue('Description',partProperty.description)
-                partPropertyProject.SetValue('Value',partProperty.PropertyString(stype='raw'))
-                partPropertyProject.SetValue('Hidden',partProperty.hidden)
-                partPropertyProject.SetValue('Visible',partProperty.visible)
-                partPropertyProject.SetValue('KeywordVisible',partProperty.keywordVisible)
-                partPropertyProject.SetValue('Type',partProperty.type)
-                partPropertyProject.SetValue('Unit',partProperty.unit)
+            deviceProject.SetValue('PartProperties',device.propertiesList)
         ProjectFileBase.Write(self,filename)
         return self
 
@@ -178,19 +166,7 @@ if __name__ == '__main__':
                 partPictureProject.SetValue('Orientation',partPicture.current.orientation)
                 partPictureProject.SetValue('MirroredVertically',partPicture.current.mirroredVertically)
                 partPictureProject.SetValue('MirroredHorizontally',partPicture.current.mirroredHorizontally)
-                deviceProject.SetValue('PartProperties',[PartPropertyConfiguration() for _ in range(len(device.propertiesList))])
-                for p in range(len(deviceProject.GetValue('PartProperties'))):
-                    partPropertyProject=deviceProject.GetValue('PartProperties')[p]
-                    partProperty=device.propertiesList[p]
-                    partPropertyProject.SetValue('Keyword',partProperty.keyword)
-                    partPropertyProject.SetValue('PropertyName',partProperty.propertyName)
-                    partPropertyProject.SetValue('Description',partProperty.description)
-                    partPropertyProject.SetValue('Value',partProperty.PropertyString(stype='raw'))
-                    partPropertyProject.SetValue('Hidden',partProperty.hidden)
-                    partPropertyProject.SetValue('Visible',partProperty.visible)
-                    partPropertyProject.SetValue('KeywordVisible',partProperty.keywordVisible)
-                    partPropertyProject.SetValue('Type',partProperty.type)
-                    partPropertyProject.SetValue('Unit',partProperty.unit)
+                deviceProject.SetValue('PartProperties',device.propertiesList)
             project.SetValue('Drawing.Schematic.Wires',[WireConfiguration() for _ in range(len(self.Drawing.schematic.wireList))])
             for w in range(len(project.GetValue('Drawing.Schematic.Wires'))):
                 wireProject=project.GetValue('Drawing.Schematic.Wires')[w]

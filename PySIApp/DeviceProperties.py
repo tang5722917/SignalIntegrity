@@ -22,7 +22,7 @@ from Device import Device
 class DeviceProperty(Frame):
     def __init__(self,parentFrame,parent,partProperty):
         Frame.__init__(self,parentFrame)
-        if not partProperty.hidden:
+        if not partProperty.GetValue('Hidden'):
             self.pack(side=TOP,fill=X,expand=YES)
         self.parent=parent
         self.parentFrame=parentFrame
@@ -30,13 +30,13 @@ class DeviceProperty(Frame):
         self.partProperty=partProperty
         self.callBack=parent.UpdatePicture
         self.propertyString=StringVar(value=str(self.partProperty.PropertyString(stype='entry')))
-        self.propertyVisible=IntVar(value=int(self.partProperty.visible))
-        self.keywordVisible=IntVar(value=int(self.partProperty.keywordVisible))
+        self.propertyVisible=IntVar(value=int(self.partProperty.GetValue('Visible')))
+        self.keywordVisible=IntVar(value=int(self.partProperty.GetValue('KeywordVisible')))
         propertyVisibleCheckBox = Checkbutton(self,variable=self.propertyVisible,command=self.onPropertyVisible)
         propertyVisibleCheckBox.pack(side=LEFT,expand=NO,fill=X)
         keywordVisibleCheckBox = Checkbutton(self,variable=self.keywordVisible,command=self.onKeywordVisible)
         keywordVisibleCheckBox.pack(side=LEFT,expand=NO,fill=X)
-        propertyLabel = Label(self,width=25,text=self.partProperty.description+': ',anchor='e')
+        propertyLabel = Label(self,width=25,text=self.partProperty.GetValue('Description')+': ',anchor='e')
         propertyLabel.pack(side=LEFT, expand=NO, fill=X)
         self.propertyEntry = Entry(self,textvariable=self.propertyString)
         self.propertyEntry.config(width=15)
@@ -49,11 +49,11 @@ class DeviceProperty(Frame):
         self.propertyEntry.bind('<Escape>',self.onUntouchedLoseFocus)
         self.propertyEntry.bind('<FocusOut>',self.onUntouched)
         self.propertyEntry.pack(side=LEFT, expand=YES, fill=X)
-        if self.partProperty.type == 'file':
+        if self.partProperty.GetValue('Type') == 'file':
             self.propertyFileBrowseButton = Button(self,text='browse',command=self.onFileBrowse)
             self.propertyFileBrowseButton.pack(side=LEFT,expand=NO,fill=X)
-            if self.partProperty.propertyName == PartPropertyFileName().propertyName or\
-                self.partProperty.propertyName == PartPropertyWaveformFileName().propertyName:
+            if self.partProperty.GetValue('PropertyName') == 'filename' or\
+                self.partProperty.GetValue('PropertyName') == 'waveformfilename':
                 self.propertyFileViewButton = Button(self,text='view',command=self.onFileView)
                 self.propertyFileViewButton.pack(side=LEFT,expand=NO,fill=X)
     def onFileBrowse(self):
@@ -64,14 +64,14 @@ class DeviceProperty(Frame):
         # until the next time you press the button, when it is right.
         # This workaround forces the ports to be updated now.
         for pp in range(len(self.parent.device.propertiesList)):
-            if self.parent.device.propertiesList[pp].propertyName == 'ports':
+            if self.parent.device.propertiesList[pp].GetValue('PropertyName') == 'ports':
                 self.parent.propertyFrameList[pp].onUntouched(None)
         # end of ugly workaround
         self.callBack()
-        if self.partProperty.propertyName == PartPropertyFileName().propertyName:
+        if self.partProperty.GetValue('PropertyName') == 'filename':
             extension='.s'+self.device['ports'].PropertyString(stype='raw')+'p'
             filetypename='s-parameters'
-        elif self.partProperty.propertyName == PartPropertyWaveformFileName().propertyName:
+        elif self.partProperty.GetValue('PropertyName') == 'waveformfilename':
             extension='.txt'
             filetypename='waveforms'
         else:
@@ -103,7 +103,7 @@ class DeviceProperty(Frame):
         filename=self.partProperty.GetValue()
         if filename != '':
             import SignalIntegrity as si
-            if self.partProperty.propertyName == PartPropertyFileName().propertyName:
+            if self.partProperty.GetValue('PropertyName') == 'filename':
                 try:
                     sp=si.sp.SParameterFile(filename)
                 except si.PySIException as e:
@@ -111,7 +111,7 @@ class DeviceProperty(Frame):
                     return
                 spd=SParametersDialog(self.parent.parent.parent,sp,filename)
                 spd.grab_set()
-            elif self.partProperty.propertyName == PartPropertyWaveformFileName().propertyName:
+            elif self.partProperty.GetValue('PropertyName') == 'waveformfilename':
                 filenametoshow=('/'.join(filename.split('\\'))).split('/')[-1]
                 if filenametoshow is None:
                     filenametoshow=''
@@ -126,10 +126,10 @@ class DeviceProperty(Frame):
                 sd.state('normal')
                 sd.grab_set()
     def onPropertyVisible(self):
-        self.partProperty.visible=bool(self.propertyVisible.get())
+        self.partProperty.SetValue('Visible',bool(self.propertyVisible.get()))
         self.callBack()
     def onKeywordVisible(self):
-        self.partProperty.keywordVisible=bool(self.keywordVisible.get())
+        self.partProperty.SetValue('KeywordVisible',bool(self.keywordVisible.get()))
         self.callBack()
     def onEntered(self,event):
         self.partProperty.SetValueFromString(self.propertyString.get())
@@ -153,7 +153,7 @@ class DeviceProperties(Frame):
         self.title = device.PartPropertyByName('type').PropertyString(stype='raw')
         self.device=device
         if isinstance(self.device,Device): # part other than file - allow viewing
-            if not 'file name' in [property.description for property in self.device.propertiesList]:
+            if not 'file name' in [property.GetValue('Description') for property in self.device.propertiesList]:
                 if self.device.NetListLine().split(' ')[0]=='device':
                     partViewFrame=Frame(self)
                     partViewFrame.pack(side=TOP,fill=X,expand=YES)

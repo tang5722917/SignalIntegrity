@@ -69,7 +69,7 @@ class Schematic(object):
         if defaultDesignator != None and '?' in defaultDesignator:
             referenceDesignatorList=[]
             for device in self.deviceList:
-                deviceReferenceDesignatorProperty = device[PartPropertyReferenceDesignator().propertyName]
+                deviceReferenceDesignatorProperty = device['reference']
                 if deviceReferenceDesignatorProperty != None:
                     deviceReferenceDesignator = deviceReferenceDesignatorProperty.GetValue()
                     if deviceReferenceDesignator != None:
@@ -1126,16 +1126,16 @@ class DrawingStateMachine(object):
             else:
                 existingReferenceDesignators=[]
                 for existingDevice in self.parent.schematic.deviceList:
-                    referenceDesignatorProperty = existingDevice[PartPropertyReferenceDesignator().propertyName]
+                    referenceDesignatorProperty = existingDevice['reference']
                     if referenceDesignatorProperty != None:
                         existingReferenceDesignators.append(referenceDesignatorProperty.GetValue())
-                if device[PartPropertyReferenceDesignator().propertyName].GetValue() in existingReferenceDesignators:
-                    defaultProperty = device[PartPropertyDefaultReferenceDesignator().propertyName]
+                if device['reference'].GetValue() in existingReferenceDesignators:
+                    defaultProperty = device['defaultreference']
                     if defaultProperty != None:
                         defaultPropertyValue = defaultProperty.GetValue()
                         uniqueReferenceDesignator = self.parent.schematic.NewUniqueReferenceDesignator(defaultPropertyValue)
                         if uniqueReferenceDesignator != None:
-                            device[PartPropertyReferenceDesignator().propertyName].SetValueFromString(uniqueReferenceDesignator)
+                            device['reference'].SetValueFromString(uniqueReferenceDesignator)
             device.partPicture.current.SetOrigin((device.partPicture.current.origin[0]+self.parent.Button1Coord[0],device.partPicture.current.origin[1]+self.parent.Button1Coord[1]))
             device.selected=True
             self.parent.schematic.deviceList.append(device)
@@ -1313,12 +1313,12 @@ class Drawing(Frame):
                     portNumber=portNumber+1
                 self.partLoaded['portnumber'].SetValueFromString(str(portNumber))
             else:
-                defaultProperty = self.partLoaded[PartPropertyDefaultReferenceDesignator().propertyName]
+                defaultProperty = self.partLoaded['defaultreference']
                 if defaultProperty != None:
                     defaultPropertyValue = defaultProperty.GetValue()
                     uniqueReferenceDesignator = self.schematic.NewUniqueReferenceDesignator(defaultPropertyValue)
                     if uniqueReferenceDesignator != None:
-                        self.partLoaded[PartPropertyReferenceDesignator().propertyName].SetValueFromString(uniqueReferenceDesignator)
+                        self.partLoaded['reference'].SetValueFromString(uniqueReferenceDesignator)
             self.stateMachine.PartLoaded()
     def DeleteSelected(self):
         if self.stateMachine.state=='WireSelected':
