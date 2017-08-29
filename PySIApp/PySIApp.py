@@ -20,7 +20,7 @@ import os
 import sys
 
 from PartPicture import PartPicture
-from PartProperty import PartPropertyPartName,PartPropertyDefaultReferenceDesignator,PartPropertyReferenceDesignator
+from PartProperty import PartPropertyReferenceDesignator
 from Device import DeviceList,DeviceListUnknown,DeviceListSystem
 from Device import DeviceOutput,DeviceMeasurement,Port,DeviceStim
 from DeviceProperties import DevicePropertiesDialog

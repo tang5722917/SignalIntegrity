@@ -7,13 +7,11 @@
  or do not agree to the terms in that file, then you are not licensed to use
  this material whatsoever.
 '''
-import xml.etree.ElementTree as et
-
 from ToSI import ToSI,FromSI
 from ProjectFile import PartPropertyConfiguration
 
 class PartProperty(PartPropertyConfiguration):
-    def __init__(self,propertyName,type=None,unit=None,keyword=None,description=None,value=None,hidden=False,visible=False,keywordVisible=True):
+    def __init__(self,propertyName,type=None,unit=None,keyword=None,description=None,value=None,hidden=False,visible=False,keywordVisible=True,inProjectFile=True):
         PartPropertyConfiguration.__init__(self)
         self.SetValue('Keyword', keyword)
         self.SetValue('PropertyName',propertyName)
@@ -24,6 +22,7 @@ class PartProperty(PartPropertyConfiguration):
         self.SetValue('KeywordVisible', keywordVisible)
         self.SetValue('Type', type)
         self.SetValue('Unit',unit)
+        self.SetValue('InProjectFile',inProjectFile)
     def NetListProperty(self):
         return self.keyword + ' ' + self.PropertyString(stype='raw')
     def PropertyString(self,stype='raw'):
@@ -151,10 +150,16 @@ class PartPropertyFromProject(PartProperty):
         ptype=partPropertyProject.GetValue('Type')
         unit=partPropertyProject.GetValue('Unit')
         keywordVisible=partPropertyProject.GetValue('KeywordVisible')
+        inProjectFile=partPropertyProject.GetValue('InProjectFile')
         # hack because stupid xml outputs none for empty string
         if ptype == 'float' and (unit is None or unit == 'None'):
             unit = ''
-        self.result=PartProperty(propertyName,ptype,unit,keyword,description,value,hidden,visible,keywordVisible)
+        self.result=PartProperty(propertyName,ptype,unit,keyword,description,value,hidden,visible,keywordVisible,inProjectFile)
+
+class PartPropertyReadOnly(PartProperty):
+    def __init__(self,propertyName,type=None,unit=None,keyword=None,description=None,value=None,hidden=False,visible=False,keywordVisible=True):
+        inProjectFile=False
+        PartProperty.__init__(self,propertyName,type,unit,keyword,description,value,hidden,visible,keywordVisible,inProjectFile)
 
 class PartPropertyPortNumber(PartProperty):
     def __init__(self,portNumber):
@@ -164,9 +169,9 @@ class PartPropertyReferenceDesignator(PartProperty):
     def __init__(self,referenceDesignator=''):
         PartProperty.__init__(self,'reference',type='string',unit=None,description='reference designator',value=referenceDesignator,visible=False,keywordVisible=False)
 
-class PartPropertyDefaultReferenceDesignator(PartProperty):
+class PartPropertyDefaultReferenceDesignator(PartPropertyReadOnly):
     def __init__(self,referenceDesignator=''):
-        PartProperty.__init__(self,'defaultreference',type='string',unit=None,description='default reference designator',value=referenceDesignator,hidden=True,visible=False,keywordVisible=False)
+        PartPropertyReadOnly.__init__(self,'defaultreference',type='string',unit=None,description='default reference designator',value=referenceDesignator,hidden=True,visible=False,keywordVisible=False)
 
 class PartPropertyPorts(PartProperty):
     def __init__(self,numPorts=1,hidden=True):
@@ -196,17 +201,17 @@ class PartPropertyConductance(PartProperty):
     def __init__(self,conductance=0.,keyword='g',descriptionPrefix=''):
         PartProperty.__init__(self,'conductance',type='float',unit='S',keyword=keyword,description=descriptionPrefix+'conductance (S)',value=conductance,visible=True,keywordVisible=False)
 
-class PartPropertyPartName(PartProperty):
+class PartPropertyPartName(PartPropertyReadOnly):
     def __init__(self,partName=''):
-        PartProperty.__init__(self,'type',type='string',unit=None,description='part type',value=partName,hidden=True)
+        PartPropertyReadOnly.__init__(self,'type',type='string',unit=None,description='part type',value=partName,hidden=True)
 
-class PartPropertyCategory(PartProperty):
+class PartPropertyCategory(PartPropertyReadOnly):
     def __init__(self,category=''):
-        PartProperty.__init__(self,'category',type='string',unit=None,description='part category',value=category,hidden=True)
+        PartPropertyReadOnly.__init__(self,'category',type='string',unit=None,description='part category',value=category,hidden=True)
 
-class PartPropertyDescription(PartProperty):
+class PartPropertyDescription(PartPropertyReadOnly):
     def __init__(self,description=''):
-        PartProperty.__init__(self,'description',type='string',unit=None,description='part description',value=description,hidden=True)
+        PartPropertyReadOnly.__init__(self,'description',type='string',unit=None,description='part description',value=description,hidden=True)
 
 class PartPropertyVoltageGain(PartProperty):
     def __init__(self,voltageGain=1.0):

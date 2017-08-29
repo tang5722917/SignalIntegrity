@@ -21,6 +21,8 @@ class Device(object):
         self.propertiesList=propertiesList
         self.partPicture=partPicture
         self.selected=False
+        self.AddPartProperty(PartPropertyReferenceDesignator(''))
+
     def DrawDevice(self,canvas,grid,x,y,pinsConnectedList=None):
         self.CreateVisiblePropertiesList()
         self.partPicture.current.Selected(self.selected).DrawDevice(canvas,grid,(x,y),pinsConnectedList)
@@ -41,7 +43,8 @@ class Device(object):
                 return partProperty
         return None
     def AddPartProperty(self,PartProperty):
-        self.propertiesList=self.propertiesList+[PartProperty]
+        if self[PartProperty.GetValue('PropertyName')] is None:
+            self.propertiesList=self.propertiesList+[PartProperty]
     def __getitem__(self,item):
         return self.PartPropertyByName(item)
     def __setitem__(self,item,value):
@@ -66,13 +69,12 @@ class Device(object):
 
 class DeviceFromProject(object):
     def __init__(self,deviceProject):
-        devicePartPropertiesProjectList=deviceProject.GetValue('PartProperties')
-        propertiesList=[PartPropertyFromProject(devicePartPropertiesProject).result for devicePartPropertiesProject in devicePartPropertiesProjectList]
-        className=deviceProject.GetValue('ClassName')
         ports=None
-        for partProperty in propertiesList:
-            if partProperty.GetValue('PropertyName') == 'ports':
-                ports=partProperty.GetValue()
+        for partPropertyProject in deviceProject.GetValue('PartProperties'):
+            if partPropertyProject.GetValue('PropertyName') == 'ports':
+                ports=int(partPropertyProject.GetValue('Value'))
+                break
+        className=deviceProject.GetValue('ClassName')
         for device in DeviceList+DeviceListSystem+DeviceListUnknown:
             if (str(device.__class__).split('.')[-1].strip('\'>') == className):
                 devicePorts = device.PartPropertyByName('ports')
@@ -83,16 +85,15 @@ class DeviceFromProject(object):
                 else:
                     match=False
                 if match:
-                    partPictureList = device.partPicture.partPictureClassList
+                    self.result=copy.deepcopy(device)
                     break
-        if partPictureList is None:
-            raise
-        partPicture=PartPictureFromProject(partPictureList,deviceProject.GetValue('PartPicture'),ports).result
-        try:
-            self.result=eval(className).__new__(eval(className))
-            Device.__init__(self.result,propertiesList,partPicture)
-        except NameError:
-            self.result=None
+        for partPropertyProject in deviceProject.GetValue('PartProperties'):
+            devicePartProperty=self.result[partPropertyProject.GetValue('PropertyName')]
+            for propertyItemName in partPropertyProject.dict:
+                if partPropertyProject.dict[propertyItemName].dict['write']:
+                    devicePartProperty.SetValue(propertyItemName,partPropertyProject.GetValue(propertyItemName))
+        partPictureList=self.result.partPicture.partPictureClassList
+        self.result.partPicture=PartPictureFromProject(partPictureList,deviceProject.GetValue('PartPicture'),ports).result
 
 class DeviceXMLClassFactory(object):
     def __init__(self,xml):
@@ -109,6 +110,7 @@ class DeviceXMLClassFactory(object):
                     propertiesList.append(partProperty)
                     if partProperty.GetValue('PropertyName')=='ports':
                         ports=partProperty.GetValue()
+        self.result=None
         for device in DeviceList+DeviceListSystem+DeviceListUnknown:
             if (str(device.__class__).split('.')[-1].strip('\'>') == className):
                 devicePorts = device.PartPropertyByName('ports')
@@ -119,16 +121,17 @@ class DeviceXMLClassFactory(object):
                 else:
                     match=False
                 if match:
-                    partPictureList = device.partPicture.partPictureClassList
+                    self.result=copy.deepcopy(device)
                     break
         for child in xml:
             if child.tag == 'part_picture':
-                partPicture=PartPictureXMLClassFactory(partPictureList,child,ports).result
-        try:
-            self.result=eval(className).__new__(eval(className))
-            Device.__init__(self.result,propertiesList,partPicture)
-        except NameError:
-            self.result=None
+                self.result.partPicture=PartPictureXMLClassFactory(self.result,child,ports).result
+        for partProperty in propertiesList:
+            for devicePartProperty in self.result.propertiesList:
+                if partProperty.GetValue('PropertyName') == devicePartProperty.GetValue('PropertyName'):
+                    devicePartProperty.SetValue('Value',partProperty.GetValue('Value'))
+                    devicePartProperty.SetValue('Visible',partProperty.GetValue('Visible'))
+                    devicePartProperty.SetValue('KeywordVisible',partProperty.GetValue('KeywordVisible'))
 
 class DeviceFile(Device):
     def __init__(self,propertiesList,partPicture):

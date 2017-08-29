@@ -16,15 +16,21 @@ import sys
 class PartPropertyConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self,'PartPropertyConfiguration')
-        self.dict['Keyword']=XMLPropertyDefaultString('Keyword')
+        self.dict['Keyword']=XMLPropertyDefaultString('Keyword',write=False)
         self.dict['PropertyName']=XMLPropertyDefaultString('PropertyName')
-        self.dict['Description']=XMLPropertyDefaultString('Description')
+        self.dict['Description']=XMLPropertyDefaultString('Description',write=False)
         self.dict['Value']=XMLPropertyDefaultString('Value')
-        self.dict['Hidden']=XMLPropertyDefaultBool('Hidden')
+        self.dict['Hidden']=XMLPropertyDefaultBool('Hidden',write=False)
         self.dict['Visible']=XMLPropertyDefaultBool('Visible')
         self.dict['KeywordVisible']=XMLPropertyDefaultBool('KeywordVisible')
-        self.dict['Type']=XMLPropertyDefaultString('Type')
-        self.dict['Unit']=XMLPropertyDefaultString('Unit')
+        self.dict['Type']=XMLPropertyDefaultString('Type',write=False)
+        self.dict['Unit']=XMLPropertyDefaultString('Unit',write=False)
+        self.dict['InProjectFile']=XMLPropertyDefaultBool('InProjectFile',True,False)
+    def OutputXML(self,indent):
+        if self.GetValue('InProjectFile'):
+            return XMLConfiguration.OutputXML(self, indent)
+        else:
+            return []
 
 class PartPictureConfiguration(XMLConfiguration):
     def __init__(self):

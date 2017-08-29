@@ -386,7 +386,7 @@ class PartPicture(object):
         canvas.create_text(p[0],p[1],text=c,fill=self.color)
 
 class PartPictureXMLClassFactory(object):
-    def __init__(self,partPictureClassList,xml,ports):
+    def __init__(self,device,xml,ports):
         partPictureSelected = 0
         origin=(0,0)
         orientation='0'
@@ -405,7 +405,7 @@ class PartPictureXMLClassFactory(object):
                 mirroredVertically = eval(item.text)
             elif item.tag == 'mirrored_horizontally':
                 mirroredHorizontally = eval(item.text)
-        self.result=PartPictureVariable(partPictureClassList,ports,partPictureSelected,origin,orientation,mirroredHorizontally,mirroredVertically)
+        self.result=PartPictureVariable(device.partPicture.partPictureClassList,ports,partPictureSelected,origin,orientation,mirroredHorizontally,mirroredVertically)
 
 class PartPictureFromProject(object):
     def __init__(self,partPictureClassList,partPictureProject,ports):

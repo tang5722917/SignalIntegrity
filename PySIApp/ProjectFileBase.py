@@ -161,9 +161,10 @@ class XMLPropertyDefaultBool(XMLPropertyDefault):
         XMLPropertyDefault.__init__(self,name,'bool',value,write)
 
 class XMLConfiguration(object):
-    def __init__(self,name):
+    def __init__(self,name,write=True):
         self.dict={}
         self.name=name
+        self.write=write
     def InterceptProperty(self,element):
         return False
     def OutputXML(self,indent):
