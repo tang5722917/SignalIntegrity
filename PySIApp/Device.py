@@ -75,18 +75,24 @@ class DeviceFromProject(object):
                 ports=int(partPropertyProject.GetValue('Value'))
                 break
         className=deviceProject.GetValue('ClassName')
-        for device in DeviceList+DeviceListSystem+DeviceListUnknown:
-            if (str(device.__class__).split('.')[-1].strip('\'>') == className):
-                devicePorts = device.PartPropertyByName('ports')
-                if (devicePorts is None):
-                    match=True
-                elif (devicePorts.GetValue() == ports):
-                    match=True
-                else:
-                    match=False
-                if match:
-                    self.result=copy.deepcopy(device)
-                    break
+        self.result=None
+        if className=='DeviceFile':
+            self.result=DeviceFile([PartPropertyDescription('Variable Port File'),PartPropertyPorts(ports,False)],PartPictureVariableSpecifiedPorts(ports))
+        else:
+            for device in DeviceList+DeviceListSystem+DeviceListUnknown:
+                if (str(device.__class__).split('.')[-1].strip('\'>') == className):
+                    devicePorts = device.PartPropertyByName('ports')
+                    if (devicePorts is None):
+                        match=True
+                    elif (devicePorts.GetValue() == ports):
+                        match=True
+                    else:
+                        match=False
+                    if match:
+                        self.result=copy.deepcopy(device)
+                        break
+        if self.result is None:
+            raise
         for partPropertyProject in deviceProject.GetValue('PartProperties'):
             devicePartProperty=self.result[partPropertyProject.GetValue('PropertyName')]
             for propertyItemName in partPropertyProject.dict:
@@ -137,7 +143,7 @@ class DeviceFile(Device):
     def __init__(self,propertiesList,partPicture):
         Device.__init__(self,[PartPropertyCategory('Files'),PartPropertyPartName('File'),PartPropertyDefaultReferenceDesignator('D?'),PartPropertyFileName()]+propertiesList,partPicture)
     def NetListLine(self):
-        return Device.NetListLine(self)+' file '+self['filename'].PropertyString(stype='raw')
+        return Device.NetListLine(self)+' file '+str(self['filename'].PropertyString(stype='raw'))
 
 class DeviceUnknown(Device):
     def __init__(self,propertiesList,partPicture):
