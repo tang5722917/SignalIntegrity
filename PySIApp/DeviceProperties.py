@@ -274,7 +274,7 @@ class DeviceProperties(Frame):
         self.focus()
         device=self.device
         numPorts=device['ports'].GetValue()
-        referenceDesignator=device['reference'].GetValue()
+        referenceDesignator=device['ref'].GetValue()
         portLine='port'
         for port in range(numPorts):
             portLine=portLine+' '+str(port+1)+' '+referenceDesignator+' '+str(port+1)
