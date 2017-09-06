@@ -23,16 +23,6 @@ class PartProperty(PartPropertyConfiguration):
         self.SetValue('Type', type)
         self.SetValue('Unit',unit)
         self.SetValue('InProjectFile',inProjectFile)
-    def NetListProperty(self,keywordstring=None):
-        resultstring=''
-        if keywordstring is None:
-            keywordstring=self.GetValue('Keyword')
-        if not keywordstring is None:
-            resultstring=keywordstring
-        if not resultstring == '':
-            resultstring=resultstring+' '
-        resultstring=resultstring+self.PropertyString(stype='raw')
-        return resultstring
     def PropertyString(self,stype='raw'):
         if stype=='attr':
             result=''

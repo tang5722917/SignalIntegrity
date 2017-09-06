@@ -154,12 +154,12 @@ class DeviceProperties(Frame):
         self.device=device
         if isinstance(self.device,Device): # part other than file - allow viewing
             if not 'file name' in [property.GetValue('Description') for property in self.device.propertiesList]:
-                if self.device.NetListLine().split(' ')[0]=='device':
+                if self.device.netlist.devicename=='device':
                     partViewFrame=Frame(self)
                     partViewFrame.pack(side=TOP,fill=X,expand=YES)
                     self.partViewButton = Button(partViewFrame,text='view s-parameters according to calc properties',command=self.onPartView)
                     self.partViewButton.pack(expand=NO,fill=NONE,anchor=CENTER)
-                elif self.device.NetListLine().split(' ')[0]=='voltagesource' or self.device.NetListLine().split(' ')[0]=='currentsource':
+                elif self.device.netlist.devicename in ['voltagesource','currentsource']:
                     partViewFrame=Frame(self)
                     partViewFrame.pack(side=TOP,fill=X,expand=YES)
                     self.waveformViewButton = Button(partViewFrame,text='view waveform',command=self.onWaveformView)

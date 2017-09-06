@@ -27,12 +27,9 @@ class NetList(object):
         equiPotentialWireList=WireList().InitFromProject(schematic.project.GetValue('Drawing.Schematic.Wires')).EquiPotentialWireList()
         # put all devices in the net list
         for device in deviceList:
-            deviceType = device['partname'].GetValue()
-            if  not ((deviceType == 'Port') or (deviceType == 'Measure') or (deviceType == 'Output') or (deviceType == 'Stim')):
-                thisline=device.NetListLine()
-                self.textToShow.append(thisline)
-                firstToken=thisline.strip().split(' ')[0]
-                if firstToken == 'voltagesource' or firstToken == 'currentsource':
+            if not device['partname'].GetValue() in ['Port','Measure','Output','Stim']:
+                self.textToShow.append(device.NetListLine())
+                if device.netlist.devicename in ['voltagesource','currentsource']:
                     self.sourceNames.append(device['ref'].GetValue())
         # gather up all device pin coordinates
         devicePinCoordinateList = [device.PinCoordinates() for device in deviceList]

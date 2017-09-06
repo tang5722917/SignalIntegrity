@@ -16,16 +16,16 @@ import math
 
 class NetListInstructions(object):
     def __init__(self,devicename=None,partname=None,showReference=True,showports=True,values=None):
-        self.devicename=devicename
+        if devicename is None:
+            self.devicename='device'
+        else:
+            self.devicename=devicename
         self.partname=partname
         self.showReference=showReference
         self.showports=showports
         self.values=values
     def NetListLine(self,device):
-        if self.devicename is None:
-            returnstring='device'
-        else:
-            returnstring=self.devicename
+        returnstring=self.devicename
         if self.showReference:
             if not returnstring=='':
                 returnstring=returnstring+' '

@@ -1254,14 +1254,8 @@ class Drawing(Frame):
                 foundASystem = True
             elif deviceType == 'Unknown':
                 foundAnUnknown = True
-            else:
-                netListLine = device.NetListLine()
-                if not netListLine is None:
-                    firstToken=netListLine.strip().split(' ')[0]
-                    if firstToken == 'voltagesource':
-                        foundASource = True
-                    elif firstToken == 'currentsource':
-                        foundASource = True
+            elif device.netlist.devicename in ['voltagesource','currentsource']:
+                foundASource = True
         if not hasattr(self.parent,'project'):
             return
         if self.parent.project is None:
