@@ -23,8 +23,16 @@ class PartProperty(PartPropertyConfiguration):
         self.SetValue('Type', type)
         self.SetValue('Unit',unit)
         self.SetValue('InProjectFile',inProjectFile)
-    def NetListProperty(self):
-        return self.keyword + ' ' + self.PropertyString(stype='raw')
+    def NetListProperty(self,keywordstring=None):
+        resultstring=''
+        if keywordstring is None:
+            keywordstring=self.GetValue('Keyword')
+        if not keywordstring is None:
+            resultstring=keywordstring
+        if not resultstring == '':
+            resultstring=resultstring+' '
+        resultstring=resultstring+self.PropertyString(stype='raw')
+        return resultstring
     def PropertyString(self,stype='raw'):
         if stype=='attr':
             result=''
@@ -134,6 +142,28 @@ class PartPropertyXMLClassFactory(PartProperty):
                 ptype = item.text
             elif item.tag == 'unit':
                 unit = item.text
+        # legacy change - all part properties must have keywords
+        if propertyName == 'portnumber':
+            keyword='pn'
+        elif propertyName == 'reference':
+            keyword='ref'
+        elif propertyName == 'defaultreference':
+            keyword='defref'
+        elif propertyName == 'ports':
+            keyword='ports'
+        elif propertyName == 'filename':
+            keyword='file'
+        elif propertyName == 'type':
+            keyword='partname'
+        elif propertyName == 'category':
+            keyword='cat'
+        elif propertyName == 'description':
+            keyword='desc'
+        elif propertyName == 'waveformfilename':
+            keyword='wffile'
+
+        if keyword is None:
+            raise
         # hack because stupid xml outputs none for empty string
         if ptype == 'float' and (unit is None or unit == 'None'):
             unit = ''
@@ -163,27 +193,27 @@ class PartPropertyReadOnly(PartProperty):
 
 class PartPropertyPortNumber(PartProperty):
     def __init__(self,portNumber):
-        PartProperty.__init__(self,'portnumber',type='int',unit=None,keyword='',description='port number',value=portNumber,visible=True)
+        PartProperty.__init__(self,'portnumber',type='int',unit=None,keyword='pn',description='port number',value=portNumber,visible=True, keywordVisible=False)
 
 class PartPropertyReferenceDesignator(PartProperty):
     def __init__(self,referenceDesignator=''):
-        PartProperty.__init__(self,'reference',type='string',unit=None,description='reference designator',value=referenceDesignator,visible=False,keywordVisible=False)
+        PartProperty.__init__(self,'reference',type='string',unit=None,keyword='ref',description='reference designator',value=referenceDesignator,visible=False,keywordVisible=False)
 
 class PartPropertyDefaultReferenceDesignator(PartPropertyReadOnly):
     def __init__(self,referenceDesignator=''):
-        PartPropertyReadOnly.__init__(self,'defaultreference',type='string',unit=None,description='default reference designator',value=referenceDesignator,hidden=True,visible=False,keywordVisible=False)
+        PartPropertyReadOnly.__init__(self,'defaultreference',type='string',unit=None,keyword='defref',description='default reference designator',value=referenceDesignator,hidden=True,visible=False,keywordVisible=False)
 
 class PartPropertyPorts(PartProperty):
     def __init__(self,numPorts=1,hidden=True):
-        PartProperty.__init__(self,'ports',type='int',unit=None,description='ports',value=numPorts,hidden=hidden)
+        PartProperty.__init__(self,'ports',type='int',unit=None,description='ports',keyword='ports',value=numPorts,hidden=hidden)
 
 class PartPropertyFileName(PartProperty):
     def __init__(self,fileName=''):
-        PartProperty.__init__(self,'filename',type='file',unit=None,description='file name',value=fileName)
+        PartProperty.__init__(self,'filename',type='file',unit=None,keyword='file',description='file name',value=fileName)
 
 class PartPropertyWaveformFileName(PartProperty):
     def __init__(self,fileName=''):
-        PartProperty.__init__(self,'waveformfilename',type='file',unit=None,description='file name',value=fileName)
+        PartProperty.__init__(self,'waveformfilename',type='file',unit=None,keyword='wffile',description='file name',value=fileName)
 
 class PartPropertyResistance(PartProperty):
     def __init__(self,resistance=50.,keyword='r',descriptionPrefix=''):
@@ -203,15 +233,15 @@ class PartPropertyConductance(PartProperty):
 
 class PartPropertyPartName(PartPropertyReadOnly):
     def __init__(self,partName=''):
-        PartPropertyReadOnly.__init__(self,'type',type='string',unit=None,description='part type',value=partName,hidden=True)
+        PartPropertyReadOnly.__init__(self,'type',type='string',unit=None,keyword='partname',description='part type',value=partName,hidden=True)
 
 class PartPropertyCategory(PartPropertyReadOnly):
     def __init__(self,category=''):
-        PartPropertyReadOnly.__init__(self,'category',type='string',unit=None,description='part category',value=category,hidden=True)
+        PartPropertyReadOnly.__init__(self,'category',type='string',unit=None,keyword='cat',description='part category',value=category,hidden=True)
 
 class PartPropertyDescription(PartPropertyReadOnly):
     def __init__(self,description=''):
-        PartPropertyReadOnly.__init__(self,'description',type='string',unit=None,description='part description',value=description,hidden=True)
+        PartPropertyReadOnly.__init__(self,'description',type='string',unit=None,keyword='desc',description='part description',value=description,hidden=True)
 
 class PartPropertyVoltageGain(PartProperty):
     def __init__(self,voltageGain=1.0):

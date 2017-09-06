@@ -386,7 +386,7 @@ class TheApp(Frame):
             self.project=ProjectFile().Read(self.fileparts.FullFilePathExtension('.pysi_project'),self.Drawing)
             self.AnotherFileOpened(self.fileparts.FullFilePathExtension('.pysi_project'))
         self.Drawing.stateMachine.Nothing()
-        self.Drawing.DrawSchematic()
+        #self.Drawing.DrawSchematic()
         self.history.Event('read project')
         self.root.title('PySI: '+self.fileparts.FileNameTitle())
 
@@ -543,18 +543,18 @@ class TheApp(Frame):
         self.Drawing.stateMachine.Nothing()
         dpd=DevicePickerDialog(self,deviceList)
         if dpd.result != None:
-            if deviceList[dpd.result]['type'].GetValue() == 'Port':
+            if deviceList[dpd.result]['partname'].GetValue() == 'Port':
                 self.onAddPort()
                 return
             else:
                 devicePicked=copy.deepcopy(deviceList[dpd.result])
                 devicePicked.AddPartProperty(PartPropertyReferenceDesignator(''))
-                defaultProperty = devicePicked['defaultreference']
+                defaultProperty = devicePicked['defref']
                 if defaultProperty != None:
                     defaultPropertyValue = defaultProperty.GetValue()
                     uniqueReferenceDesignator = self.Drawing.schematic.NewUniqueReferenceDesignator(defaultPropertyValue)
                     if uniqueReferenceDesignator != None:
-                        devicePicked['reference'].SetValueFromString(uniqueReferenceDesignator)
+                        devicePicked['ref'].SetValueFromString(uniqueReferenceDesignator)
                 dpe=DevicePropertiesDialog(self,devicePicked)
             if dpe.result != None:
                 self.Drawing.partLoaded = dpe.result
@@ -608,9 +608,9 @@ class TheApp(Frame):
         self.Drawing.stateMachine.Nothing()
         portNumber=1
         for device in self.Drawing.schematic.deviceList:
-            if device['type'].GetValue() == 'Port':
-                if portNumber <= int(device['portnumber'].GetValue()):
-                    portNumber = int(device['portnumber'].GetValue())+1
+            if device['partname'].GetValue() == 'Port':
+                if portNumber <= int(device['pn'].GetValue()):
+                    portNumber = int(device['pn'].GetValue())+1
         dpe=DevicePropertiesDialog(self,Port(portNumber))
         if dpe.result != None:
             self.Drawing.partLoaded = dpe.result
@@ -629,12 +629,12 @@ class TheApp(Frame):
         self.Drawing.stateMachine.Nothing()
         devicePicked=part
         devicePicked.AddPartProperty(PartPropertyReferenceDesignator(''))
-        defaultProperty = devicePicked['defaultreference']
+        defaultProperty = devicePicked['defref']
         if defaultProperty != None:
             defaultPropertyValue = defaultProperty.GetValue()
             uniqueReferenceDesignator = self.Drawing.schematic.NewUniqueReferenceDesignator(defaultPropertyValue)
             if uniqueReferenceDesignator != None:
-                devicePicked['reference'].SetValueFromString(uniqueReferenceDesignator)
+                devicePicked['ref'].SetValueFromString(uniqueReferenceDesignator)
         dpe=DevicePropertiesDialog(self,devicePicked)
         if dpe.result != None:
             self.Drawing.partLoaded = dpe.result

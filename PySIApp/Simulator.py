@@ -317,15 +317,13 @@ class Simulator(object):
             outputWaveform=outputWaveformList[outputWaveformIndex]
             outputWaveformLabel = self.outputWaveformLabels[outputWaveformIndex]
             for device in self.parent.Drawing.schematic.deviceList:
-                if device['type'].GetValue() in ['Output','DifferentialVoltageOutput','CurrentOutput']:
-                    if device['reference'].GetValue() == outputWaveformLabel:
+                if device['partname'].GetValue() in ['Output','DifferentialVoltageOutput','CurrentOutput']:
+                    if device['ref'].GetValue() == outputWaveformLabel:
                         # probes may have different kinds of gain specified
                         gainProperty = device['gain']
-                        if gainProperty is None:
-                            gainProperty = device['transresistance']
                         gain=gainProperty.GetValue()
                         offset=device['offset'].GetValue()
-                        delay=device['delay'].GetValue()
+                        delay=device['td'].GetValue()
                         if gain != 1.0 or offset != 0.0 or delay != 0.0:
                             outputWaveform = outputWaveform.DelayBy(delay)*gain+offset
                         outputWaveformList[outputWaveformIndex]=outputWaveform
@@ -377,15 +375,13 @@ class Simulator(object):
             outputWaveform=outputWaveformList[outputWaveformIndex]
             outputWaveformLabel = self.outputWaveformLabels[outputWaveformIndex]
             for device in self.parent.Drawing.schematic.deviceList:
-                if device['type'].GetValue() in ['Output','DifferentialVoltageOutput','CurrentOutput']:
-                    if device['reference'].GetValue() == outputWaveformLabel:
+                if device['partname'].GetValue() in ['Output','DifferentialVoltageOutput','CurrentOutput']:
+                    if device['ref'].GetValue() == outputWaveformLabel:
                         # probes may have different kinds of gain specified
                         gainProperty = device['gain']
-                        if gainProperty is None:
-                            gainProperty = device['transresistance']
                         gain=gainProperty.GetValue()
                         offset=device['offset'].GetValue()
-                        delay=device['delay'].GetValue()
+                        delay=device['td'].GetValue()
                         if gain != 1.0 or offset != 0.0 or delay != 0.0:
                             outputWaveform = outputWaveform.DelayBy(delay)*gain+offset
                         outputWaveformList[outputWaveformIndex]=outputWaveform

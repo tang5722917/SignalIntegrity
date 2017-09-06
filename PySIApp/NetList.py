@@ -27,13 +27,13 @@ class NetList(object):
         equiPotentialWireList=WireList().InitFromProject(schematic.project.GetValue('Drawing.Schematic.Wires')).EquiPotentialWireList()
         # put all devices in the net list
         for device in deviceList:
-            deviceType = device['type'].GetValue()
+            deviceType = device['partname'].GetValue()
             if  not ((deviceType == 'Port') or (deviceType == 'Measure') or (deviceType == 'Output') or (deviceType == 'Stim')):
                 thisline=device.NetListLine()
                 self.textToShow.append(thisline)
                 firstToken=thisline.strip().split(' ')[0]
                 if firstToken == 'voltagesource' or firstToken == 'currentsource':
-                    self.sourceNames.append(device['reference'].GetValue())
+                    self.sourceNames.append(device['ref'].GetValue())
         # gather up all device pin coordinates
         devicePinCoordinateList = [device.PinCoordinates() for device in deviceList]
         devicePinNeedToCheckList = [[True for pinIndex in range(len(devicePinCoordinateList[deviceIndex]))] for deviceIndex in range(len(devicePinCoordinateList))]
@@ -85,7 +85,7 @@ class NetList(object):
                 deviceIndex=devicePin[0]
                 pinIndex=devicePin[1]
                 thisDevice=schematic.deviceList[deviceIndex]
-                thisDevicePartName = thisDevice['type'].GetValue()
+                thisDevicePartName = thisDevice['partname'].GetValue()
                 if thisDevicePartName == 'Port':
                     portList.append(devicePin)
                 elif thisDevicePartName == 'Output':
@@ -100,17 +100,17 @@ class NetList(object):
                 # for the measures, outputs and ports, we just need one device/port, so we use the first one
                 deviceIndexOfFirstDeviceInNet = net[0][0]
                 pinIndexOfFirstDeviceInNet = net[0][1]
-                firstDeviceName = schematic.deviceList[deviceIndexOfFirstDeviceInNet]['reference'].GetValue()
+                firstDeviceName = schematic.deviceList[deviceIndexOfFirstDeviceInNet]['ref'].GetValue()
                 firstDevicePinNumber = schematic.deviceList[deviceIndexOfFirstDeviceInNet].partPicture.current.pinList[pinIndexOfFirstDeviceInNet].pinNumber
                 devicePinString = firstDeviceName + ' ' + str(firstDevicePinNumber)
                 for measure in measureList:
                     deviceIndex = measure[0]
                     self.textToShow.append(schematic.deviceList[deviceIndex].NetListLine() + ' ' + devicePinString)
-                    self.measureNames.append(schematic.deviceList[deviceIndex]['reference'].GetValue())
+                    self.measureNames.append(schematic.deviceList[deviceIndex]['ref'].GetValue())
                 for output in outputList:
                     deviceIndex = output[0]
                     self.textToShow.append(schematic.deviceList[deviceIndex].NetListLine() + ' ' + devicePinString)
-                    self.outputNames.append(schematic.deviceList[deviceIndex]['reference'].GetValue())
+                    self.outputNames.append(schematic.deviceList[deviceIndex]['ref'].GetValue())
                 for port in portList:
                     deviceIndex = port[0]
                     self.textToShow.append(schematic.deviceList[deviceIndex].NetListLine() + ' ' + devicePinString)
@@ -120,7 +120,7 @@ class NetList(object):
                 for devicePortIndex in net:
                     deviceIndex = devicePortIndex[0]
                     pinIndex = devicePortIndex[1]
-                    deviceName = schematic.deviceList[deviceIndex]['reference'].GetValue()
+                    deviceName = schematic.deviceList[deviceIndex]['ref'].GetValue()
                     pinNumber = schematic.deviceList[deviceIndex].partPicture.current.pinList[pinIndex].pinNumber
                     thisConnectionString = thisConnectionString + ' '+ str(deviceName) +' '+str(pinNumber)
                 self.textToShow.append(thisConnectionString)
@@ -172,7 +172,7 @@ class NetList(object):
                                 if stimNameString=='':
                                     self.stimNames.append(stimDeviceIndex)
                                     stimNameString = 'm'+str(len(self.stimNames))
-                                deviceName = deviceList[deviceIndex]['reference'].GetValue()
+                                deviceName = deviceList[deviceIndex]['ref'].GetValue()
                                 devicePinNumber = deviceList[deviceIndex].partPicture.current.pinList[devicePinIndex].pinNumber
                                 devicePinString = deviceName + ' ' + str(devicePinNumber)
                                 self.textToShow.append(deviceList[stimDeviceIndex].NetListLine() + ' ' + stimNameString + ' ' + devicePinString)

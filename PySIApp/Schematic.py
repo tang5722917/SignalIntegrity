@@ -69,7 +69,7 @@ class Schematic(object):
         if defaultDesignator != None and '?' in defaultDesignator:
             referenceDesignatorList=[]
             for device in self.deviceList:
-                deviceReferenceDesignatorProperty = device['reference']
+                deviceReferenceDesignatorProperty = device['ref']
                 if deviceReferenceDesignatorProperty != None:
                     deviceReferenceDesignator = deviceReferenceDesignatorProperty.GetValue()
                     if deviceReferenceDesignator != None:
@@ -1113,29 +1113,29 @@ class DrawingStateMachine(object):
         self.UnselectAllWires()
         self.SaveButton1Coordinates(event)
         for device in self.parent.devicesToDuplicate:
-            if device['type'].GetValue() == 'Port':
+            if device['partname'].GetValue() == 'Port':
                 portNumberList=[]
                 for existingDevice in self.parent.schematic.deviceList:
-                    if existingDevice['type'].GetValue() == 'Port':
-                        portNumberList.append(int(existingDevice['portnumber'].GetValue()))
-                if device['portnumber'].GetValue() in portNumberList:
+                    if existingDevice['partname'].GetValue() == 'Port':
+                        portNumberList.append(int(existingDevice['pn'].GetValue()))
+                if device['pn'].GetValue() in portNumberList:
                     portNumber=1
                     while portNumber in portNumberList:
                         portNumber=portNumber+1
-                    device['portnumber'].SetValueFromString(str(portNumber))
+                    device['pn'].SetValueFromString(str(portNumber))
             else:
                 existingReferenceDesignators=[]
                 for existingDevice in self.parent.schematic.deviceList:
-                    referenceDesignatorProperty = existingDevice['reference']
+                    referenceDesignatorProperty = existingDevice['ref']
                     if referenceDesignatorProperty != None:
                         existingReferenceDesignators.append(referenceDesignatorProperty.GetValue())
-                if device['reference'].GetValue() in existingReferenceDesignators:
-                    defaultProperty = device['defaultreference']
+                if device['ref'].GetValue() in existingReferenceDesignators:
+                    defaultProperty = device['defref']
                     if defaultProperty != None:
                         defaultPropertyValue = defaultProperty.GetValue()
                         uniqueReferenceDesignator = self.parent.schematic.NewUniqueReferenceDesignator(defaultPropertyValue)
                         if uniqueReferenceDesignator != None:
-                            device['reference'].SetValueFromString(uniqueReferenceDesignator)
+                            device['ref'].SetValueFromString(uniqueReferenceDesignator)
             device.partPicture.current.SetOrigin((device.partPicture.current.origin[0]+self.parent.Button1Coord[0],device.partPicture.current.origin[1]+self.parent.Button1Coord[1]))
             device.selected=True
             self.parent.schematic.deviceList.append(device)
@@ -1241,7 +1241,7 @@ class Drawing(Frame):
             foundSomething=True
             devicePinsConnected=devicePinConnectedList[deviceIndex]
             device.DrawDevice(canvas,self.grid,self.originx,self.originy,devicePinsConnected)
-            deviceType = device['type'].GetValue()
+            deviceType = device['partname'].GetValue()
             if  deviceType == 'Port':
                 foundAPort = True
             elif deviceType in ['Output','DifferentialVoltageOutput','CurrentOutput']:
@@ -1303,22 +1303,22 @@ class Drawing(Frame):
     def DuplicateSelectedDevice(self):
         if self.stateMachine.state=='DeviceSelected':
             self.partLoaded=copy.deepcopy(self.deviceSelected)
-            if self.partLoaded['type'].GetValue() == 'Port':
+            if self.partLoaded['partname'].GetValue() == 'Port':
                 portNumberList=[]
                 for device in self.schematic.deviceList:
-                    if device['type'].GetValue() == 'Port':
-                        portNumberList.append(int(device['portnumber'].GetValue()))
+                    if device['partname'].GetValue() == 'Port':
+                        portNumberList.append(int(device['pn'].GetValue()))
                 portNumber=1
                 while portNumber in portNumberList:
                     portNumber=portNumber+1
-                self.partLoaded['portnumber'].SetValueFromString(str(portNumber))
+                self.partLoaded['pn'].SetValueFromString(str(portNumber))
             else:
-                defaultProperty = self.partLoaded['defaultreference']
+                defaultProperty = self.partLoaded['defref']
                 if defaultProperty != None:
                     defaultPropertyValue = defaultProperty.GetValue()
                     uniqueReferenceDesignator = self.schematic.NewUniqueReferenceDesignator(defaultPropertyValue)
                     if uniqueReferenceDesignator != None:
-                        self.partLoaded['reference'].SetValueFromString(uniqueReferenceDesignator)
+                        self.partLoaded['ref'].SetValueFromString(uniqueReferenceDesignator)
             self.stateMachine.PartLoaded()
     def DeleteSelected(self):
         if self.stateMachine.state=='WireSelected':

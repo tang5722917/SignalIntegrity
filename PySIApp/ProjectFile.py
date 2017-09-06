@@ -16,8 +16,8 @@ import sys
 class PartPropertyConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self,'PartPropertyConfiguration')
-        self.dict['Keyword']=XMLPropertyDefaultString('Keyword',write=False)
-        self.dict['PropertyName']=XMLPropertyDefaultString('PropertyName')
+        self.dict['Keyword']=XMLPropertyDefaultString('Keyword')
+        self.dict['PropertyName']=XMLPropertyDefaultString('PropertyName',write=False)
         self.dict['Description']=XMLPropertyDefaultString('Description',write=False)
         self.dict['Value']=XMLPropertyDefaultString('Value')
         self.dict['Hidden']=XMLPropertyDefaultBool('Hidden',write=False)

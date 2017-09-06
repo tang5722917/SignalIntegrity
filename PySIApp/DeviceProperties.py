@@ -299,7 +299,7 @@ class DeviceProperties(Frame):
     def onWaveformView(self):
         self.focus()
         device=self.device
-        referenceDesignator=device['reference'].GetValue()
+        referenceDesignator=device['ref'].GetValue()
         import SignalIntegrity as si
         try:
             wf=device.Waveform()
@@ -317,7 +317,7 @@ class DevicePropertiesDialog(Toplevel):
         Toplevel.__init__(self, parent)
         self.transient(parent)
         self.device = copy.deepcopy(device)
-        self.title(self.device['description'].PropertyString(stype='raw'))
+        self.title(self.device['desc'].PropertyString(stype='raw'))
         self.parent = parent
         self.result = None
         self.DeviceProperties = DeviceProperties(self,self.device)
