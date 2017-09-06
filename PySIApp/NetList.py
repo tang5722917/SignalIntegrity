@@ -29,7 +29,7 @@ class NetList(object):
         for device in deviceList:
             if not device['partname'].GetValue() in ['Port','Measure','Output','Stim']:
                 self.textToShow.append(device.NetListLine())
-                if device.netlist.devicename in ['voltagesource','currentsource']:
+                if device.netlist.GetValue('DeviceName') in ['voltagesource','currentsource']:
                     self.sourceNames.append(device['ref'].GetValue())
         # gather up all device pin coordinates
         devicePinCoordinateList = [device.PinCoordinates() for device in deviceList]

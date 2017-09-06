@@ -13,6 +13,21 @@ from ProjectFileBase import ProjectFileBase,XMLProperty
 import os
 import sys
 
+class DeviceNetListKeywordConfiguration(XMLConfiguration):
+    def __init__(self):
+        XMLConfiguration.__init__(self,'DeviceNetListKeywordConfiguration',write=False)
+        self.dict['Keyword']=XMLPropertyDefaultString('Keyword')
+        self.dict['ShowKeyword']=XMLPropertyDefaultBool('ShowKeyword',True)
+
+class DeviceNetListConfiguration(XMLConfiguration):
+    def __init__(self):
+        XMLConfiguration.__init__(self,'DeviceNetListConfiguration',write=False)
+        self.dict['DeviceName']=XMLPropertyDefaultString('DeviceName')
+        self.dict['PartName']=XMLPropertyDefaultString('PartName')
+        self.dict['ShowReference']=XMLPropertyDefaultBool('ShowReference',True)
+        self.dict['ShowPorts']=XMLPropertyDefaultBool('ShowPorts',True)
+        self.dict['Values']=XMLProperty('Values',[DeviceNetListKeywordConfiguration() for _ in range(0)])
+
 class PartPropertyConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self,'PartPropertyConfiguration')
@@ -47,6 +62,7 @@ class DeviceConfiguration(XMLConfiguration):
         self.dict['ClassName']=XMLPropertyDefaultString('ClassName')
         self.dict['PartPicture']=PartPictureConfiguration()
         self.dict['PartProperties']=XMLProperty('PartProperties',[PartPropertyConfiguration() for _ in range(0)])
+        self.dict['DeviceNetList']=DeviceNetListConfiguration()
 
 class VertexConfiguration(XMLConfiguration):
     def __init__(self):
@@ -130,6 +146,10 @@ class ProjectFile(ProjectFileBase):
             partPictureProject.SetValue('MirroredVertically',partPicture.current.mirroredVertically)
             partPictureProject.SetValue('MirroredHorizontally',partPicture.current.mirroredHorizontally)
             deviceProject.SetValue('PartProperties',device.propertiesList)
+            deviceNetListProject=deviceProject.GetValue('DeviceNetList')
+            deviceNetList=device.netlist
+            for n in deviceNetList.dict:
+                deviceNetListProject.SetValue(n,deviceNetList.GetValue(n))
         ProjectFileBase.Write(self,filename)
         return self
 

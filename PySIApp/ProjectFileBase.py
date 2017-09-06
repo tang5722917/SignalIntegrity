@@ -169,10 +169,11 @@ class XMLConfiguration(object):
         return False
     def OutputXML(self,indent):
         lines=[]
-        lines=lines+[indent+'<'+self.name+'>']
-        for item in self.dict:
-            lines=lines+self.dict[item].OutputXML(indent+ProjectFileBase.indent)
-        lines=lines+[indent+'</'+self.name+'>']
+        if self.write:
+            lines=lines+[indent+'<'+self.name+'>']
+            for item in self.dict:
+                lines=lines+self.dict[item].OutputXML(indent+ProjectFileBase.indent)
+            lines=lines+[indent+'</'+self.name+'>']
         return lines
 
     def Changed(self,changed):

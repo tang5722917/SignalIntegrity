@@ -1254,7 +1254,7 @@ class Drawing(Frame):
                 foundASystem = True
             elif deviceType == 'Unknown':
                 foundAnUnknown = True
-            elif device.netlist.devicename in ['voltagesource','currentsource']:
+            elif device.netlist.GetValue('DeviceName') in ['voltagesource','currentsource']:
                 foundASource = True
         if not hasattr(self.parent,'project'):
             return
