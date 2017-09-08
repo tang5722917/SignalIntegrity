@@ -27,8 +27,11 @@ class SParameterCompareHelper(object):
 
 class Test(unittest.TestCase,SParameterCompareHelper):
     relearn=False
-    debug=True
+    debug=False
+    checkPictures=True
     def PictureChecker(self,pysi):
+        if not self.checkPictures:
+            return
         currentDirectory=os.getcwd()
         os.chdir(os.path.dirname(os.path.realpath(__file__)))
         filename=pysi.fileparts.filename+'.TpX'
