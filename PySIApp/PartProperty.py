@@ -135,22 +135,31 @@ class PartPropertyXMLClassFactory(PartProperty):
         # legacy change - all part properties must have keywords
         if propertyName == 'portnumber':
             keyword='pn'
+            keywordVisible=False
         elif propertyName == 'reference':
             keyword='ref'
+            keywordVisible=False
         elif propertyName == 'defaultreference':
             keyword='defref'
+            keywordVisible=False
         elif propertyName == 'ports':
             keyword='ports'
+            keywordVisible=False
         elif propertyName == 'filename':
             keyword='file'
+            keywordVisible=False
         elif propertyName == 'type':
             keyword='partname'
+            keywordVisible=False
         elif propertyName == 'category':
             keyword='cat'
+            keywordVisible=False
         elif propertyName == 'description':
             keyword='desc'
+            keywordVisible=False
         elif propertyName == 'waveformfilename':
             keyword='wffile'
+            keywordVisible=False
 
         if keyword is None:
             raise
