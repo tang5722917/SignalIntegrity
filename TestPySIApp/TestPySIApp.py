@@ -186,6 +186,12 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         self.SParameterResultsChecker('../PySIApp/Examples/telegrapherFourPort.xml')
     def testPySIAppExampleTelegrapherTestTwoPort(self):
         self.SParameterResultsChecker('../PySIApp/Examples/telegrapherTestTwoPort.xml')
+    def testPySIAppExamplesSimulationExampleBMYcheby(self):
+        self.SimulationResultsChecker('../PySIApp/Examples/SimulationExample/BMYcheby.xml')
+    def testPySIAppExamplesSimulationExampleBMYchebySParameters(self):
+        self.SParameterResultsChecker('../PySIApp/Examples/SimulationExample/BMYchebySParameters.xml')
+    def testPySIAppExamplesSimulationExampleInvCheby_8(self):
+        self.SimulationResultsChecker('../PySIApp/Examples/SimulationExample/InvCheby_8.xml')
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
