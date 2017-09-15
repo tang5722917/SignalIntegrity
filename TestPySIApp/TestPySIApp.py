@@ -176,6 +176,23 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         self.VirtualProbeResultsChecker('../PySIApp/Examples/VirtualProbingExample/VirtualProbeExample.xml')
     def testOpenStub(self):
         self.SParameterResultsChecker('OpenStub.xml')
+    def testPySIAppExampleCascCableFilter(self):
+        self.SParameterResultsChecker('../PySIApp/Examples/CascCableFilter.xml')
+    def testPySIAppExamplesRLCTest(self):
+        self.SimulationResultsChecker('../PySIApp/Examples/RLCTest.xml')
+    def testPySIAppExamplesRC(self):
+        self.SimulationResultsChecker('../PySIApp/Examples/RC.xml')
+    def testPySIAppExampleTelegrapherFourPort(self):
+        self.SParameterResultsChecker('../PySIApp/Examples/telegrapherFourPort.xml')
+    def testPySIAppExampleTelegrapherTestTwoPort(self):
+        self.SParameterResultsChecker('../PySIApp/Examples/telegrapherTestTwoPort.xml')
+    def testPySIAppExamplesSimulationExampleBMYcheby(self):
+        self.SimulationResultsChecker('../PySIApp/Examples/SimulationExample/BMYcheby.xml')
+    def testPySIAppExamplesSimulationExampleBMYchebySParameters(self):
+        self.SParameterResultsChecker('../PySIApp/Examples/SimulationExample/BMYchebySParameters.xml')
+    def testPySIAppExamplesSimulationExampleInvCheby_8(self):
+        self.SimulationResultsChecker('../PySIApp/Examples/SimulationExample/InvCheby_8.xml')
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
