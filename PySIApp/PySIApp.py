@@ -399,9 +399,8 @@ class PySIApp(Frame):
                                    title='new project file')
         if filename is None:
             return
-        self.Drawing.stateMachine.Nothing()
-        self.Drawing.schematic.Clear()
         self.project=ProjectFile()
+        self.Drawing.InitFromProject(self.project)
         self.Drawing.DrawSchematic()
         self.history.Event('new project')
         self.SaveProjectToFile(filename)
