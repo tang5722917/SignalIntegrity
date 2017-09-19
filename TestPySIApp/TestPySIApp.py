@@ -29,46 +29,46 @@ class Test(unittest.TestCase,SParameterCompareHelper):
     relearn=False
     debug=False
     checkPictures=True
-    def PictureChecker(self,pysi):
+    def TestFileName(self,filename):
+        return filename.replace('..', 'Up').replace('/','_').split('.')[0]
+    def PictureChecker(self,pysi,filename):
         if not self.checkPictures:
             return
         currentDirectory=os.getcwd()
         os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        filename=pysi.fileparts.filename+'.TpX'
+        testFilename=self.TestFileName(filename)+'.TpX'
         try:
             tpx=pysi.Drawing.DrawSchematic(TpX()).Finish()
             tikz=pysi.Drawing.DrawSchematic(TikZ()).Finish()
             tpx.lineList=tpx.lineList+tikz.lineList
         except:
             self.assertTrue(False,filename + ' couldnt be drawn')
-        if not os.path.exists(filename):
-            tpx.WriteToFile(filename)
+        if not os.path.exists(testFilename):
+            tpx.WriteToFile(testFilename)
             if not self.relearn:
-                self.assertTrue(False, filename + ' not found')
-        with open(filename) as f:
+                self.assertTrue(False, testFilename + ' not found')
+        with open(testFilename) as f:
             regression=f.readlines()
-        if self.debug and (tpx.lineList != regression):
-            tpx.WriteToFile(pysi.fileparts.filename+'_DIFFERENT.TpX')
-        self.assertTrue(tpx.lineList==regression,filename + ' incorrect')
+        self.assertTrue(tpx.lineList==regression,testFilename + ' incorrect')
         os.chdir(currentDirectory)
-    def NetListChecker(self,pysi):
+    def NetListChecker(self,pysi,filename):
         currentDirectory=os.getcwd()
         os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        filename=pysi.fileparts.filename+'.net'
+        testFilename=self.TestFileName(filename)+'.net'
         try:
             netlist=pysi.Drawing.schematic.NetList().Text()
         except:
             self.assertTrue(False,filename + ' couldnt produce netlist')
         netlist=[line+'\n' for line in netlist]
-        if not os.path.exists(filename):
-            with open(filename,"w") as f:
+        if not os.path.exists(testFilename):
+            with open(testFilename,"w") as f:
                 for line in netlist:
                     f.write(line)
                 if not self.relearn:
-                    self.assertTrue(False, filename + ' not found')
-        with open(filename) as f:
+                    self.assertTrue(False, testFilename + ' not found')
+        with open(testFilename) as f:
             regression=f.readlines()
-        self.assertTrue(netlist==regression,filename + ' incorrect')
+        self.assertTrue(netlist==regression,testFilename + ' incorrect')
         os.chdir(currentDirectory)
     def SParameterRegressionChecker(self,sp,spfilename):
         currentDirectory=os.getcwd()
@@ -95,9 +95,9 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         pysi=PySIAppHeadless()
         self.assertTrue(pysi.OpenProjectFile(os.path.realpath(filename)),filename + ' couldnt be opened')
         if checkPicture:
-            self.PictureChecker(pysi)
+            self.PictureChecker(pysi,filename)
         if checkNetlist:
-            self.NetListChecker(pysi)
+            self.NetListChecker(pysi,filename)
         return pysi
     def SParameterResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
         pysi=self.Preliminary(filename, checkPicture, checkNetlist)
@@ -105,6 +105,7 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         self.assertIsNotNone(result, filename+' produced none')
         os.chdir(os.path.dirname(os.path.realpath(__file__)))
         spfilename=result[1]
+        spfilename=self.TestFileName(filename)+'.'+spfilename.split('.')[-1]
         sp=result[0]
         self.SParameterRegressionChecker(sp, spfilename)
     def SimulationResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
@@ -123,11 +124,11 @@ class Test(unittest.TestCase,SParameterCompareHelper):
                 raise
         except:
             self.assertTrue(False, filename + 'has no transfer matrices')
-        spfilename=pysi.fileparts.filename+'.s'+str(ports)+'p'
+        spfilename=self.TestFileName(filename)+'.s'+str(ports)+'p'
         self.SParameterRegressionChecker(sp, spfilename)
         for i in range(len(outputNames)):
             wf=outputWaveforms[i]
-            wffilename=pysi.fileparts.filename+'_'+outputNames[i]+'.txt'
+            wffilename=self.TestFileName(filename)+'_'+outputNames[i]+'.txt'
             self.WaveformRegressionChecker(wf, wffilename)
     def VirtualProbeResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
         pysi=self.Preliminary(filename, checkPicture, checkNetlist)
@@ -145,11 +146,11 @@ class Test(unittest.TestCase,SParameterCompareHelper):
                 raise
         except:
             self.assertTrue(False, filename + 'has no transfer matrices')
-        spfilename=pysi.fileparts.filename+'.s'+str(ports)+'p'
+        spfilename=self.TestFileName(filename)+'.s'+str(ports)+'p'
         self.SParameterRegressionChecker(sp, spfilename)
         for i in range(len(outputNames)):
             wf=outputWaveforms[i]
-            wffilename=pysi.fileparts.filename+'_'+outputNames[i]+'.txt'
+            wffilename=self.TestFileName(filename)+'_'+outputNames[i]+'.txt'
             self.WaveformRegressionChecker(wf, wffilename)
     def DeembeddingResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
         pysi=self.Preliminary(filename, checkPicture, checkNetlist)
@@ -157,6 +158,7 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         self.assertIsNotNone(result, filename+' produced none')
         os.chdir(os.path.dirname(os.path.realpath(__file__)))
         spfilenames=result[0]
+        spfilenames=[self.TestFileName(filename)+'_'+spf for spf in spfilenames]
         sps=result[1]
         for i in range(len(spfilenames)):
             sp=sps[i]
@@ -192,6 +194,135 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         self.SParameterResultsChecker('../PySIApp/Examples/SimulationExample/BMYchebySParameters.xml')
     def testPySIAppExamplesSimulationExampleInvCheby_8(self):
         self.SimulationResultsChecker('../PySIApp/Examples/SimulationExample/InvCheby_8.xml')
+    def testPicturesNetlists(self):
+        filesList=[
+            '/home/peterp/Work/PySI/TestPySIApp/FilterTest.xml',
+            '/home/peterp/Work/PySI/TestPySIApp/FourPortTLineTest.xml',
+            '/home/peterp/Work/PySI/TestPySIApp/Devices.xml',
+            #'/home/peterp/Work/PySI/TestPySIApp/TestVRM.xml',
+            '/home/peterp/Work/PySI/TestPySIApp/OpenStub.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/TestVRMIstvan2.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VP/Measure.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VP/Calculate.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VP/Compare.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/TestVRMIstvan.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/TestVRMEquiv.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VRMWaveformCompare.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/TestCNaturalResponse.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/TestVRMModel.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VPSteady/FeedbackNetwork.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VPSteady/Measure5.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VPSteady/Measure.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VPSteady/Measure2.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VPSteady/Measure4.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VPSteady/Measure3.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/VPSteady/Measure6.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/LoadResistanceBWL.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/TestVRMEquivAC.xml',
+            '/home/peterp/Work/PySI/PowerIntegrity/TestVRM.xml',
+            '/home/peterp/Work/PySI/TestSignalIntegrity/TestCurrentSense.xml',
+            '/home/peterp/Work/PySI/TestSignalIntegrity/TestVRMParasitics.xml',
+            '/home/peterp/Work/PySI/TestSignalIntegrity/TestVRM.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/DifferentialTransmissionLineComparesMixedMode.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/Mutual.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/telegrapherFourPortTwoElements.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/telegrapherFourPortCircuitOneSection.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/DifferentialTransmissionLineCompares.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/telegrapherFourPortElement.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/TL_test_Circuit1_Pete.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/telegrapherFourPort10000Elements.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/DimaWay.xml',
+            '/home/peterp/Work/PySI/PySIApp/FourPortTests/telegrapherFourPortCircuitTwoSections.xml',
+            #'/home/peterp/Work/PySI/PySIApp/Examples/XRAYTest.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/RLCTest.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/telegrapherFourPort.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/SParameterExample.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/RC.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/telegrapherTestFourPort.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/SParameterExample/SParameterGenerationExample.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/DeembedCableFilter.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/PulseGeneratorTest.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/SimulationExample/SimulatorExample.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/SimulationExample/InvCheby_8.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/SimulationExample/BMYcheby.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/SimulationExample/BMYchebySParameters.xml',
+            #'/home/peterp/Work/PySI/PySIApp/Examples/XRAYTest2.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/telegrapherTestTwoPort.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/VirtualProbingExample/VirtualProbeExampleSimulation2.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/VirtualProbingExample/VirtualProbeExampleSimulation.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/VirtualProbingExample/VirtualProbeExampleCompare.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/VirtualProbingExample/VirtualProbeExample.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/RLC.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/CascCableFilter.xml',
+            #'/home/peterp/Work/PySI/PySIApp/Examples/RCNetwork.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/StepGeneratorTest.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/RLCTest2.xml',
+            '/home/peterp/Work/PySI/PySIApp/VirtualProbeTests/comparison.xml',
+            '/home/peterp/Work/PySI/PySIApp/VirtualProbeTests/Example2.xml',
+            '/home/peterp/Work/PySI/PySIApp/VirtualProbeTests/SimpleCaseExample1.xml',
+            '/home/peterp/Work/PySI/PySIApp/VirtualProbeTests/Example3DegreeOfFreedom.xml',
+            '/home/peterp/Work/PySI/PySIApp/VirtualProbeTests/SimpleCase.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/TerminationDifferentialCenterTapUnbalanced.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/FourPortMixedModeModelCompareTlines.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/TerminationMixedMode.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/MixedModeSimulation.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/MixedModeConverterSymbol.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/FourPortMixedModeModelCompareTelegrapher.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/TerminationDifferentialCenterTapACCoupled.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/TerminationDifferentialTee.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/TerminationDifferentialCenterTap.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/SimulationTerminationDifferentialTee.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/BalancedFourPortTelegrapherMixedMode.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/TerminationDifferentialOnly.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/DifferentialTelegrapher.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/DifferentialTelegrapherBalancede.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/TerminationDifferentialPi.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/BalancedFourPortModelMixedMode.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/MixedModeConverterVoltageSymbol.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/MixedModeSimulationPi.xml',
+            '/home/peterp/Work/PySIBook/TransmissionLines/MixedModeSimulationTee.xml',
+            '/home/peterp/Work/PySIBook/SParameters/Mutual.xml',
+            '/home/peterp/Work/PySIBook/Simulation/SimulationCircuitSchematic2.xml',
+            '/home/peterp/Work/PySIBook/Simulation/SimulationCircuitBlockDiagram.xml',
+            '/home/peterp/Work/PySIBook/Simulation/SimulationCircuitSchematic.xml',
+            '/home/peterp/Work/PySIBook/WaveformProcessing/TransferMatricesProcessing.xml',
+            '/home/peterp/Work/PySIBook/SymbolicDeviceSolutions/FourPortVoltageAmplifierVoltageSeriesFeedbackCircuit.xml',
+            '/home/peterp/Work/PySIBook/SymbolicDeviceSolutions/TransistorThreePortCircuit.xml',
+            '/home/peterp/Work/PySIBook/VirtualProbing/VirtualProbingSimpleExample.xml',
+            '/home/peterp/Work/PySIBook/VirtualProbing/VirtualProbingTwoVoltageExample.xml',
+            '/home/peterp/Work/PySIBook/VirtualProbing/VirtualProbingDifferentialExample.xml',
+            '/home/peterp/Work/PySIBook/VirtualProbing/VirtualProbingProbeDeembeddingExample.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/ShuntImpedanceInstrumentedZ.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/FileDevice.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/YParametersSchematic.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/SimpleCircuitAnalysisExampleNetwork.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/ArbitraryCircuitInstrumentedZ.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/ClassicNetworkParameterDevice.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/CascABCD.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/SeriesImpedanceInstrumentedZ.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/SeriesImpedanceInstrumentedY.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/ZParametersSchematic.xml',
+            '/home/peterp/Work/PySIBook/NetworkParameters/SimpleCircuitAnalysisExampleCircuit.xml',
+            '/home/peterp/Work/PySIBook/Sources/Amplifiers/OperationalAmplifierSymbol.xml',
+            '/home/peterp/Work/PySIBook/Sources/Amplifiers/VoltageAmplifierTwoPortSymbol.xml',
+            '/home/peterp/Work/PySIBook/Sources/Amplifiers/CurrentAmplifierFourPortCircuit.xml',
+            '/home/peterp/Work/PySIBook/Sources/Amplifiers/VoltageAmplifierTwoPortCircuit.xml',
+            '/home/peterp/Work/PySIBook/Sources/Amplifiers/OperationalAmplifierCircuit.xml',
+            '/home/peterp/Work/PySIBook/Sources/Amplifiers/VoltageAmplifierFourPortSymbol.xml',
+            '/home/peterp/Work/PySIBook/Sources/Amplifiers/VoltageAmplifierThreePortCircuit.xml',
+            '/home/peterp/Work/PySIBook/Sources/Amplifiers/VoltageAmplifierFourPortCircuit.xml',
+            '/home/peterp/Work/PySIBook/Sources/IdealTransformer/testIdealTransformer.xml',
+            '/home/peterp/Work/PySIBook/Sources/IdealTransformer/IdealTransformerSP.xml',
+            '/home/peterp/Work/PySIBook/Sources/IdealTransformer/IdealTransformerCircuit.xml',
+            '/home/peterp/Work/PySIBook/Sources/IdealTransformer/IdealTransformerSymbol.xml',
+            '/home/peterp/Work/PySIBook/Sources/DependentSources/DependentSources.xml',
+            '/home/peterp/Work/TempProject/SenseResistorVirtualProbe.xml',
+            '/home/peterp/Work/TempProject/SenseResistorMeasurement.xml',
+            '/home/peterp/Work/TempProject/SenseResistorSimple.xml'
+        ]
+        for filename in filesList:
+            filename=filename.replace('/home/peterp/Work','../..')
+            self.Preliminary(filename)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
