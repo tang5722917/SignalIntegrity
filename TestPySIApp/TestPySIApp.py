@@ -194,6 +194,10 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         self.SParameterResultsChecker('../PySIApp/Examples/SimulationExample/BMYchebySParameters.xml')
     def testPySIAppExamplesSimulationExampleInvCheby_8(self):
         self.SimulationResultsChecker('../PySIApp/Examples/SimulationExample/InvCheby_8.xml')
+    def testPySIAppExamplesPulseGeneratorTest(self):
+        self.SimulationResultsChecker('../PySIApp/Examples/PulseGeneratorTest.xml')
+    def testPySIAppExamplesStepGeneratorTest(self):
+        self.SimulationResultsChecker('../PySIApp/Examples/StepGeneratorTest.xml')
     def testPicturesNetlists(self):
         filesList=[
             '/home/peterp/Work/PySI/TestPySIApp/FilterTest.xml',
@@ -240,7 +244,7 @@ class Test(unittest.TestCase,SParameterCompareHelper):
             '/home/peterp/Work/PySI/PySIApp/Examples/telegrapherTestFourPort.xml',
             '/home/peterp/Work/PySI/PySIApp/Examples/SParameterExample/SParameterGenerationExample.xml',
             '/home/peterp/Work/PySI/PySIApp/Examples/DeembedCableFilter.xml',
-            #'/home/peterp/Work/PySI/PySIApp/Examples/PulseGeneratorTest.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/PulseGeneratorTest.xml',
             '/home/peterp/Work/PySI/PySIApp/Examples/SimulationExample/SimulatorExample.xml',
             '/home/peterp/Work/PySI/PySIApp/Examples/SimulationExample/InvCheby_8.xml',
             '/home/peterp/Work/PySI/PySIApp/Examples/SimulationExample/BMYcheby.xml',
@@ -252,7 +256,7 @@ class Test(unittest.TestCase,SParameterCompareHelper):
             '/home/peterp/Work/PySI/PySIApp/Examples/VirtualProbingExample/VirtualProbeExample.xml',
             '/home/peterp/Work/PySI/PySIApp/Examples/RLC.xml',
             '/home/peterp/Work/PySI/PySIApp/Examples/CascCableFilter.xml',
-            #'/home/peterp/Work/PySI/PySIApp/Examples/StepGeneratorTest.xml',
+            '/home/peterp/Work/PySI/PySIApp/Examples/StepGeneratorTest.xml',
             '/home/peterp/Work/PySI/PySIApp/Examples/RLCTest2.xml',
             '/home/peterp/Work/PySI/PySIApp/VirtualProbeTests/comparison.xml',
             #'/home/peterp/Work/PySI/PySIApp/VirtualProbeTests/Example2.xml',
