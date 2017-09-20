@@ -44,5 +44,8 @@ class DeviceNetListLine(DeviceNetListConfiguration):
                 returnstring=returnstring+' '
             if kwc.GetValue('ShowKeyword'):
                 returnstring=returnstring+kwc.GetValue('Keyword')+' '
-            returnstring=returnstring+device[kwc.GetValue('Keyword')].PropertyString(stype='raw')
+            valueString=device[kwc.GetValue('Keyword')].PropertyString(stype='raw')
+            if valueString is None:
+                valueString='None'
+            returnstring=returnstring+valueString
         return returnstring
