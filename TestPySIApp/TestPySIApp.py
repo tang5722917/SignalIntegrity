@@ -26,7 +26,7 @@ class SParameterCompareHelper(object):
         return True
 
 class Test(unittest.TestCase,SParameterCompareHelper):
-    relearn=False
+    relearn=True
     debug=False
     checkPictures=True
     def TestFileName(self,filename):
@@ -204,6 +204,8 @@ class Test(unittest.TestCase,SParameterCompareHelper):
             'FourPortTLineTest.xml',
             'FileDevices.xml',
             'GeneratorsDevices.xml',
+            'UnknownDevices.xml',
+            'SystemDevices.xml',
             'Noise.xml',
             'OpenStub.xml',
             '/home/peterp/Work/PySI/PowerIntegrity/TestVRMIstvan2.xml',
