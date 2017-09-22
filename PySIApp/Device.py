@@ -151,19 +151,28 @@ class DeviceXMLClassFactory(object):
                     propertiesList.append(partProperty)
                     if partProperty.GetValue('Keyword')=='ports':
                         ports=partProperty.GetValue()
+                    if partProperty.GetValue('PropertyName')=='description':
+                        partDescription=partProperty.GetValue()
         self.result=None
-        for device in DeviceList+DeviceListSystem+DeviceListUnknown:
-            if (str(device.__class__).split('.')[-1].strip('\'>') == className):
-                devicePorts = device.PartPropertyByKeyword('ports')
-                if (devicePorts is None):
-                    match=True
-                elif (devicePorts.GetValue() == ports):
-                    match=True
-                else:
-                    match=False
-                if match:
-                    self.result=copy.deepcopy(device)
-                    break
+        if partDescription=='Variable Port File':
+            self.result=DeviceFile([PartPropertyDescription('Variable Port File'),PartPropertyPorts(ports,False)],PartPictureVariableSpecifiedPorts(ports))
+        elif partDescription=='Variable Port Unknown':
+            self.result=DeviceUnknown([PartPropertyDescription('Variable Port Unknown'),PartPropertyPorts(ports,False)],PartPictureVariableUnknown(ports))
+        elif partDescription=='Variable Port System':
+            self.result=DeviceSystem([PartPropertyDescription('Variable Port System'),PartPropertyPorts(ports,False)],PartPictureVariableSystem(ports))
+        else:
+            for device in DeviceList+DeviceListSystem+DeviceListUnknown:
+                if (str(device.__class__).split('.')[-1].strip('\'>') == className):
+                    devicePorts = device.PartPropertyByKeyword('ports')
+                    if (devicePorts is None):
+                        match=True
+                    elif (devicePorts.GetValue() == ports):
+                        match=True
+                    else:
+                        match=False
+                    if match:
+                        self.result=copy.deepcopy(device)
+                        break
         for child in xml:
             if child.tag == 'part_picture':
                 self.result.partPicture=PartPictureXMLClassFactory(self.result,child,ports).result
