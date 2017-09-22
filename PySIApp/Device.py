@@ -372,14 +372,14 @@ class DeviceTransmissionLine(Device):
 class DeviceTelegrapherTwoPort(Device):
     def __init__(self,propertiesList,partPicture):
         netlist=DeviceNetListLine(partname='telegrapher',values=[('r',True),('l',True),('g',True),('c',True),('sect',True)])
-        Device.__init__(self,netlist,[PartPropertyCategory('TransmissionLines'),PartPropertyPartName('Telegrapher'),PartPropertyDefaultReferenceDesignator('T?'),PartPropertyResistance(),PartPropertyInductance(),PartPropertyConductance(),PartPropertyCapacitance(),PartPropertySections()]+propertiesList,partPicture)
+        Device.__init__(self,netlist,[PartPropertyCategory('TransmissionLines'),PartPropertyPartName('Telegrapher'),PartPropertyDefaultReferenceDesignator('T?'),PartPropertyResistance(resistance=0.0),PartPropertyInductance(),PartPropertyConductance(),PartPropertyCapacitance(),PartPropertySections()]+propertiesList,partPicture)
 
 class DeviceTelegrapherFourPort(Device):
     def __init__(self,propertiesList,partPicture):
         netlist=DeviceNetListLine(partname='telegrapher',values=[('rp',True),('lp',True),('gp',True),('cp',True),('rn',True),('ln',True),('gn',True),('cn',True),('lm',True),('gm',True),('cm',True),('sect',True)])
         Device.__init__(self,netlist,[PartPropertyCategory('TransmissionLines'),PartPropertyPartName('Telegrapher'),PartPropertyDefaultReferenceDesignator('T?'),
-            PartPropertyResistance(keyword='rp',descriptionPrefix='positive '),PartPropertyInductance(keyword='lp',descriptionPrefix='positive '),PartPropertyConductance(keyword='gp',descriptionPrefix='positive '),PartPropertyCapacitance(keyword='cp',descriptionPrefix='positive '),
-            PartPropertyResistance(keyword='rn',descriptionPrefix='negative '),PartPropertyInductance(keyword='ln',descriptionPrefix='negative '),PartPropertyConductance(keyword='gn',descriptionPrefix='negative '),PartPropertyCapacitance(keyword='cn',descriptionPrefix='negative '),
+            PartPropertyResistance(keyword='rp',descriptionPrefix='positive ',resistance=0.0),PartPropertyInductance(keyword='lp',descriptionPrefix='positive '),PartPropertyConductance(keyword='gp',descriptionPrefix='positive '),PartPropertyCapacitance(keyword='cp',descriptionPrefix='positive '),
+            PartPropertyResistance(keyword='rn',descriptionPrefix='negative ',resistance=0.0),PartPropertyInductance(keyword='ln',descriptionPrefix='negative '),PartPropertyConductance(keyword='gn',descriptionPrefix='negative '),PartPropertyCapacitance(keyword='cn',descriptionPrefix='negative '),
             PartPropertyConductance(keyword='gm',descriptionPrefix='mutual '),PartPropertyInductance(keyword='lm',descriptionPrefix='mutual '),PartPropertyCapacitance(keyword='cm',descriptionPrefix='mutual '),
             PartPropertySections()]+propertiesList,partPicture)
 
