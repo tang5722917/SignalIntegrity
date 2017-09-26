@@ -130,9 +130,10 @@ class ProjectFile(ProjectFileBase):
         self.SetValue('Drawing.DrawingProperties.Grid',app.Drawing.grid)
         self.SetValue('Drawing.DrawingProperties.Originx',app.Drawing.originx)
         self.SetValue('Drawing.DrawingProperties.Originy',app.Drawing.originy)
-        self.SetValue('Drawing.DrawingProperties.Width',app.Drawing.canvas.winfo_width())
-        self.SetValue('Drawing.DrawingProperties.Height',app.Drawing.canvas.winfo_height())
-        self.SetValue('Drawing.DrawingProperties.Geometry',app.root.geometry())
+        if not app.Drawing.canvas is None:
+            self.SetValue('Drawing.DrawingProperties.Width',app.Drawing.canvas.winfo_width())
+            self.SetValue('Drawing.DrawingProperties.Height',app.Drawing.canvas.winfo_height())
+            self.SetValue('Drawing.DrawingProperties.Geometry',app.root.geometry())
         self.SetValue('Drawing.Schematic.Devices',[DeviceConfiguration() for _ in range(len(app.Drawing.schematic.deviceList))])
         for d in range(len(self.GetValue('Drawing.Schematic.Devices'))):
             deviceProject=self.GetValue('Drawing.Schematic.Devices')[d]

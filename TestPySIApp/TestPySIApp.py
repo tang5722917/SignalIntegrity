@@ -328,6 +328,9 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         ]
         for filename in filesList:
             filename=filename.replace('/home/peterp/Work','../..')
+            pysi=self.Preliminary(filename)
+            pysi.SaveProject()
+            filename=filename.replace('.xml','.pysi_project')
             self.Preliminary(filename)
 
 if __name__ == "__main__":

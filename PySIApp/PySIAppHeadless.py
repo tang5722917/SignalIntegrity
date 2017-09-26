@@ -10,7 +10,7 @@ import xml.etree.ElementTree as et
 from Tkinter import ALL
 
 from CalculationProperties import CalculationProperties
-from Files import FileParts
+from Files import FileParts,ConvertFileNameToRelativePath
 from Schematic import Schematic
 from ProjectFile import ProjectFile
 from Wire import Wire
@@ -105,6 +105,12 @@ class PySIAppHeadless(object):
                 self.project=ProjectFile().Read(self.fileparts.FullFilePathExtension('.pysi_project'),self.Drawing)
         except:
             return False
+        self.Drawing.schematic.Consolidate()
+        for device in self.Drawing.schematic.deviceList:
+            device.selected=False
+        for wireProject in self.Drawing.schematic.project.GetValue('Drawing.Schematic.Wires'):
+            for vertexProject in wireProject.GetValue('Vertex'):
+                vertexProject.SetValue('Selected',False)
         return True
 
     # Legacy File Format
@@ -159,6 +165,18 @@ class PySIAppHeadless(object):
             self.project=project
             self.Drawing.InitFromProject(self.project)
             return self
+
+    def SaveProjectToFile(self,filename):
+        self.fileparts=FileParts(filename)
+        os.chdir(self.fileparts.AbsoluteFilePath())
+        self.fileparts=FileParts(filename)
+        self.project.Write(filename,self)
+
+    def SaveProject(self):
+        if self.fileparts.filename=='':
+            return
+        filename=self.fileparts.AbsoluteFilePath()+'/'+self.fileparts.FileNameWithExtension(ext='.pysi_project')
+        self.SaveProjectToFile(filename)
 
     def config(self,cursor=None):
         pass
