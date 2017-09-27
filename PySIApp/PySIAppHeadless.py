@@ -163,6 +163,7 @@ class PySIAppHeadless(object):
             project.SetValue('CalculationProperties.FrequencyResolution', project.GetValue('CalculationProperties.EndFrequency')/project.GetValue('CalculationProperties.FrequencyPoints'))
             project.SetValue('CalculationProperties.ImpulseResponseLength',1./project.GetValue('CalculationProperties.FrequencyResolution'))
             self.project=project
+            del self.calculationProperties
             self.Drawing.InitFromProject(self.project)
             return self
 
@@ -186,8 +187,10 @@ class PySIAppHeadless(object):
         import SignalIntegrity as si
         spnp=si.p.SystemSParametersNumericParser(
             si.fd.EvenlySpacedFrequencyList(
-                self.calculationProperties.endFrequency,
-                self.calculationProperties.frequencyPoints))
+                self.project.GetValue('CalculationProperties.EndFrequency'),
+                self.project.GetValue('CalculationProperties.FrequencyPoints')
+            )
+        )
         spnp.AddLines(netList)
         try:
             sp=spnp.SParameters()
@@ -200,8 +203,9 @@ class PySIAppHeadless(object):
         netListText=netList.Text()
         import SignalIntegrity as si
         fd=si.fd.EvenlySpacedFrequencyList(
-            self.calculationProperties.endFrequency,
-            self.calculationProperties.frequencyPoints)
+            self.project.GetValue('CalculationProperties.EndFrequency'),
+            self.project.GetValue('CalculationProperties.FrequencyPoints')
+            )
         snp=si.p.SimulatorNumericParser(fd)
         snp.AddLines(netListText)
         try:
@@ -241,7 +245,7 @@ class PySIAppHeadless(object):
                         outputWaveformList[outputWaveformIndex]=outputWaveform
                         break
         outputWaveformList = [wf.Adapt(
-            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.calculationProperties.userSampleRate))
+            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.project.GetValue('CalculationProperties.UserSampleRate')))
                 for wf in outputWaveformList]
         return (sourceNames,outputWaveformLabels,transferMatrices,outputWaveformList)
 
@@ -251,8 +255,10 @@ class PySIAppHeadless(object):
         import SignalIntegrity as si
         snp=si.p.VirtualProbeNumericParser(
             si.fd.EvenlySpacedFrequencyList(
-                self.calculationProperties.endFrequency,
-                self.calculationProperties.frequencyPoints))
+                self.project.GetValue('CalculationProperties.EndFrequency'),
+                self.project.GetValue('CalculationProperties.FrequencyPoints')
+            )
+        )
         snp.AddLines(netListText)       
         try:
             transferMatrices=snp.TransferMatrices()
@@ -291,7 +297,7 @@ class PySIAppHeadless(object):
                         outputWaveformList[outputWaveformIndex]=outputWaveform
                         break
         outputWaveformList = [wf.Adapt(
-            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.calculationProperties.userSampleRate))
+            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.project.GetValue('CalculationProperties.UserSampleRate')))
                 for wf in outputWaveformList]
         return (sourceNames,outputWaveformLabels,transferMatrices,outputWaveformList)
 
@@ -300,8 +306,10 @@ class PySIAppHeadless(object):
         import SignalIntegrity as si
         dnp=si.p.DeembedderNumericParser(
             si.fd.EvenlySpacedFrequencyList(
-                self.calculationProperties.endFrequency,
-                self.calculationProperties.frequencyPoints))
+                self.project.GetValue('CalculationProperties.EndFrequency'),
+                self.project.GetValue('CalculationProperties.FrequencyPoints')
+            )
+        )
         dnp.AddLines(netList)
 
         try:

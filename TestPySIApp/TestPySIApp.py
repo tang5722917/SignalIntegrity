@@ -29,6 +29,7 @@ class Test(unittest.TestCase,SParameterCompareHelper):
     relearn=True
     debug=False
     checkPictures=True
+    keepNewFormats=False
     def TestFileName(self,filename):
         return filename.replace('..', 'Up').replace('/','_').split('.')[0]
     def PictureChecker(self,pysi,filename):
@@ -112,9 +113,13 @@ class Test(unittest.TestCase,SParameterCompareHelper):
     def SParameterResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
         if filename.split('.')[-1]=='xml':
             pysi=self.SParameterResultsCheckerOne(filename,checkPicture,checkNetlist)
-            pysi.SaveProject()
             filename=filename.replace('.xml','.pysi_project')
-            self.SParameterResultsCheckerOne(filename,checkPicture,checkNetlist)
+            os.chdir(os.path.dirname(os.path.realpath(__file__)))
+            pysi.SaveProjectToFile(os.path.realpath(filename))
+            pysi=self.SParameterResultsCheckerOne(filename,checkPicture,checkNetlist)
+            if not self.keepNewFormats:
+                os.chdir(os.path.dirname(os.path.realpath(__file__)))
+                os.remove(os.path.realpath(filename))
         else:
             self.SParameterResultsCheckerOne(filename, checkPicture, checkNetlist)    
     def SimulationResultsCheckerOne(self,filename,checkPicture=True,checkNetlist=True):
@@ -143,11 +148,15 @@ class Test(unittest.TestCase,SParameterCompareHelper):
     def SimulationResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
         if filename.split('.')[-1]=='xml':
             pysi=self.SimulationResultsCheckerOne(filename,checkPicture,checkNetlist)
-            pysi.SaveProject()
             filename=filename.replace('.xml','.pysi_project')
-            self.SimulationResultsCheckerOne(filename,checkPicture,checkNetlist)
+            os.chdir(os.path.dirname(os.path.realpath(__file__)))
+            pysi.SaveProjectToFile(os.path.realpath(filename))
+            pysi=self.SimulationResultsCheckerOne(filename,checkPicture,checkNetlist)
+            if not self.keepNewFormats:
+                os.chdir(os.path.dirname(os.path.realpath(__file__)))
+                os.remove(os.path.realpath(filename))
         else:
-            self.SimulationResultsChecker(filename, checkPicture, checkNetlist)    
+            self.SimulationResultsChecker(filename, checkPicture, checkNetlist)
     def VirtualProbeResultsCheckerOne(self,filename,checkPicture=True,checkNetlist=True):
         pysi=self.Preliminary(filename, checkPicture, checkNetlist)
         result=pysi.VirtualProbe()
@@ -174,9 +183,13 @@ class Test(unittest.TestCase,SParameterCompareHelper):
     def VirtualProbeResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
         if filename.split('.')[-1]=='xml':
             pysi=self.VirtualProbeResultsCheckerOne(filename,checkPicture,checkNetlist)
-            pysi.SaveProject()
             filename=filename.replace('.xml','.pysi_project')
-            self.VirtualProbeResultsCheckerOne(filename,checkPicture,checkNetlist)
+            os.chdir(os.path.dirname(os.path.realpath(__file__)))
+            pysi.SaveProjectToFile(os.path.realpath(filename))
+            pysi=self.VirtualProbeResultsCheckerOne(filename,checkPicture,checkNetlist)
+            if not self.keepNewFormats:
+                os.chdir(os.path.dirname(os.path.realpath(__file__)))
+                os.remove(os.path.realpath(filename))
         else:
             self.VirtualProbeResultsCheckerOne(filename, checkPicture, checkNetlist)    
     def DeembeddingResultsCheckerOne(self,filename,checkPicture=True,checkNetlist=True):
@@ -195,9 +208,13 @@ class Test(unittest.TestCase,SParameterCompareHelper):
     def DeembeddingResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
         if filename.split('.')[-1]=='xml':
             pysi=self.DeembeddingResultsCheckerOne(filename,checkPicture,checkNetlist)
-            pysi.SaveProject()
             filename=filename.replace('.xml','.pysi_project')
-            self.DeembeddingResultsCheckerOne(filename,checkPicture,checkNetlist)
+            os.chdir(os.path.dirname(os.path.realpath(__file__)))
+            pysi.SaveProjectToFile(os.path.realpath(filename))
+            pysi=self.DeembeddingResultsCheckerOne(filename,checkPicture,checkNetlist)
+            if not self.keepNewFormats:
+                os.chdir(os.path.dirname(os.path.realpath(__file__)))
+                os.remove(os.path.realpath(filename))
         else:
             self.DeembeddingResultsCheckerOne(filename, checkPicture, checkNetlist)    
     def testFourPortTLineTest(self):
@@ -367,7 +384,9 @@ class Test(unittest.TestCase,SParameterCompareHelper):
             pysi=self.Preliminary(filename)
             pysi.SaveProject()
             filename=filename.replace('.xml','.pysi_project')
-            self.Preliminary(filename)
+            pysi=self.Preliminary(filename)
+            if not self.keepNewFormats:
+                os.remove(pysi.fileparts.FullFilePathExtension('pysi_project'))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
