@@ -99,7 +99,7 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         if checkNetlist:
             self.NetListChecker(pysi,filename)
         return pysi
-    def SParameterResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
+    def SParameterResultsCheckerOne(self,filename,checkPicture=True,checkNetlist=True):
         pysi=self.Preliminary(filename, checkPicture, checkNetlist)
         result=pysi.CalculateSParameters()
         self.assertIsNotNone(result, filename+' produced none')
@@ -108,7 +108,16 @@ class Test(unittest.TestCase,SParameterCompareHelper):
         spfilename=self.TestFileName(filename)+'.'+spfilename.split('.')[-1]
         sp=result[0]
         self.SParameterRegressionChecker(sp, spfilename)
-    def SimulationResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
+        return pysi
+    def SParameterResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
+        if filename.split('.')[-1]=='xml':
+            pysi=self.SParameterResultsCheckerOne(filename,checkPicture,checkNetlist)
+            pysi.SaveProject()
+            filename=filename.replace('.xml','.pysi_project')
+            self.SParameterResultsCheckerOne(filename,checkPicture,checkNetlist)
+        else:
+            self.SParameterResultsCheckerOne(filename, checkPicture, checkNetlist)    
+    def SimulationResultsCheckerOne(self,filename,checkPicture=True,checkNetlist=True):
         pysi=self.Preliminary(filename, checkPicture, checkNetlist)
         result=pysi.Simulate()
         self.assertIsNotNone(result, filename+' produced none')
@@ -130,7 +139,16 @@ class Test(unittest.TestCase,SParameterCompareHelper):
             wf=outputWaveforms[i]
             wffilename=self.TestFileName(filename)+'_'+outputNames[i]+'.txt'
             self.WaveformRegressionChecker(wf, wffilename)
-    def VirtualProbeResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
+        return pysi
+    def SimulationResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
+        if filename.split('.')[-1]=='xml':
+            pysi=self.SimulationResultsCheckerOne(filename,checkPicture,checkNetlist)
+            pysi.SaveProject()
+            filename=filename.replace('.xml','.pysi_project')
+            self.SimulationResultsCheckerOne(filename,checkPicture,checkNetlist)
+        else:
+            self.SimulationResultsChecker(filename, checkPicture, checkNetlist)    
+    def VirtualProbeResultsCheckerOne(self,filename,checkPicture=True,checkNetlist=True):
         pysi=self.Preliminary(filename, checkPicture, checkNetlist)
         result=pysi.VirtualProbe()
         self.assertIsNotNone(result, filename+' produced none')
@@ -152,7 +170,16 @@ class Test(unittest.TestCase,SParameterCompareHelper):
             wf=outputWaveforms[i]
             wffilename=self.TestFileName(filename)+'_'+outputNames[i]+'.txt'
             self.WaveformRegressionChecker(wf, wffilename)
-    def DeembeddingResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
+        return pysi
+    def VirtualProbeResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
+        if filename.split('.')[-1]=='xml':
+            pysi=self.VirtualProbeResultsCheckerOne(filename,checkPicture,checkNetlist)
+            pysi.SaveProject()
+            filename=filename.replace('.xml','.pysi_project')
+            self.VirtualProbeResultsCheckerOne(filename,checkPicture,checkNetlist)
+        else:
+            self.VirtualProbeResultsCheckerOne(filename, checkPicture, checkNetlist)    
+    def DeembeddingResultsCheckerOne(self,filename,checkPicture=True,checkNetlist=True):
         pysi=self.Preliminary(filename, checkPicture, checkNetlist)
         result=pysi.Deembed()
         self.assertIsNotNone(result, filename+' produced none')
@@ -164,6 +191,15 @@ class Test(unittest.TestCase,SParameterCompareHelper):
             sp=sps[i]
             spfilename=spfilenames[i]+'.s'+str(sp.m_P)+'p'
             self.SParameterRegressionChecker(sp, spfilename)
+        return pysi
+    def DeembeddingResultsChecker(self,filename,checkPicture=True,checkNetlist=True):
+        if filename.split('.')[-1]=='xml':
+            pysi=self.DeembeddingResultsCheckerOne(filename,checkPicture,checkNetlist)
+            pysi.SaveProject()
+            filename=filename.replace('.xml','.pysi_project')
+            self.DeembeddingResultsCheckerOne(filename,checkPicture,checkNetlist)
+        else:
+            self.DeembeddingResultsCheckerOne(filename, checkPicture, checkNetlist)    
     def testFourPortTLineTest(self):
         self.SimulationResultsChecker('FourPortTLineTest.xml')
     def testFilterTest(self):
