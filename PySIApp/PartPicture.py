@@ -45,7 +45,7 @@ class PartPicture(object):
     def __init__(self,origin,pinList,innerBox,boundingBox,propertiesLocation,orientation,mirroredHorizontally,mirroredVertically,rotationPoint=None):
         if rotationPoint==None:
             if len(pinList)==1:
-                self.rotationPoint=pinList[0].pinConnectionPoint
+                self.rotationPoint=eval(pinList[0].GetValue('ConnectionPoint'))
             else:
                 self.rotationPoint = ((innerBox[0][0]+innerBox[1][0])/2,(innerBox[0][1]+innerBox[1][1])/2)
         else: self.rotationPoint = rotationPoint
@@ -62,59 +62,60 @@ class PartPicture(object):
         ct=CoordinateTranslater(self.rotationPoint,self.orientation,self.mirroredHorizontally,self.mirroredVertically)
         self.pinList = copy.deepcopy(self.pinListSupplied)
         for pin in self.pinList:
-            if pin.pinOrientation=='t':
+            pinOrientation=pin.GetValue('Orientation')
+            if pinOrientation=='t':
                 if self.orientation=='0':
-                    if self.mirroredVertically: pin.pinOrientation = 'b'
-                    else: pin.pinOrientation='t'
+                    if self.mirroredVertically: pin.SetValue('Orientation','b')
+                    else: pin.SetValue('Orientation','t')
                 elif self.orientation=='90':
-                    if self.mirroredHorizontally: pin.pinOrientation='r'
-                    else: pin.pinOrientation='l'
+                    if self.mirroredHorizontally: pin.SetValue('Orientation','r')
+                    else: pin.SetValue('Orientation','l')
                 elif self.orientation=='180':
-                    if self.mirroredVertically: pin.pinOrientation='t'
-                    else: pin.pinOrientation='b'
+                    if self.mirroredVertically: pin.SetValue('Orientation','t')
+                    else: pin.SetValue('Orientation','b')
                 elif self.orientation=='270':
-                    if self.mirroredHorizontally: pin.pinOrientation='l'
-                    else: pin.pinOrientation='r'
-            elif pin.pinOrientation=='l':
+                    if self.mirroredHorizontally: pin.SetValue('Orientation','l')
+                    else: pin.SetValue('Orientation','r')
+            elif pinOrientation=='l':
                 if self.orientation=='0':
-                    if self.mirroredHorizontally: pin.pinOrientation='r'
-                    else: pin.pinOrientation='l'
+                    if self.mirroredHorizontally: pin.SetValue('Orientation','r')
+                    else: pin.SetValue('Orientation','l')
                 elif self.orientation=='90':
-                    if self.mirroredVertically: pin.pinOrientation='t'
-                    else: pin.pinOrientation='b'
+                    if self.mirroredVertically: pin.SetValue('Orientation','t')
+                    else: pin.SetValue('Orientation','b')
                 elif self.orientation=='180':
-                    if self.mirroredHorizontally: pin.pinOrientation='l'
-                    else: pin.pinOrientation='r'
+                    if self.mirroredHorizontally: pin.SetValue('Orientation','l')
+                    else: pin.SetValue('Orientation','r')
                 elif self.orientation=='270':
-                    if self.mirroredVertically: pin.pinOrientation = 'b'
-                    else: pin.pinOrientation='t'
-            elif pin.pinOrientation == 'b':
+                    if self.mirroredVertically: pin.SetValue('Orientation','b')
+                    else: pin.SetValue('Orientation','t')
+            elif pinOrientation == 'b':
                 if self.orientation=='0':
-                    if self.mirroredVertically: pin.pinOrientation='t'
-                    else: pin.pinOrientation='b'
+                    if self.mirroredVertically: pin.SetValue('Orientation','t')
+                    else: pin.SetValue('Orientation','b')
                 elif self.orientation=='90':
-                    if self.mirroredHorizontally: pin.pinOrientation='l'
-                    else: pin.pinOrientation='r'
+                    if self.mirroredHorizontally: pin.SetValue('Orientation','l')
+                    else: pin.SetValue('Orientation','r')
                 elif self.orientation=='180':
-                    if self.mirroredVertically: pin.pinOrientation = 'b'
-                    else: pin.pinOrientation='t'
+                    if self.mirroredVertically: pin.SetValue('Orientation','b')
+                    else: pin.SetValue('Orientation','t')
                 elif self.orientation=='270':
-                    if self.mirroredHorizontally: pin.pinOrientation='r'
-                    else: pin.pinOrientation='l'
-            elif pin.pinOrientation=='r':
+                    if self.mirroredHorizontally: pin.SetValue('Orientation','r')
+                    else: pin.SetValue('Orientation','l')
+            elif pinOrientation=='r':
                 if self.orientation=='0':
-                    if self.mirroredHorizontally: pin.pinOrientation='l'
-                    else: pin.pinOrientation='r'
+                    if self.mirroredHorizontally: pin.SetValue('Orientation','l')
+                    else: pin.SetValue('Orientation','r')
                 elif self.orientation=='90':
-                    if self.mirroredVertically: pin.pinOrientation = 'b'
-                    else: pin.pinOrientation='t'
+                    if self.mirroredVertically: pin.SetValue('Orientation','b')
+                    else: pin.SetValue('Orientation','t')
                 elif self.orientation=='180':
-                    if self.mirroredHorizontally: pin.pinOrientation='r'
-                    else: pin.pinOrientation='l'
+                    if self.mirroredHorizontally: pin.SetValue('Orientation','r')
+                    else: pin.SetValue('Orientation','l')
                 elif self.orientation=='270':
-                    if self.mirroredVertically: pin.pinOrientation='t'
-                    else: pin.pinOrientation='b'
-            pin.pinConnectionPoint = ct.Translate(pin.pinConnectionPoint)
+                    if self.mirroredVertically: pin.SetValue('Orientation','t')
+                    else: pin.SetValue('Orientation','b')
+            pin.SetValue('ConnectionPoint',str(ct.Translate(eval(pin.GetValue('ConnectionPoint')))))
         self.boundingBox=[ct.Translate(self.boundingBoxSupplied[0]),ct.Translate(self.boundingBoxSupplied[1])]
         self.boundingBox=[(min(self.boundingBox[0][0],self.boundingBox[1][0]),min(self.boundingBox[0][1],self.boundingBox[1][1])),
                      (max(self.boundingBox[0][0],self.boundingBox[1][0]),max(self.boundingBox[0][1],self.boundingBox[1][1]))]
@@ -222,7 +223,8 @@ class PartPicture(object):
             canvas.create_text(locations[v][0],locations[v][1],
                 text=self.visiblePartPropertyList[v],anchor=anchorString,fill=self.color)
     def PinCoordinates(self):
-        return [(pin.pinConnectionPoint[0]+self.origin[0],pin.pinConnectionPoint[1]+self.origin[1]) for pin in self.pinList]
+
+        return [(eval(pin.GetValue('ConnectionPoint'))[0]+self.origin[0],eval(pin.GetValue('ConnectionPoint'))[1]+self.origin[1]) for pin in self.pinList]
     def Selected(self,selected):
         if selected:
             self.color='blue'
@@ -1432,7 +1434,7 @@ class PartPictureStim(PartPicture):
         if not connected is None:
             for pinIndex in range(len(self.pinList)):
                 pin = self.pinList[pinIndex]
-                if pin.pinNumber == 2:
+                if pin.GetValue('Number') == 2:
                     connected[pinIndex]=True
         PartPicture.DrawDevice(self,canvas,grid,drawingOrigin,False,connected)
 

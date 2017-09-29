@@ -98,7 +98,7 @@ class NetList(object):
                 deviceIndexOfFirstDeviceInNet = net[0][0]
                 pinIndexOfFirstDeviceInNet = net[0][1]
                 firstDeviceName = schematic.deviceList[deviceIndexOfFirstDeviceInNet]['ref'].GetValue()
-                firstDevicePinNumber = schematic.deviceList[deviceIndexOfFirstDeviceInNet].partPicture.current.pinList[pinIndexOfFirstDeviceInNet].pinNumber
+                firstDevicePinNumber = schematic.deviceList[deviceIndexOfFirstDeviceInNet].partPicture.current.pinList[pinIndexOfFirstDeviceInNet].GetValue('Number')
                 devicePinString = firstDeviceName + ' ' + str(firstDevicePinNumber)
                 for measure in measureList:
                     deviceIndex = measure[0]
@@ -118,7 +118,7 @@ class NetList(object):
                     deviceIndex = devicePortIndex[0]
                     pinIndex = devicePortIndex[1]
                     deviceName = schematic.deviceList[deviceIndex]['ref'].GetValue()
-                    pinNumber = schematic.deviceList[deviceIndex].partPicture.current.pinList[pinIndex].pinNumber
+                    pinNumber = schematic.deviceList[deviceIndex].partPicture.current.pinList[pinIndex].GetValue('Number')
                     thisConnectionString = thisConnectionString + ' '+ str(deviceName) +' '+str(pinNumber)
                 self.textToShow.append(thisConnectionString)
             if len(stimList)>0: # there is at least one stim on this net
@@ -136,7 +136,7 @@ class NetList(object):
                     # this is indicated by a pin 1 connection to the net
                     # and the rest of the stims with a pin 2 connection
                     for stim in stimList:
-                        if deviceList[stim[0]].partPicture.current.pinList[stim[1]].pinNumber==1:
+                        if deviceList[stim[0]].partPicture.current.pinList[stim[1]].GetValue('Number')==1:
                             definingStimListThisNet.append(stim)
                         else:
                             directStimListThisNet.append(stim)
@@ -149,7 +149,7 @@ class NetList(object):
                 else: # there are stims and devices on this net
                     # all of the stim pins must be pin 1
                     # and the pin 1 must be connected directly to one of the device ports on the net
-                    if all(deviceList[stim[0]].partPicture.current.pinList[stim[1]].pinNumber==1 for stim in stimList): # all of the stim pins are pin 1
+                    if all(deviceList[stim[0]].partPicture.current.pinList[stim[1]].GetValue('Number')==1 for stim in stimList): # all of the stim pins are pin 1
                         directStimListThisNet=stimList
                 # okay - now that we're here, we either have one defining stim and one or more direct stims
                 # which implies that this is a stim net used to define a stimdef or...
@@ -170,7 +170,7 @@ class NetList(object):
                                     self.stimNames.append(stimDeviceIndex)
                                     stimNameString = 'm'+str(len(self.stimNames))
                                 deviceName = deviceList[deviceIndex]['ref'].GetValue()
-                                devicePinNumber = deviceList[deviceIndex].partPicture.current.pinList[devicePinIndex].pinNumber
+                                devicePinNumber = deviceList[deviceIndex].partPicture.current.pinList[devicePinIndex].GetValue('Number')
                                 devicePinString = deviceName + ' ' + str(devicePinNumber)
                                 self.textToShow.append(deviceList[stimDeviceIndex].NetListLine() + ' ' + stimNameString + ' ' + devicePinString)
                 elif len(definingStimListThisNet)==1: #stimdef

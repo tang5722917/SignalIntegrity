@@ -47,6 +47,16 @@ class PartPropertyConfiguration(XMLConfiguration):
         else:
             return []
 
+class PartPinConfiguration(XMLConfiguration):
+    def __init__(self):
+        XMLConfiguration.__init__(self,'PartPinConfiguration',write=False)
+        self.dict['Number']=XMLPropertyDefaultInt('PinNumber')
+        self.dict['ConnectionPoint']=XMLPropertyDefaultString('ConnectionPoint')
+        self.dict['Orientation']=XMLPropertyDefaultString('Orientation')
+        self.dict['NumberVisible']=XMLPropertyDefaultBool('NumberVisible')
+        self.dict['Visible']=XMLPropertyDefaultBool('Visible')
+        self.dict['NumberingMatters']=XMLPropertyDefaultBool('NumberingMatters')
+
 class PartPictureConfiguration(XMLConfiguration):
     def __init__(self):
         XMLConfiguration.__init__(self,'PartPictureConfiguration')
