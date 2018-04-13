@@ -12,7 +12,6 @@ import unittest
 
 from TestConversions import *
 from TestDeembedding import *
-from TestFrequencyDependentSParameters import *
 from TestRefImp import *
 from TestSParameterFile import *
 from TestSplines import *
@@ -42,6 +41,7 @@ from TestAdaptDecimate import *
 from TestSPARQSOLT import *
 from TestSPARQFourPort import *
 from TDRSimulationFourPortScaled import *
+from Sequid import *
 
 if __name__ == '__main__':
     unittest.main()

@@ -206,8 +206,8 @@ class DeviceResistor(Device):
 
 class DeviceCapacitor(Device):
     def __init__(self,propertiesList,partPicture):
-        netlist=DeviceNetListLine(partname='C',values=[('c',False)])
-        Device.__init__(self,netlist,[PartPropertyCategory('Capacitors'),PartPropertyPartName('Capacitor'),PartPropertyDefaultReferenceDesignator('C?'),PartPropertyCapacitance()]+propertiesList,partPicture)
+        netlist=DeviceNetListLine(partname='C',values=[('c',False),('esr',True),('df',True)])
+        Device.__init__(self,netlist,[PartPropertyCategory('Capacitors'),PartPropertyPartName('Capacitor'),PartPropertyDefaultReferenceDesignator('C?'),PartPropertyCapacitance(),PartPropertyDissipationFactor(),PartPropertyESR()]+propertiesList,partPicture)
 
 class DeviceInductor(Device):
     def __init__(self,propertiesList,partPicture):
@@ -376,17 +376,44 @@ class DeviceTransmissionLine(Device):
 
 class DeviceTelegrapherTwoPort(Device):
     def __init__(self,propertiesList,partPicture):
-        netlist=DeviceNetListLine(partname='telegrapher',values=[('r',True),('l',True),('g',True),('c',True),('sect',True)])
-        Device.__init__(self,netlist,[PartPropertyCategory('TransmissionLines'),PartPropertyPartName('Telegrapher'),PartPropertyDefaultReferenceDesignator('T?'),PartPropertyResistance(resistance=0.0),PartPropertyInductance(),PartPropertyConductance(),PartPropertyCapacitance(),PartPropertySections()]+propertiesList,partPicture)
+        netlist=DeviceNetListLine(partname='telegrapher',values=[('r',True),('rse',True),('l',True),('g',True),('c',True),('df',True),('sect',True)])
+        Device.__init__(self,netlist,[PartPropertyCategory('TransmissionLines'),
+                              PartPropertyPartName('Telegrapher'),
+                              PartPropertyDefaultReferenceDesignator('T?'),
+                              PartPropertyResistance(resistance=0.0),
+                              PartPropertyResistanceSkinEffect(),
+                              PartPropertyInductance(),
+                              PartPropertyConductance(),
+                              PartPropertyCapacitance(),
+                              PartPropertyDissipationFactor(),
+                              PartPropertySections(sections=0)]+propertiesList,partPicture)
 
 class DeviceTelegrapherFourPort(Device):
     def __init__(self,propertiesList,partPicture):
-        netlist=DeviceNetListLine(partname='telegrapher',values=[('rp',True),('lp',True),('gp',True),('cp',True),('rn',True),('ln',True),('gn',True),('cn',True),('lm',True),('gm',True),('cm',True),('sect',True)])
-        Device.__init__(self,netlist,[PartPropertyCategory('TransmissionLines'),PartPropertyPartName('Telegrapher'),PartPropertyDefaultReferenceDesignator('T?'),
-            PartPropertyResistance(keyword='rp',descriptionPrefix='positive ',resistance=0.0),PartPropertyInductance(keyword='lp',descriptionPrefix='positive '),PartPropertyConductance(keyword='gp',descriptionPrefix='positive '),PartPropertyCapacitance(keyword='cp',descriptionPrefix='positive '),
-            PartPropertyResistance(keyword='rn',descriptionPrefix='negative ',resistance=0.0),PartPropertyInductance(keyword='ln',descriptionPrefix='negative '),PartPropertyConductance(keyword='gn',descriptionPrefix='negative '),PartPropertyCapacitance(keyword='cn',descriptionPrefix='negative '),
-            PartPropertyConductance(keyword='gm',descriptionPrefix='mutual '),PartPropertyInductance(keyword='lm',descriptionPrefix='mutual '),PartPropertyCapacitance(keyword='cm',descriptionPrefix='mutual '),
-            PartPropertySections()]+propertiesList,partPicture)
+        netlist=DeviceNetListLine(partname='telegrapher',
+            values=[('rp',True),('rsep',True),('lp',True),('gp',True),('cp',True),('dfp',True),
+                    ('rn',True),('rsen',True),('ln',True),('gn',True),('cn',True),('dfn',True),
+                    ('lm',True),('gm',True),('cm',True),('dfm',True),('sect',True)])
+        Device.__init__(self,netlist,[PartPropertyCategory('TransmissionLines'),
+                              PartPropertyPartName('Telegrapher'),
+                              PartPropertyDefaultReferenceDesignator('T?'),
+                              PartPropertyResistance(keyword='rp',descriptionPrefix='positive ',resistance=0.0),
+                              PartPropertyResistanceSkinEffect(keyword='rsep',descriptionPrefix='positive '),
+                              PartPropertyInductance(keyword='lp',descriptionPrefix='positive '),
+                              PartPropertyConductance(keyword='gp',descriptionPrefix='positive '),
+                              PartPropertyCapacitance(keyword='cp',descriptionPrefix='positive '),
+                              PartPropertyDissipationFactor(keyword='dfp',descriptionPrefix='positive '),
+                              PartPropertyResistance(keyword='rn',descriptionPrefix='negative ',resistance=0.0),
+                              PartPropertyResistanceSkinEffect(keyword='rsen',descriptionPrefix='negative '),
+                              PartPropertyInductance(keyword='ln',descriptionPrefix='negative '),
+                              PartPropertyConductance(keyword='gn',descriptionPrefix='negative '),
+                              PartPropertyCapacitance(keyword='cn',descriptionPrefix='negative '),
+                              PartPropertyDissipationFactor(keyword='dfn',descriptionPrefix='negative '),
+                              PartPropertyConductance(keyword='gm',descriptionPrefix='mutual '),
+                              PartPropertyInductance(keyword='lm',descriptionPrefix='mutual '),
+                              PartPropertyCapacitance(keyword='cm',descriptionPrefix='mutual '),
+                              PartPropertyDissipationFactor(keyword='dfm',descriptionPrefix='mutual '),
+                              PartPropertySections(sections=0)]+propertiesList,partPicture)
 
 class DeviceVoltageNoiseSource(Device):
     def __init__(self,propertiesList,partPicture):

@@ -542,9 +542,9 @@ class TestPI(unittest.TestCase,SourcesTesterHelper,ResponseTesterHelper):
         plot=False
         if plot:
             import matplotlib.pyplot as plt
-            voy=Voutfd.Content('dB')
-            ioy=Ioutfd.Content('dB')
-            vivoy=VinMinusVoutfd.Content('dB')
+            voy=Voutfd.Values('dB')
+            ioy=Ioutfd.Values('dB')
+            vivoy=VinMinusVoutfd.Values('dB')
             vof=Voutfd.Frequencies('MHz')
             iof=Ioutfd.Frequencies('MHz')
             vivof=VinMinusVoutfd.Frequencies('MHz')
@@ -574,22 +574,22 @@ class TestPI(unittest.TestCase,SourcesTesterHelper,ResponseTesterHelper):
         ZsourceImpedance=[]
         for n in range(len(Voutfd)):
             try:
-                Zload=Voutfd.Content()[n]/Ioutfd.Content()[n]
+                Zload=Voutfd[n]/Ioutfd[n]
                 ZloadFrequencies.append(Voutfd.Frequencies()[n])
                 ZloadImpedance.append(Zload)
-                Zsource=VinMinusVoutfd.Content()[n]/Ioutfd.Content()[n]
+                Zsource=VinMinusVoutfd[n]/Ioutfd[n]
                 ZsourceFrequencies.append(Voutfd.Frequencies()[n])
                 ZsourceImpedance.append(Zsource)
             except Exception as e:
                 raise e
-        Zloadfd=si.fd.FrequencyContent(si.fd.GenericFrequencyList(ZloadFrequencies),ZloadImpedance)
-        Zsourcefd=si.fd.FrequencyContent(si.fd.GenericFrequencyList(ZsourceFrequencies),ZsourceImpedance)
+        Zloadfd=si.fd.FrequencyDomain(si.fd.GenericFrequencyList(ZloadFrequencies),ZloadImpedance)
+        Zsourcefd=si.fd.FrequencyDomain(si.fd.GenericFrequencyList(ZsourceFrequencies),ZsourceImpedance)
 
         plot=False
         if plot:
             import matplotlib.pyplot as plt
-            zsy=Zsourcefd.Content('mag')
-            zly=Zloadfd.Content('mag')
+            zsy=Zsourcefd.Values('mag')
+            zly=Zloadfd.Values('mag')
             zsf=Zsourcefd.Frequencies()
             zlf=Zloadfd.Frequencies()
             plt.subplot(1,1,1)
@@ -675,7 +675,7 @@ class TestPI(unittest.TestCase,SourcesTesterHelper,ResponseTesterHelper):
         vl=Vl.Values()
         il[0]=0.
         T=1./Vl.TimeDescriptor().Fs
-        K=Vl.TimeDescriptor().N
+        K=Vl.TimeDescriptor().K
         for k in range(1,K):
             il[k]=(vl[k]+L/T*il[k-1])/(L/T+R)
         Ilcalc=si.td.wf.Waveform(Vl.TimeDescriptor(),il)
@@ -833,7 +833,7 @@ class TestPI(unittest.TestCase,SourcesTesterHelper,ResponseTesterHelper):
         Vout=si.td.wf.Waveform().ReadFromFile('Waveform_TestPI_TestPI_testVRMParasitics_Vout.txt')
         Vin=si.td.wf.Waveform().ReadFromFile('Waveform_TestPI_TestPI_testVRMParasitics_Vin.txt')
         Vlcalc=Vin-Vout
-        K=Vlcalc.TimeDescriptor().N
+        K=Vlcalc.TimeDescriptor().K
         T=1./Vlcalc.TimeDescriptor().Fs
         L=220e-6
         R=.1

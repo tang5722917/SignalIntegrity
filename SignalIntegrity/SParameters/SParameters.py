@@ -1,12 +1,14 @@
-'''
- Teledyne LeCroy Inc. ("COMPANY") CONFIDENTIAL
- Unpublished Copyright (c) 2015-2016 Peter J. Pupalaikis and Teledyne LeCroy,
- All Rights Reserved.
+"""
+SParameters
+"""
+# Teledyne LeCroy Inc. ("COMPANY") CONFIDENTIAL
+# Unpublished Copyright (c) 2015-2016 Peter J. Pupalaikis and Teledyne LeCroy,
+# All Rights Reserved.
+#
+# Explicit license in accompanying README.txt file.  If you don't have that file
+# or do not agree to the terms in that file, then you are not licensed to use
+# this material whatsoever.
 
- Explicit license in accompanying README.txt file.  If you don't have that file
- or do not agree to the terms in that file, then you are not licensed to use
- this material whatsoever.
-'''
 from numpy import empty
 from numpy import array
 import cmath
@@ -18,11 +20,17 @@ import os
 from SignalIntegrity.Conversions import ReferenceImpedance
 from SignalIntegrity.FrequencyDomain.FrequencyList import FrequencyList
 from SignalIntegrity.FrequencyDomain.FrequencyResponse import FrequencyResponse
-from SParameterManipulation import SParameterManipulation
+from SignalIntegrity.SParameters.SParameterManipulation import SParameterManipulation
 from SignalIntegrity.PySIException import PySIExceptionSParameterFile
 
 class SParameters(SParameterManipulation):
+    """Class containing s-parameters"""
     def __init__(self,f,data,Z0=50.0):
+        """Constructor
+        @param f list of frequencies
+        @param data list of list of list matrices were each element is a list of list s-parameter matrix.
+        @param Z0 (optional) real or complex reference impedance
+        """
         self.m_sToken='S'; self.m_d=data; self.m_Z0=Z0
         self.m_f=FrequencyList(f)
         if not data is None:
@@ -31,12 +39,39 @@ class SParameters(SParameterManipulation):
             mat=self[0]
             if not mat is None: self.m_P=len(mat[0])
     def __getitem__(self,item): return self.m_d[item]
+    """overloads [item]
+    @param item integer index of list of list s-parameter matrix
+    @return list of list s-parameter matrix at index location
+    """
     def __len__(self): return len(self.m_f)
+    """overloads len()
+    @return the number of frequencies in the s-parameters
+    """
     def f(self): return self.m_f
+    """returns the frequencies of the s-parameters
+    @return list of frequencies"""
     def Response(self,ToP,FromP): return [mat[ToP-1][FromP-1] for mat in self]
+    """Response
+    @param ToP integer receive port
+    @param FromP integer driven port
+    @return list of complex as the frequency response at port ToP due to waves driven at FromP.
+    @see FrequencyResponse()
+    """
     def FrequencyResponse(self,ToP,FromP):
+        """FrequencyResponse
+        @param ToP integer receive port
+        @param FromP integer driven port
+        @return instance of class FrequencyResponse as the frequency response at port ToP due to waves driven at FromP.
+        """
         return FrequencyResponse(self.f(),self.Response(ToP,FromP))
     def WriteToFile(self,name,formatString=None):
+        """Writes the s-parameters to a file
+        @param name string filename to write to
+        @param formatString (optional) string containing the  format
+        Writes the file in the Touchstone 1.0 format using the format string provided.
+
+        If no format string is provided, uses ' MHz MA S R 50.0'
+        """
         # pragma: silent exclude
         try:
             filename, file_extension = os.path.splitext(name)
@@ -94,6 +129,10 @@ class SParameters(SParameterManipulation):
         spfile.close()
         return self
     def Resample(self,fl):
+        """Resamples the s-parameters onto a new frequency scale
+        @param fl list of frequencies to resample to.
+        @return instance of class SParameters containing resampled s-parameters
+        """
         if self.m_d is None:
             self.m_f=fl
             copy.deepcopy(self)
@@ -107,6 +146,11 @@ class SParameters(SParameterManipulation):
                     SR[n][o][i]=res[n]
         return SParameters(fl,SR,self.m_Z0)
     def SetReferenceImpedance(self,Z0):
+        """Sets the reference impedance as specified
+        @param Z0 real or complex reference impedance
+        @return self
+        Transforms the reference impedance of self to the new reference impedance Z0.
+        """
         if Z0 != self.m_Z0:
             for n in range(len(self.m_f)):
                 self.m_d[n]=ReferenceImpedance(self.m_d[n],Z0,self.m_Z0)

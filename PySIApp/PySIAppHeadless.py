@@ -98,7 +98,7 @@ class PySIAppHeadless(object):
             self.fileparts=FileParts(filename)
             os.chdir(self.fileparts.AbsoluteFilePath())
             self.fileparts=FileParts(filename)
-    
+
             if self.fileparts.fileext == '.xml':
                 self.OpenProjectFileLegacy(self.fileparts.FullFilePathExtension('.xml'))
             else:
@@ -245,7 +245,7 @@ class PySIAppHeadless(object):
                         outputWaveformList[outputWaveformIndex]=outputWaveform
                         break
         outputWaveformList = [wf.Adapt(
-            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.project.GetValue('CalculationProperties.UserSampleRate')))
+            si.td.wf.TimeDescriptor(wf.td.H,wf.td.K,self.project.GetValue('CalculationProperties.UserSampleRate')))
                 for wf in outputWaveformList]
         return (sourceNames,outputWaveformLabels,transferMatrices,outputWaveformList)
 
@@ -273,7 +273,7 @@ class PySIAppHeadless(object):
             sourceNames=netList.MeasureNames()
         except si.PySIException as e:
             return None
-        
+
         try:
             outputWaveformList = transferMatricesProcessor.ProcessWaveforms(inputWaveformList)
         except si.PySIException as e:
@@ -297,7 +297,7 @@ class PySIAppHeadless(object):
                         outputWaveformList[outputWaveformIndex]=outputWaveform
                         break
         outputWaveformList = [wf.Adapt(
-            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.project.GetValue('CalculationProperties.UserSampleRate')))
+            si.td.wf.TimeDescriptor(wf.td.H,wf.td.K,self.project.GetValue('CalculationProperties.UserSampleRate')))
                 for wf in outputWaveformList]
         return (sourceNames,outputWaveformLabels,transferMatrices,outputWaveformList)
 
@@ -320,7 +320,7 @@ class PySIAppHeadless(object):
         unknownNames=dnp.m_sd.UnknownNames()
         if len(unknownNames)==1:
             sp=[sp]
-        
+
         return (unknownNames,sp)
 
         filename=[]
@@ -329,5 +329,5 @@ class PySIAppHeadless(object):
             filename=unknownNames[u]+extension
             if self.fileparts.filename != '':
                 filename.append(self.fileparts.filename+'_'+filename)
-                
+
         return (unknownNames,sp,filename)

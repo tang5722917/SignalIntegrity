@@ -1,18 +1,18 @@
-'''
- Teledyne LeCroy Inc. ("COMPANY") CONFIDENTIAL
- Unpublished Copyright (c) 2015-2016 Peter J. Pupalaikis and Teledyne LeCroy,
- All Rights Reserved.
+# Teledyne LeCroy Inc. ("COMPANY") CONFIDENTIAL
+# Unpublished Copyright (c) 2015-2016 Peter J. Pupalaikis and Teledyne LeCroy,
+# All Rights Reserved.
+#
+# Explicit license in accompanying README.txt file.  If you don't have that file
+# or do not agree to the terms in that file, then you are not licensed to use
+# this material whatsoever.
 
- Explicit license in accompanying README.txt file.  If you don't have that file
- or do not agree to the terms in that file, then you are not licensed to use
- this material whatsoever.
-'''
 from numpy import matrix
 from numpy import array
 import math
 
 from SignalIntegrity.Conversions import Y2S
 
+# old definition
 def MutualOld(Ll,Lr,M,f,Z0=None,K=None):
     s=1j*2.*math.pi*f
     try:
@@ -23,6 +23,22 @@ def MutualOld(Ll,Lr,M,f,Z0=None,K=None):
     return array(Y2S(array(YM).tolist(),Z0,K)).tolist()
 
 def Mutual(Ll,Lr,M,f,Z0=None,K=None):
+    """Mutual
+    Mutual Inductance
+    @param Ll float self inductance of left leg
+    @param Lr float self inductance of right leg
+    @param M float mutual inductance between legs
+    @param f float frequency
+    @param Z0 (optional) float or complex reference impedance (assumed 50 Ohms)
+    @param K (optional) float or complex scaling factor (actually unused).
+    @return list of list representing s-parameter matrix of a mutual inductance
+    @remark The device is four port.\n
+    The left leg is from port 1 to 2.\n
+    The right leg is from port 3 to 4.\n
+    The arrow for the mutual points to ports 1 and 3.\n
+    @todo use Z0KHelper to resolve reference impedance and scaling factor.  Currently K is not used.
+    @todo remove old mutual inductance code
+    """
     s=1j*2.*math.pi*f
     D=s*s*(Ll*Lr-M*M)+2*Z0*s*(Ll+Lr)+4*Z0*Z0
     S11=(s*s*(Ll*Lr-M*M)+2*s*Ll*Z0)/D

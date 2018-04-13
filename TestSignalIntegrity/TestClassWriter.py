@@ -36,7 +36,7 @@ class TestWriteClass(unittest.TestCase,RoutineWriterTesterHelper):
     def testWriteFrequencyDomain(self):
         fileName="../SignalIntegrity/FrequencyDomain/FrequencyDomain.py"
         className='FrequencyDomain'
-        defName=['__init__','__getitem__','__setitem__','__len__','FrequencyList',
+        defName=['__init__','FrequencyList',
         'Frequencies','Values','ReadFromFile','WriteToFile']
         self.WriteClassCode(fileName,className,defName)
     def testWriteFrequencyResponse_Basic(self):
@@ -98,7 +98,7 @@ class TestWriteClass(unittest.TestCase,RoutineWriterTesterHelper):
     def testWriteWaveform_Values(self):
         fileName="../SignalIntegrity/TimeDomain/Waveform/Waveform.py"
         className='Waveform'
-        defName=['Values','__init__','__len__','__getitem__','__setitem__','Times','TimeDescriptor',]
+        defName=['Values','__init__','Times','TimeDescriptor',]
         self.WriteClassCode(fileName,className,defName)
     def testWriteWaveform_File(self):
         fileName="../SignalIntegrity/TimeDomain/Waveform/Waveform.py"
@@ -142,7 +142,7 @@ class TestWriteClass(unittest.TestCase,RoutineWriterTesterHelper):
     def testWriteFrequencyList_Frequencies(self):
         fileName="../SignalIntegrity/FrequencyDomain/FrequencyList.py"
         className='FrequencyList'
-        defName=['Frequencies','__init__','__len__','__getitem__','__setitem__','SetEvenlySpaced','SetList',
+        defName=['Frequencies','SetEvenlySpaced','SetList',
         'EvenlySpaced','CheckEvenlySpaced','__div__','__mul__','TimeDescriptor']
         self.WriteClassCode(fileName,className,defName)
     def testWriteEvenlySpacedFrequencyList_Init(self):
@@ -555,6 +555,11 @@ class TestWriteClass(unittest.TestCase,RoutineWriterTesterHelper):
         className='DeviceFactory'
         defName=['__init__']
         self.WriteClassCode(fileName,className,defName)
+    def testWriteDeviceFactoryInitContd(self):
+        fileName="../SignalIntegrity/Parsers/Devices/DeviceParser.py"
+        className='DeviceFactory'
+        defName=['__init__Contd']
+        self.WriteClassCode(fileName,className,defName)
     def testWriteDeviceFactoryMakeDevice(self):
         fileName="../SignalIntegrity/Parsers/Devices/DeviceParser.py"
         className='DeviceFactory'
@@ -595,6 +600,14 @@ class TestWriteClass(unittest.TestCase,RoutineWriterTesterHelper):
         className=''
         defName=['MixedModeConverterVoltage']
         self.WriteClassCode(fileName,className,defName)
+    def testWriteFrequencyContent(self):
+        fileName="../SignalIntegrity/FrequencyDomain/FrequencyContent.py"
+        className='FrequencyContent'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName,lineDefs=True)
 
 if __name__ == '__main__':
     unittest.main()

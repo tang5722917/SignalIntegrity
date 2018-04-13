@@ -625,12 +625,12 @@ class Test(unittest.TestCase,RoutineWriterTesterHelper,ResponseTesterHelper):
     def testSymbolicDeembeddingExample4(self):
         ds=si.sd.DeembedderSymbolic(size='small')
         ds.AddDevice('F',4)
-        ds.AddUnknown('?1',1)
-        ds.AddUnknown('?2',1)
+        ds.AddUnknown('U_1',1)
+        ds.AddUnknown('U_2',1)
         ds.AddPort('F',1,1)
         ds.AddPort('F',2,2)
-        ds.ConnectDevicePort('F',3,'?1',1)
-        ds.ConnectDevicePort('F',4,'?2',1)
+        ds.ConnectDevicePort('F',3,'U_1',1)
+        ds.ConnectDevicePort('F',4,'U_2',1)
         ds.SymbolicSolution().Emit()
         # pragma: exclude
         self.CheckSymbolicResult(self.id(),ds,'Book Example Symbolic Deembedding Solution 4')
@@ -1041,13 +1041,13 @@ class Test(unittest.TestCase,RoutineWriterTesterHelper,ResponseTesterHelper):
     def testSymbolicSolutionParserExample2Code(self):
         self.WriteCode('TestBook.py','testSymbolicSolutionParserExample2(self)',self.standardHeader)
     def testNumericSolutionExample2Code(self):
-        self.WriteCode('TestBook.py','testNumericSolutionExample2(self)',self.standardHeader)
+        self.WriteCode('TestBook.py','testNumericSolutionExample2(self)',[self.standardHeader[0]])
     def testNumericSolutionExample2aCode(self):
-        self.WriteCode('TestBook.py','testNumericSolutionExample2a(self)',self.standardHeader)
+        self.WriteCode('TestBook.py','testNumericSolutionExample2a(self)',[self.standardHeader[0]])
     def testNumericSolutionParserExample2Code(self):
-        self.WriteCode('TestBook.py','testNumericSolutionParserExample2(self)',self.standardHeader)
+        self.WriteCode('TestBook.py','testNumericSolutionParserExample2(self)',[self.standardHeader[0]])
     def testNumericSolutionParserFileExample2Code(self):
-        self.WriteCode('TestBook.py','testNumericSolutionParserFileExample2(self)',self.standardHeader)
+        self.WriteCode('TestBook.py','testNumericSolutionParserFileExample2(self)',[self.standardHeader[0]])
     def testSymbolicSolutionParserFileExample3Code(self):
         self.WriteCode('TestBook.py','testSymbolicSolutionParserFileExample3(self)',self.standardHeader)
     def testSystemDescriptionExampleCode(self):

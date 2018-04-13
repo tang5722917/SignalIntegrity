@@ -4,33 +4,20 @@ import SignalIntegrity as si
 import math
 import os
 from TestHelpers import *
+from SignalIntegrity.Test.PySIAppTestHelper import PySIAppTestHelper
 
-class TestTline(unittest.TestCase,ResponseTesterHelper,SourcesTesterHelper):
+class TestTline(unittest.TestCase,ResponseTesterHelper,
+                SourcesTesterHelper,RoutineWriterTesterHelper,
+                si.test.PySIAppTestHelper):
+    checkPictures=True
+    def __init__(self, methodName='runTest'):
+        unittest.TestCase.__init__(self,methodName)
+        ResponseTesterHelper.__init__(self)
+        SourcesTesterHelper.__init__(self)
+        RoutineWriterTesterHelper.__init__(self)
+        PySIAppTestHelper.__init__(self,os.path.dirname(os.path.realpath(__file__)))
     def id(self):
         return '.'.join(unittest.TestCase.id(self).split('.')[-3:])
-    def testTline(self):
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        f=[(n+1)*20e6 for n in range(100)]
-        #SParametersAproximateTLineModel(f,Rsp,Lsp,Csp,Gsp,Rsm,Lsm,Csm,Gsm,Lm,Cm,Gm,Z0,K)
-        SP=si.dev.ApproximateFourPortTLine(
-            f,
-                10.,5.85e-8,2e-11,0.01,
-                10.,5.85e-8,2e-11,0.01,
-                1.35e-8,1.111e-12,1e-30,50,100)
-        sf=si.sp.SParameters(f,SP)
-        fileName='_'.join(self.id().split('.'))+'.s'+str(sf.m_P)+'p'
-        if not os.path.exists(fileName):
-            sf.WriteToFile(fileName)
-            self.assertTrue(False,fileName + 'does not exist')
-        regression = si.sp.SParameterFile(fileName,50.)
-        self.assertTrue(self.SParametersAreEqual(sf,regression,0.001),self.id()+'result not same: '+str(fileName))
-        import matplotlib.pyplot as plt
-##        for r in range(4):
-##            for c in range(4):
-##                y=[20*math.log(abs(SP[n][r][c]),10) for n in range(len(f))]
-##                plt.subplot(4,4,r*4+c+1)
-##                plt.plot(f,y)
-##        plt.show()
     def FourPortTLineModel(self,f,Zo,TDo,Ze,TDe):
         sspp=si.p.SystemSParametersNumericParser(f)
         sspp.AddLines(['device D1 4 tline zc 50. td 1.e-9',
@@ -52,33 +39,6 @@ class TestTline(unittest.TestCase,ResponseTesterHelper,SourcesTesterHelper):
             'connect D4 4 G 1'
             ])
         return sspp.SParameters()
-    def testTline2(self):
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        f=[(n+1)*20e6 for n in range(100)]
-        #SParametersAproximateTLineModel(f,Rsp,Lsp,Csp,Gsp,Rsm,Lsm,Csm,Gsm,Lm,Cm,Gm,Z0,K)
-        SP=si.dev.ApproximateFourPortTLine(
-            f,
-                0.00001,5.85e-8,2e-11,0.00001,
-                0.00001,5.85e-8,2e-11,0.00001,
-                1.35e-8,1.111e-12,0.00001,50,1000)
-        sf=si.sp.SParameters(f,SP)
-        #sf=self.FourPortTLineModel(f,50.,1.e-9,50.,1.e-9)
-        #sf=si.sp.SParameters(f,[si.p.dev.Tlinef(f,4,50.,1.e-9).SParameters(n) for n in range(len(f))])
-        fileName='_'.join(self.id().split('.'))+'.s'+str(sf.m_P)+'p'
-        if not os.path.exists(fileName):
-            sf.WriteToFile(fileName)
-            self.assertTrue(False,fileName + 'does not exist')
-        regression = si.sp.SParameterFile(fileName,50.)
-        self.assertTrue(self.SParametersAreEqual(sf,regression,0.001),self.id()+'result not same: '+str(fileName))
-        """
-        import matplotlib.pyplot as plt
-        for r in range(4):
-            for c in range(4):
-                y=[20*math.log(abs(sf[n][r][c]+0.001),10) for n in range(len(f))]
-                plt.subplot(4,4,r*4+c+1)
-                plt.plot(f,y)
-        plt.show()
-        """
     def testTline3(self):
         """
         this test checks that a four port transmission line approximated as 10,000
@@ -101,22 +61,13 @@ class TestTline(unittest.TestCase,ResponseTesterHelper,SourcesTesterHelper):
         Zc=0.5*math.sqrt((Ls+Lm)/Cs)
         Td=math.sqrt((Ls-Lm)*(Cs+2.*Cm))
         Tc=math.sqrt((Ls+Lm)*Cs)
-        spmodel=si.sp.dev.ApproximateFourPortTLine(
+        spmodel=si.sp.dev.TLineDifferentialRLGCApproximate(
             f,
-                0.0,Ls,Cs,0.0,
-                0.0,Ls,Cs,0.0,
-                Lm,Cm,0.0,50.,10000)
+                0.0,0.0,Ls,0.0,Cs,0.0,
+                0.0,0.0,Ls,0.0,Cs,0.0,
+                Cm,0.0,0.0,Lm,50.,10000)
         spmodel2=si.sp.dev.MixedModeTLine(f,Zd,Td,Zc,Tc)
         self.assertTrue(self.SParametersAreEqual(spmodel,spmodel2,0.05),self.id()+' result not same')
-        """
-        import matplotlib.pyplot as plt
-        for r in range(4):
-            for c in range(4):
-                y=[20*math.log(abs(sf[n][r][c]+0.001),10) for n in range(len(f))]
-                plt.subplot(4,4,r*4+c+1)
-                plt.plot(f,y)
-        plt.show()
-        """
     def testTline4(self):
         """
         this test checks that a four port transmission line approximated as 10,000
@@ -140,11 +91,11 @@ class TestTline(unittest.TestCase,ResponseTesterHelper,SourcesTesterHelper):
         Zc=0.5*math.sqrt((Ls+Lm)/Cs)
         Td=math.sqrt((Ls-Lm)*(Cs+2.*Cm))
         Tc=math.sqrt((Ls+Lm)*Cs)
-        spmodel=si.sp.dev.ApproximateFourPortTLine(
+        spmodel=si.sp.dev.TLineDifferentialRLGCApproximate(
             f,
-                0.0,Ls,Cs,0.0,
-                0.0,Ls,Cs,0.0,
-                Lm,Cm,0.0,50.,10000)
+                0.0,0.0,Ls,0.0,Cs,0.0,
+                0.0,0.0,Ls,0.0,Cs,0.0,
+                Cm,0.0,0.0,Lm,50.,10000)
         spmodel2=si.sp.dev.MixedModeTLine(f,Zd,Td,Zc,Tc)
         self.assertTrue(self.SParametersAreEqual(spmodel,spmodel2,0.005),self.id()+' result not same')
     def testTline5(self):
@@ -168,7 +119,7 @@ class TestTline(unittest.TestCase,ResponseTesterHelper,SourcesTesterHelper):
         #fileNameBase = self.id().split('.')[2].replace('test','')
         #spFileName = fileNameBase +'_1.s4p'
         #self.CheckSParametersResult(spmodel,spFileName,' incorrect')
-        spmodel2=si.sp.dev.TLine(f,4,50.,1e-9)
+        spmodel2=si.sp.dev.TLineLossless(f,4,50.,1e-9)
         #spFileName2 = fileNameBase +'_2.s4p'
         #self.CheckSParametersResult(spmodel2,spFileName2,' incorrect')
         self.assertTrue(self.SParametersAreEqual(spmodel,spmodel2,0.00001),self.id()+' result not same')
@@ -193,7 +144,7 @@ class TestTline(unittest.TestCase,ResponseTesterHelper,SourcesTesterHelper):
         #fileNameBase = self.id().split('.')[2].replace('test','')
         #spFileName = fileNameBase +'_1.s4p'
         #self.CheckSParametersResult(spmodel,spFileName,' incorrect')
-        spmodel2=si.sp.dev.TLine(f,4,50.,1e-9)
+        spmodel2=si.sp.dev.TLineLossless(f,4,50.,1e-9)
         #spFileName2 = fileNameBase +'_2.s4p'
         #self.CheckSParametersResult(spmodel2,spFileName2,' incorrect')
         self.assertTrue(self.SParametersAreEqual(spmodel,spmodel2,0.00001),self.id()+' result not same')
@@ -213,7 +164,7 @@ class TestTline(unittest.TestCase,ResponseTesterHelper,SourcesTesterHelper):
         #fileNameBase = self.id().split('.')[2].replace('test','')
         #spFileName = fileNameBase +'_1.s4p'
         #self.CheckSParametersResult(spmodel,spFileName,' incorrect')
-        spmodel2=si.sp.dev.TLine(f,4,50.,1e-9)
+        spmodel2=si.sp.dev.TLineLossless(f,4,50.,1e-9)
         #spFileName2 = fileNameBase +'_2.s4p'
         #self.CheckSParametersResult(spmodel2,spFileName2,' incorrect')
         self.assertTrue(self.SParametersAreEqual(spmodel,spmodel2,0.00001),self.id()+' result not same')
@@ -365,6 +316,243 @@ class TestTline(unittest.TestCase,ResponseTesterHelper,SourcesTesterHelper):
         #self.CheckSParametersResult(spc3,'mutual3.s4p','assembled mutual not same')
         self.assertTrue(self.SParametersAreEqual(spc1,spc2,1e-6),'Mutual not same')
         self.assertTrue(self.SParametersAreEqual(spc1,spc3,1e-6),'Mutual not same')
+    def testBalancedFourPortTLineSParameters(self):
+        """
+        This test generates symbolically the s-parameters of the balanced four port
+        network with the s-parameters of the even and odd mode transmission lines connected
+        to mixed mode converters
+        """
+        sdp=si.p.SystemDescriptionParser()
+        # Ports 1 2 3 4 are + - D C of mixed mode converter
+        sdp.AddLines(['device L 4 mixedmode','device R 4 mixedmode',
+            'device TE 2','device TO 2',
+            'port 1 L 1','port 2 L 2','port 3 R 1','port 4 R 2',
+            'connect L 3 TO 1','connect R 3 TO 2',
+            'connect L 4 TE 1','connect R 4 TE 2'])
+        ssps=si.sd.SystemSParametersSymbolic(sdp.SystemDescription())
+#        ssps.DocStart()
+        ssps.LaTeXSolution(size='big')
+#        ssps.DocEnd()
+        ssps.Emit()
+        self.CheckSymbolicResult(self.id(), ssps, self.id())
+    def testTline8(self):
+        """
+        this test checks that a four port transmission line approximated as 10,000
+        sections of RLGC sections with 1/10,000th of the supplied series resistance
+        and inductance, shunt capacitance and conductance, and mutual inductance and
+        capacitance is the same the mixed mode model with the differential and common-mode
+        impedance and propagation time corresponding to RLGC.
+        """
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
+        f=[n*200e6 for n in range(50)]
+        #SParametersAproximateTLineModel(f,Rsp,Lsp,Csp,Gsp,Rsm,Lsm,Csm,Gsm,Lm,Cm,Gm,Z0,K)
+        #differential 90 Ohm, 1 ns - common-mode 20 Ohm 1.2 ns
+        Ls=58.5e-9
+        Cs=20e-12
+        Lm=13.5e-9
+        Cm=1.11111111111e-12
+        Zd=2.*math.sqrt((Ls-Lm)/(Cs+2.*Cm))
+        Zc=0.5*math.sqrt((Ls+Lm)/Cs)
+        Td=math.sqrt((Ls-Lm)*(Cs+2.*Cm))
+        Tc=math.sqrt((Ls+Lm)*Cs)
+        spmodel=si.sp.dev.TLineDifferentialRLGC(
+            f,
+                0.0,0.0,Ls,0.0,Cs,0.0,
+                0.0,0.0,Ls,0.0,Cs,0.0,
+                Cm,0.0,0.0,Lm,50.,100000)
+        spmodel2=si.sp.dev.MixedModeTLine(f,Zd,Td,Zc,Tc)
+        self.assertTrue(self.SParametersAreEqual(spmodel,spmodel2,0.005),self.id()+' result not same')
+    def testTline9(self):
+        """
+        this test checks that a four port transmission line approximated as 10,000
+        sections of RLGC sections with 1/10,000th of the supplied series resistance
+        and inductance, shunt capacitance and conductance, and mutual inductance and
+        capacitance is the same the mixed mode model with the differential and common-mode
+        impedance and propagation time corresponding to RLGC.
+        """
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
+        f=[n*200e6 for n in range(50)]
+        #SParametersAproximateTLineModel(f,Rsp,Lsp,Csp,Gsp,Rsm,Lsm,Csm,Gsm,Lm,Cm,Gm,Z0,K)
+        #differential 90 Ohm, 1 ns - common-mode 20 Ohm 1.2 ns
+        Ls=58.5e-9
+        Cs=20e-12
+        Lm=13.5e-9
+        Cm=1.11111111111e-12
+        Zd=2.*math.sqrt((Ls-Lm)/(Cs+2.*Cm))
+        Zc=0.5*math.sqrt((Ls+Lm)/Cs)
+        Td=math.sqrt((Ls-Lm)*(Cs+2.*Cm))
+        Tc=math.sqrt((Ls+Lm)*Cs)
+        spmodel=si.sp.dev.TLineDifferentialRLGC(
+            f,
+                0.0,0.0,Ls,0.0,Cs,0.0,
+                0.0,0.0,Ls,0.0,Cs,0.0,
+                Cm,0.0,0.0,Lm,50.,0)
+        spmodel2=si.sp.dev.MixedModeTLine(f,Zd,Td,Zc,Tc)
+        self.assertTrue(self.SParametersAreEqual(spmodel,spmodel2,0.005),self.id()+' result not same')
+    def testWriteTLineLosslessSp(self):
+        fileName="../SignalIntegrity/SParameters/Devices/TLineLossless.py"
+        className='TLineLossless'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineTwoPortLosslessDev(self):
+        fileName="../SignalIntegrity/Devices/TLineTwoPortLossless.py"
+        className=''
+        defName=['TLineTwoPortLossless']
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineFourPortLosslessDev(self):
+        fileName="../SignalIntegrity/Devices/TLineFourPortLossless.py"
+        className=''
+        defName=['TLineFourPortLossless']
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineTwoPortDev(self):
+        fileName="../SignalIntegrity/Devices/TLineTwoPort.py"
+        className=''
+        defName=['TLineTwoPort']
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineFourPortDev(self):
+        fileName="../SignalIntegrity/Devices/TLineFourPort.py"
+        className=''
+        defName=['TLineFourPort']
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineTwoPortRLGC(self):
+        fileName="../SignalIntegrity/SParameters/Devices/TLineTwoPortRLGC.py"
+        className='TLineTwoPortRLGC'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineTwoPortRLGCApproximate(self):
+        fileName="../SignalIntegrity/SParameters/Devices/TLineTwoPortRLGCApproximate.py"
+        className='TLineTwoPortRLGCApproximate'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineTwoPortRLGCAnalytic(self):
+        fileName="../SignalIntegrity/SParameters/Devices/TLineTwoPortRLGCAnalytic.py"
+        className='TLineTwoPortRLGCAnalytic'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineDifferentialRLGC(self):
+        fileName="../SignalIntegrity/SParameters/Devices/TLineDifferentialRLGC.py"
+        className='TLineDifferentialRLGC'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineDifferentialRLGCApproximate(self):
+        fileName="../SignalIntegrity/SParameters/Devices/TLineDifferentialRLGCApproximate.py"
+        className='TLineDifferentialRLGCApproximate'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineDifferentialRLGCUncoupled(self):
+        fileName="../SignalIntegrity/SParameters/Devices/TLineDifferentialRLGCUncoupled.py"
+        className='TLineDifferentialRLGCUncoupled'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteTLineDifferentialRLGCBalanced(self):
+        fileName="../SignalIntegrity/SParameters/Devices/TLineDifferentialRLGCBalanced.py"
+        className='TLineDifferentialRLGCBalanced'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName)
+    def testFourPortTLinePySIApp(self):
+        resultTLineModel=self.SParameterResultsChecker('FourPortTLineCompare.xml')
+        resultTLineXfrmr=self.SParameterResultsChecker('FourPortTLineCompareIdealXfrmr.xml')
+        resultTLineCommonModeOpen=self.SParameterResultsChecker('FourPortTLineCompareCommonModeOpen.xml')
+        self.assertTrue(self.SParametersAreEqual(resultTLineModel[0], resultTLineXfrmr[0], 1e-5),'four port model not same as ideal transformer model')
+        self.assertTrue(self.SParametersAreEqual(resultTLineModel[0], resultTLineCommonModeOpen[0], 1e-5),'four port model not same as common mode open model')
+    def testWriteRseSp(self):
+        fileName="../SignalIntegrity/SParameters/Devices/SeriesRse.py"
+        className='SeriesRse'
+        firstDef='__init__'
+        allfuncs=self.EntireListOfClassFunctions(fileName,className)
+        allfuncs.remove(firstDef)
+        defName=[firstDef]+allfuncs
+        self.WriteClassCode(fileName,className,defName)
+    def testWriteRse(self):
+        fileName="../SignalIntegrity/Devices/SeriesRse.py"
+        className=''
+        defName=['SeriesRse']
+        self.WriteClassCode(fileName,className,defName)
+    def testTransmissionLineSimulation(self):
+        (sourceNames,outputNames,transferMatrices,outputWaveforms)=self.SimulationResultsChecker('TransmissionLineSimulation')
+        wfdict={name:wf for (name,wf) in zip(outputNames,outputWaveforms)}
+        V=1.
+        Zs=40.
+        Zl=65.
+        Zc=55.
+        Z0=50.
+        K0=math.sqrt(Z0)
+        Kc=math.sqrt(Zc)
+        td=wfdict['Vs'].TimeDescriptor()
+        # Test our understanding of the definition of waves in the Z0 reference impedance
+        wfdict['Fsexp']=si.td.wf.Waveform(td,[1/2./K0*(v+i*Z0) for (v,i) in zip(wfdict['Vs'].Values(),wfdict['Is'].Values())])
+        wfdict['Rsexp']=si.td.wf.Waveform(td,[1/2./K0*(v-i*Z0) for (v,i) in zip(wfdict['Vs'].Values(),wfdict['Is'].Values())])
+        self.assertTrue(wfdict['Fsexp'],wfdict['Fs'])
+        self.assertTrue(wfdict['Rsexp'],wfdict['Rs'])
+        wfdict['Flexp']=si.td.wf.Waveform(td,[1/2./K0*(v+i*Z0) for (v,i) in zip(wfdict['Vl'].Values(),wfdict['Il'].Values())])
+        wfdict['Rlexp']=si.td.wf.Waveform(td,[1/2./K0*(v-i*Z0) for (v,i) in zip(wfdict['Vl'].Values(),wfdict['Il'].Values())])
+        self.assertTrue(wfdict['Flexp'],wfdict['Fl'])
+        self.assertTrue(wfdict['Rlexp'],wfdict['Rl'])
+        # Test our understanding of the definition of waves in the Zc reference impedance
+        GsZc=(Zs-Zc)/(Zs+Zc)
+        GlZc=(Zl-Zc)/(Zl+Zc)
+        wfdict['FsZc']=si.td.wf.Waveform(td,[1/2./Kc*(v+i*Zc) for (v,i) in zip(wfdict['Vs'].Values(),wfdict['Is'].Values())])
+        wfdict['RsZc']=si.td.wf.Waveform(td,[1/2./Kc*(v-i*Zc) for (v,i) in zip(wfdict['Vs'].Values(),wfdict['Is'].Values())])
+        wfdict['FlZc']=si.td.wf.Waveform(td,[1/2./Kc*(v+i*Zc) for (v,i) in zip(wfdict['Vl'].Values(),wfdict['Il'].Values())])
+        wfdict['RlZc']=si.td.wf.Waveform(td,[1/2./Kc*(v-i*Zc) for (v,i) in zip(wfdict['Vl'].Values(),wfdict['Il'].Values())])
+        m1=1./Kc*Zc/(Zs+Zc)*V
+        # time zero is point 1
+        self.assertAlmostEqual(wfdict['FsZc'][1], m1, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RsZc'][1], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FlZc'][1], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RlZc'][1], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FsZc'][2], 0,  12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RsZc'][2], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FlZc'][2], m1, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RlZc'][2], m1*GlZc, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FsZc'][3], m1*GlZc*GsZc,  12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RsZc'][3], m1*GlZc, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FlZc'][3], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RlZc'][3], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FsZc'][4], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RsZc'][4], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FlZc'][4], m1*GlZc*GsZc, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RlZc'][4], m1*GlZc*GsZc*GlZc, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FsZc'][5], m1*GlZc*GsZc*GlZc*GsZc,  12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RsZc'][5], m1*GlZc*GsZc*GlZc, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FlZc'][5], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RlZc'][5], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FsZc'][6], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RsZc'][6], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FlZc'][6], m1*GlZc*GsZc*GlZc*GsZc, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RlZc'][6], m1*GlZc*GsZc*GlZc*GsZc*GlZc, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FsZc'][7], m1*GlZc*GsZc*GlZc*GsZc*GlZc*GsZc,  12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RsZc'][7], m1*GlZc*GsZc*GlZc*GsZc*GlZc, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FlZc'][7], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RlZc'][7], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FsZc'][8], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RsZc'][8], 0, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['FlZc'][8], m1*GlZc*GsZc*GlZc*GsZc*GlZc*GsZc, 12, 'simulation incorrect')
+        self.assertAlmostEqual(wfdict['RlZc'][8], m1*GlZc*GsZc*GlZc*GsZc*GlZc*GsZc*GlZc, 12, 'simulation incorrect')
 
 if __name__ == '__main__':
     unittest.main()

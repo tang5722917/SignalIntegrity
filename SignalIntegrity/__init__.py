@@ -1,7 +1,8 @@
+"""@namespace SignalIntegrity
+Signal Integrity Tools"""
 import SystemDescriptions as sd
 import Conversions as cvt
 import Devices as dev
-#from SignalIntegrity import SParameters as sp
 import SParameters as sp
 import Splines as spl
 import Parsers as p
@@ -17,3 +18,4 @@ import Wavelets as wl
 from Rat import *
 import Measurement as m
 import Test as test
+import Fit as fit

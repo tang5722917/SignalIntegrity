@@ -1,12 +1,11 @@
-'''
- Teledyne LeCroy Inc. ("COMPANY") CONFIDENTIAL
- Unpublished Copyright (c) 2015-2016 Peter J. Pupalaikis and Teledyne LeCroy,
- All Rights Reserved.
+# Teledyne LeCroy Inc. ("COMPANY") CONFIDENTIAL
+# Unpublished Copyright (c) 2015-2016 Peter J. Pupalaikis and Teledyne LeCroy,
+# All Rights Reserved.
+# 
+# Explicit license in accompanying README.txt file.  If you don't have that file
+# or do not agree to the terms in that file, then you are not licensed to use
+# this material whatsoever.
 
- Explicit license in accompanying README.txt file.  If you don't have that file
- or do not agree to the terms in that file, then you are not licensed to use
- this material whatsoever.
-'''
 import inspect
 
 class PySIException(Exception):
@@ -40,6 +39,10 @@ class PySIExceptionDeembedder(PySIException):
 class PySIExceptionWaveformFile(PySIException):
     def __init__(self,message=''):
         PySIException.__init__(self,'WaveformFile',message)
+
+class PySIExceptionWaveform(PySIException):
+    def __init__(self,message=''):
+        PySIException.__init__(self,'Waveform',message)
 
 class PySIExceptionSimulator(PySIException):
     def __init__(self,message=''):

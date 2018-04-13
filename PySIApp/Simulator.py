@@ -329,7 +329,7 @@ class Simulator(object):
                         outputWaveformList[outputWaveformIndex]=outputWaveform
                         break
         outputWaveformList = [wf.Adapt(
-            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.parent.project.GetValue('CalculationProperties.UserSampleRate')))
+            si.td.wf.TimeDescriptor(wf.td.H,wf.td.K,self.parent.calculationProperties.userSampleRate))
                 for wf in outputWaveformList]
         self.SimulatorDialog().title('PySI Sim: '+self.parent.fileparts.FileNameTitle())
         self.SimulatorDialog().ExamineTransferMatricesDoer.Activate(True)
@@ -361,7 +361,7 @@ class Simulator(object):
         except si.PySIException as e:
             tkMessageBox.showerror('Virtual Probe',e.parameter+': '+e.message)
             return
-        
+
         progressDialog=ProgressDialog(self.parent,self.parent.installdir,"Waveform Processing",self.transferMatriceProcessor,self._ProcessWaveforms)
         try:
             outputWaveformList = progressDialog.GetResult()
@@ -387,7 +387,7 @@ class Simulator(object):
                         outputWaveformList[outputWaveformIndex]=outputWaveform
                         break
         outputWaveformList = [wf.Adapt(
-            si.td.wf.TimeDescriptor(wf.TimeDescriptor().H,wf.TimeDescriptor().N,self.parent.project.GetValue('CalculationProperties.UserSampleRate')))
+            si.td.wf.TimeDescriptor(wf.td.H,wf.td.K,self.parent.calculationProperties.userSampleRate))
                 for wf in outputWaveformList]
         self.SimulatorDialog().title('PySI Virtual Probe: '+self.parent.fileparts.FileNameTitle())
         self.SimulatorDialog().ExamineTransferMatricesDoer.Activate(True)
