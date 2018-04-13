@@ -12,7 +12,6 @@ from SignalIntegrity.Measurement.CalKit.Standards.OpenStandard import OpenStanda
 from SignalIntegrity.Measurement.CalKit.Standards.LoadStandard import LoadStandard
 from SignalIntegrity.Measurement.CalKit.Standards.ThruStandard import ThruStandard
 from SignalIntegrity.SParameters.SParameterFile import SParameterFile
-
 # Calibration Kit File Format
 #
 # % DESCRIPTION [Enter manufacturer and model number of calkit]
@@ -68,7 +67,7 @@ class CalibrationConstants(object):
         self.openOffsetDelay=0.     # % offset delay (pS) - OPEN
         self.openOffsetZ0=50.       # % real(Zo) of offset length - OPEN
         self.openOffsetLoss=0.      # % offset loss (GOhm/s) - OPEN
-        self.shortLO=0.             # % L0 (pH) - SHORT
+        self.shortL0=0.             # % L0 (pH) - SHORT
         self.shortL1=0.             # % L1 (1e-24 H/Hz) - SHORT
         self.shortL2=0.             # % L2 (1e-33 H/Hz^2) - SHORT
         self.shortL3=0.             # % L3 (1e-42 H/Hz^3) - SHORT
@@ -89,28 +88,49 @@ class CalibrationConstants(object):
         actualLines=[]
         for line in lines:
             if line.strip()[0]!='%':
-                actualLines.append(line)
-        self.openC0=float(actualLines[0]*1e-15)             # % C0 (fF) - OPEN
-        self.openC1=float(actualLines[1]*1e-27)             # % C1 (1e-27 F/Hz) - OPEN
-        self.openC2=float(actualLines[2]*1e-36)             # % C2 (1e-36 F/Hz^2) - OPEN
-        self.openC3=float(actualLines[3]*1e-45)             # % C3 (1e-45 F/Hz^3) - OPEN
-        self.openOffsetDelay=float(actualLines[4]*1e-12)    # % offset delay (pS) - OPEN
-        self.openOffsetZ0=float(actualLines[5])             # % real(Zo) of offset length - OPEN
-        self.openOffsetLoss=float(actualLines[6]*1e9)       # % offset loss (GOhm/s) - OPEN
-        self.shortLO=float(actualLines[7]*1e-12)            # % L0 (pH) - SHORT
-        self.shortL1=float(actualLines[8]*1e-24)            # % L1 (1e-24 H/Hz) - SHORT
-        self.shortL2=float(actualLines[9]*1e-33)            # % L2 (1e-33 H/Hz^2) - SHORT
-        self.shortL3=float(actualLines[10]*1e-42)           # % L3 (1e-42 H/Hz^3) - SHORT
-        self.shortOffsetDelay=float(actualLines[11]*1e-12)  # % offset delay (pS) - SHORT
-        self.shortOffsetZ0=float(actualLines[12])           # % real(Zo) of offset length - SHORT
-        self.shortOffsetLoss=float(actualLines[13]*1e9)      # % offset loss (GOhm/s) - SHORT
-        self.loadZ=float(actualLines[14])                   # % load resistance (Ohm) - LOAD
-        self.loadOffsetDelay=float(actualLines[15]*1e-12)   # % offset delay (pS) - LOAD
-        self.loadOffsetZ0=float(actualLines[16])            # % real(Zo) of offset length - LOAD
-        self.loadOffsetLoss=float(actualLines[17]*1e9)      # % offset loss (GOhm/s) - LOAD
-        self.thruOffsetDelay=float(actualLines[18]*1e-12)   # % offset delay (pS) - THRU
-        self.thruOffsetZ0=float(actualLines[19])            # % real(Zo) of offset length - THRU
-        self.thruOffsetLoss=float(actualLines[20]*1e9)      # % offset loss (GOhm/s) - THRU
+                actualLines.append(line.strip())
+        # % C0 (fF) - OPEN
+        self.openC0=float(actualLines[0])*1e-15
+        # % C1 (1e-27 F/Hz) - OPEN
+        self.openC1=float(actualLines[1])*1e-27
+        # % C2 (1e-36 F/Hz^2) - OPEN
+        self.openC2=float(actualLines[2])*1e-36
+        # % C3 (1e-45 F/Hz^3) - OPEN
+        self.openC3=float(actualLines[3])*1e-45
+        # % offset delay (pS) - OPEN
+        self.openOffsetDelay=float(actualLines[4])*1e-12
+        # % real(Zo) of offset length - OPEN
+        self.openOffsetZ0=float(actualLines[5])
+        # % offset loss (GOhm/s) - OPEN
+        self.openOffsetLoss=float(actualLines[6])*1e9
+        # % L0 (pH) - SHORT
+        self.shortL0=float(actualLines[7])*1e-12
+        # % L1 (1e-24 H/Hz) - SHORT
+        self.shortL1=float(actualLines[8])*1e-24
+        # % L2 (1e-33 H/Hz^2) - SHORT
+        self.shortL2=float(actualLines[9])*1e-33
+        # % L3 (1e-42 H/Hz^3) - SHORT
+        self.shortL3=float(actualLines[10])*1e-42
+        # % offset delay (pS) - SHORT
+        self.shortOffsetDelay=float(actualLines[11])*1e-12
+        # % real(Zo) of offset length - SHORT
+        self.shortOffsetZ0=float(actualLines[12])
+        # % offset loss (GOhm/s) - SHORT
+        self.shortOffsetLoss=float(actualLines[13])*1e9
+        # % load resistance (Ohm) - LOAD
+        self.loadZ=float(actualLines[14])
+        # % offset delay (pS) - LOAD
+        self.loadOffsetDelay=float(actualLines[15])*1e-12
+        # % real(Zo) of offset length - LOAD
+        self.loadOffsetZ0=float(actualLines[16])
+        # % offset loss (GOhm/s) - LOAD
+        self.loadOffsetLoss=float(actualLines[17])*1e9
+        # % offset delay (pS) - THRU
+        self.thruOffsetDelay=float(actualLines[18])*1e-12
+        # % real(Zo) of offset length - THRU
+        self.thruOffsetZ0=float(actualLines[19])
+        # % offset loss (GOhm/s) - THRU
+        self.thruOffsetLoss=float(actualLines[20])*1e9
         return self
     def WriteToFile(self,filename,calkitname=None):
         line=[]
@@ -147,7 +167,7 @@ class CalibrationConstants(object):
         line.append(str(self.openOffsetDelay/1e-12)+'\n')   # % offset delay (pS) - OPEN
         line.append(str(self.openOffsetZ0)+'\n')            # % real(Zo) of offset length - OPEN
         line.append(str(self.openOffsetLoss/1e9)+'\n')      # % offset loss (GOhm/s) - OPEN
-        line.append(str(self.shortLO/1e-12)+'\n')           # % L0 (pH) - SHORT
+        line.append(str(self.shortL0/1e-12)+'\n')           # % L0 (pH) - SHORT
         line.append(str(self.shortL1/1e-24)+'\n')           # % L1 (1e-24 H/Hz) - SHORT
         line.append(str(self.shortL2/1e-33)+'\n')           # % L2 (1e-33 H/Hz^2) - SHORT
         line.append(str(self.shortL3/1e-42)+'\n')           # % L3 (1e-42 H/Hz^3) - SHORT
@@ -161,32 +181,49 @@ class CalibrationConstants(object):
         line.append(str(self.thruOffsetDelay/1e-12)+'\n')   # % offset delay (pS) - THRU
         line.append(str(self.thruOffsetZ0)+'\n')            # % real(Zo) of offset length - THRU
         line.append(str(self.thruOffsetLoss/1e9)+'\n')      # % offset loss (GOhm/s) - THRU
+        with open(filename,'w') as f:
+            f.writelines(line)
         return self
 
 class CalibrationKit(object):
-    def __init__(self,f):
+    def __init__(self,filename=None,f=None):
+        self.Constants=CalibrationConstants()
+        self.m_f=None
+        if not filename is None:
+            self.ReadFromFile(filename)
+        if not f is None:
+            self.InitializeFrequency(f)
+    def InitializeFrequency(self,f):
         self.m_f=f
-    def ReadFromFile(self,filename):
-        c=CalibrationConstants().ReadFromFile(filename)
-        self.openStandard=OpenStandard(
-            self.m_f,c.openOffsetDelay,c.openOffsetZ0,c.openOffsetLoss,
-            self.openC0,self.openC1,self.openC2,self.openC3)
-        self.shortStandard=ShortStandard(
-            self.m_f,c.shortOffsetDelay,c.shortOffsetZ0,c.shortOffsetLoss,
-            self.shortL0,c.shortL1,c.shortL2,c.shortL3)
-        self.loadStandard=LoadStandard(
-            self.m_f,c.loadOffsetDelay,c.loadOffsetZ0,c.loadOffsetLoss,c.loadZ)
-        self.thruStandard=ThruStandard(
-            self.m_f,c.thruOffsetDelay,c.thruOffsetZ0,c.thruOffsetLoss)
+        self.openStandard=OpenStandard(self.m_f,self.Constants.openOffsetDelay,
+            self.Constants.openOffsetZ0,self.Constants.openOffsetLoss,
+            self.Constants.openC0,self.Constants.openC1,self.Constants.openC2,
+            self.Constants.openC3)
+        self.shortStandard=ShortStandard(self.m_f,self.Constants.shortOffsetDelay,
+            self.Constants.shortOffsetZ0,self.Constants.shortOffsetLoss,
+            self.Constants.shortL0,self.Constants.shortL1,self.Constants.shortL2,
+            self.Constants.shortL3)
+        self.loadStandard=LoadStandard(self.m_f,self.Constants.loadOffsetDelay,
+            self.Constants.loadOffsetZ0,self.Constants.loadOffsetLoss,
+            self.Constants.loadZ)
+        self.thruStandard=ThruStandard(self.m_f,self.Constants.thruOffsetDelay,
+            self.Constants.thruOffsetZ0,self.Constants.thruOffsetLoss)
         return self
-    def WriteToFile(self,filenamePrefix):
+    def ReadFromFile(self,filename):
+        self.Constants=CalibrationConstants().ReadFromFile(filename)
+        return self
+    def WriteToFile(self,filename,calkitname=None):
+        self.Constants.WriteToFile(filename, calkitname)
+        return self
+    def WriteStandardsToFiles(self,filenamePrefix):
         self.shortStandard.WriteToFile(filenamePrefix+'Short')
         self.openStandard.WriteToFile(filenamePrefix+'Open')
         self.loadStandard.WriteToFile(filenamePrefix+'Load')
         self.thruStandard.WriteToFile(filenamePrefix+'Thru')
         return self
-    def ReadStandardsFromSParameterFiles(self,filenamePrefix):
+    def ReadStandardsFromFiles(self,filenamePrefix):
         self.shortStandard=SParameterFile(filenamePrefix+'Short.s1p')
         self.openStandard=SParameterFile(filenamePrefix+'Open.s1p')
         self.loadStandard=SParameterFile(filenamePrefix+'Load.s1p')
-        self.thruStandard=SParameterFile(filenamePrefix+'Thru.s1p')
+        self.thruStandard=SParameterFile(filenamePrefix+'Thru.s2p')
+        return self

@@ -13,6 +13,8 @@ class TestCommonElements(unittest.TestCase,SourcesTesterHelper,RoutineWriterTest
     def __init__(self, methodName='runTest'):
         RoutineWriterTesterHelper.__init__(self)
         unittest.TestCase.__init__(self,methodName)
+    def id(self):
+        return '.'.join(unittest.TestCase.id(self).split('.')[-3:])
     def testDeviceShuntFourPort(self):
         sdp=si.p.SystemDescriptionParser()
         sdp.AddLines(['device D 2','port 1 D 1 2 D 2 3 D 1 4 D 2'])
@@ -222,6 +224,7 @@ class TestCommonElements(unittest.TestCase,SourcesTesterHelper,RoutineWriterTest
             'port 1 D 1 2 D 3 3 D 2'])
         sspn=si.sd.SystemSParametersNumeric(sdp.SystemDescription())
         sspn.AssignSParameters('D',si.dev.ShuntZFourPort(Z))
+        sspn.InstallSafeTees()
         rescalc=sspn.SParameters(solvetype='direct')
         rescorrect=si.dev.ShuntZThreePort(Z)
         difference = linalg.norm(matrix(rescalc)-matrix(rescorrect))
@@ -233,6 +236,7 @@ class TestCommonElements(unittest.TestCase,SourcesTesterHelper,RoutineWriterTest
             'port 1 D 1 2 D 3 3 D 2'])
         sspn=si.sd.SystemSParametersNumeric(sdp.SystemDescription())
         sspn.AssignSParameters('D',si.dev.ShuntZFourPort(Z))
+        sspn.InstallSafeTees()
         rescalc=sspn.SParameters(solvetype='direct')
         rescorrect=si.dev.ShuntZThreePort(Z)
         difference = linalg.norm(matrix(rescalc)-matrix(rescorrect))
