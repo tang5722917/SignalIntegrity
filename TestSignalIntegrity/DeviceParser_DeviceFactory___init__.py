@@ -15,6 +15,8 @@ class DeviceFactory(object):
         ParserDevice('ground',1,False,{},False,"Ground()"),
         ParserDevice('open',1,False,{},False,"Open()"),
         ParserDevice('thru',2,False,{},False,"Thru()"),
+        ParserDevice('directionalcoupler','3-4',False,{},False,
+                     "DirectionalCoupler(ports)"),
         ParserDevice('termination',None,False,{},False,
                      "zeros(shape=(ports,ports)).tolist()"),
         ParserDevice('tee',None,False,{},False,"Tee(ports)"),
@@ -58,6 +60,6 @@ class DeviceFactory(object):
                      float(arg['gm']),float(arg['z0']),int(arg['sect']))"),
         ParserDevice('opamp',3,False,{'zi':1e8,'zd':1e8,'zo':0.,'gain':1e8,'z0':50.},
                      False,"OperationalAmplifier(float(arg['zi']),float(arg['zd']),\
-                     float(arg['zo']),float(arg['gain']),float(arg['z0']))")
+                     float(arg['zo']),float(arg['gain']),float(arg['z0']))"),
         ]
 ...

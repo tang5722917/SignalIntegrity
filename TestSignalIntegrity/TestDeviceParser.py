@@ -375,9 +375,21 @@ class TestDeviceParser(unittest.TestCase,ResponseTesterHelper):
         self.Tester(self.id(),'telegrapher',4)
     def testTelegrapher4LC(self):
         self.Tester(self.id(),'telegrapher',4,lp='58.5e-9',cp='20e-12',ln='58.5e-9',cn='20e-12',lm='13.5e-9',cm='1.111e-12',sect='10000')
+    def testDirectionalCoupler3(self):
+        self.Tester(self.id(),'directionalcoupler',3)
+    def testDirectionalCoupler4(self):
+        self.Tester(self.id(),'directionalcoupler',4)
+    def testShortStd(self):
+        self.Tester(self.id(),'shortstd',1,od='31.785e-12',oz0='50.0',ol='2.36e9',l0='2.076',l1='-108.54',l2='2.171',l3='-0.1')
+    def testOpenStd(self):
+        self.Tester(self.id(),'openstd',1,od='29.243e-12',oz0='50.0',ol='2.2e9',c0='49.433',c1='-310.13',c2='23.168',c3='-0.16')
+    def testLoadStd(self):
+        self.Tester(self.id(),'loadstd',1,od='0.',oz0='50.0',ol='0.')
+    def testThruStd(self):
+        self.Tester(self.id(),'thrustd',2,od='94.75e-12',oz0='50.0',ol='2.51e9')
     def testlen(self):
         L=len(si.p.dev.DeviceFactory())
-        self.assertEqual(L,28)
+        self.assertEqual(L,33)
     def testMakeDeviceNoArgs(self):
         df=si.p.dev.DeviceFactory()
         self.assertFalse(df.MakeDevice(2,[],[1,2,3]))

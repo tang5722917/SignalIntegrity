@@ -239,6 +239,11 @@ class DeviceOpen(Device):
         netlist=DeviceNetListLine(partname='open')
         Device.__init__(self,netlist,[PartPropertyCategory('Miscellaneous'),PartPropertyPartName('Open'),PartPropertyDefaultReferenceDesignator('O?'),PartPropertyDescription('Open'),PartPropertyPorts(1)],partPicture=PartPictureVariableOpen())
 
+class DeviceDirectionalCoupler(Device):
+    def __init__(self,propertiesList,partPicture):
+        netlist=DeviceNetListLine(partname='directionalcoupler')
+        Device.__init__(self,netlist,[PartPropertyCategory('Miscellaneous'),PartPropertyPartName('Directional Coupler'),PartPropertyDefaultReferenceDesignator('D?')]+propertiesList,partPicture)    
+
 class DeviceVoltageSource(Device):
     def __init__(self,propertiesList,partPicture):
         netlist=DeviceNetListLine(devicename='voltagesource')
@@ -422,6 +427,8 @@ DeviceList = [
               DeviceIdealTransformer(),
               DeviceGround(),
               DeviceOpen(),
+              DeviceDirectionalCoupler([PartPropertyDescription('Three Port Directional Coupler'),PartPropertyPorts(3)],PartPictureVariableDirectionalCouplerThreePort()),
+              DeviceDirectionalCoupler([PartPropertyDescription('Four Port Directional Coupler'),PartPropertyPorts(4)],PartPictureVariableDirectionalCouplerFourPort()),
               DeviceTransmissionLine([PartPropertyDescription('Two Port Transmission Line'),PartPropertyPorts(2)],PartPictureVariableTransmissionLineTwoPort()),
               DeviceTransmissionLine([PartPropertyDescription('Four Port Transmission Line'),PartPropertyPorts(4)],PartPictureVariableTransmissionLineFourPort()),
               DeviceTelegrapherTwoPort([PartPropertyDescription('Two Port Telegrapher'),PartPropertyPorts(2)],PartPictureVariableTransmissionLineTwoPort()),
