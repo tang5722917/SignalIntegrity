@@ -8,7 +8,7 @@ import SignalIntegrity as si
 import math
 import cmath
 import os
-from numpy import zeros,matrix
+from numpy import matrix
 from TestHelpers import SParameterCompareHelper,RoutineWriterTesterHelper
 
 class TestRLGCLevMar(unittest.TestCase,si.test.PySIAppTestHelper,RoutineWriterTesterHelper,SParameterCompareHelper):
@@ -19,21 +19,120 @@ class TestRLGCLevMar(unittest.TestCase,si.test.PySIAppTestHelper,RoutineWriterTe
         RoutineWriterTesterHelper.__init__(self)
     def setUp(self):
         os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    def testAAARLGCFit(self):
-        return
+    def testWriteRLGCFit(self):
+        import os
+        self.WriteCode(os.path.basename(__file__).split('.')[0]+'.py', 'TlineFit', [], printFuncName=True)
+    def TlineFit(self,sp):
+        stepResponse=sp.FrequencyResponse(2,1).ImpulseResponse().Integral()
+        threshold=(stepResponse[len(stepResponse)-1]+stepResponse[0])/2.0
+        for k in range(len(stepResponse)):
+            if stepResponse[k]>threshold: break
+        dly=stepResponse.Times()[k]
+        rho=sp.FrequencyResponse(1,1).ImpulseResponse().Integral(scale=False).Measure(dly)
+        Z0=sp.m_Z0*(1.+rho)/(1.-rho)
+        L=dly*Z0; C=dly/Z0; guess=[0.,L,0.,C,0.,0.]
+        (R,L,G,C,Rse,df)=[r[0] for r in si.fit.RLGCFitter(sp,guess).Solve().Results()]
+        return si.sp.dev.TLineTwoPortRLGC(sp.f(),R,Rse,L,G,C,df,sp.m_Z0)
+    def testFitExample(self):
         sp=si.sp.SParameterFile('cableForRLGC.s2p')
-        guess=[1.,114.241e-9,0,43.922e-12,80e-6,100e-6]
-        #guess=[0.,114.241e-9,0,43.922e-12,0,0]
-        guess=[0,200e-9,0,50e-12,0,0]
-        #guess=[19.29331239903912,1.0169921429695769e-07,6.183111656296168e-10,0.007419799613583727,0.0001040252514702244,0.00037025795321293044]
-        self.m_fitter=si.fit.RLGCFitter(sp,guess,self.PrintProgress)
-        self.m_fitter.Solve()
+        fitsp=self.TlineFit(sp)
+        SpAreEqual=self.SParametersAreEqual(sp, fitsp,0.15)
+        self.SParameterRegressionChecker(fitsp, '_'.join(self.id().split('.')[-2:])+'.s2p')
+        self.assertTrue(SpAreEqual,'RLGC fit did not succeed')
+    def testRLGCFit(self):
+        self.sp=si.sp.SParameterFile('cableForRLGC.s2p')
+        stepResponse=self.sp.FrequencyResponse(2,1).ImpulseResponse().Integral()
+        threshold=(stepResponse[len(stepResponse)-1]+stepResponse[0])/2.0
+        for k in range(len(stepResponse)):
+            if stepResponse[k]>threshold: break
+        dly=stepResponse.Times()[k]
+        rho=self.sp.FrequencyResponse(1,1).ImpulseResponse().Integral(scale=False).Measure(dly)
+        Z0=self.sp.m_Z0*(1.+rho)/(1.-rho)
+        L=dly*Z0; C=dly/Z0; guess=[0.,L,0.,C,0.,0.]
+        #pragma: silent exclude
+        self.plotInitialized=False
+        #pragma: include
+        self.m_fitter=si.fit.RLGCFitter(self.sp,guess,self.PlotResult)
         print self.m_fitter.Results()
+        (R,L,G,C,Rse,df)=[r[0] for r in self.m_fitter.Solve().Results()]
+        print self.m_fitter.Results()
+        fitsp=si.sp.dev.TLineTwoPortRLGC(self.sp.f(),R,Rse,L,G,C,df,self.sp.m_Z0)
+        #pragma: silent exclude
+        printFitCurves=False
+        if printFitCurves:
+            self.m_fitter.ccm.PlotConvergence()
+
+        ccm=self.m_fitter.ccm
+
+        iterations=range(len(ccm._LogMseTracker))
+
+        import matplotlib.pyplot as plt
+        from TestHelpers import PlotTikZ
+
+        plt.clf()
+        plt.xlabel('iteration')
+        plt.ylabel('log(mse)')
+        plt.plot(iterations,ccm._FilteredLogMseTracker,label='filtered')
+        plt.plot(iterations,ccm._LogMseTracker,label='mse')
+        plt.legend(loc='upper right')
+        plt.grid(True)
+        #PlotTikZ('ConverganceMse.tex',plt)
+        #plt.show()
+
+        plt.clf()
+        plt.xlabel('iteration')
+        plt.ylabel('log(lambda)')
+        plt.plot(iterations,ccm._LogLambdaTracker,label='lambda')
+        plt.plot(iterations,ccm._FilteredLogLambdaTracker,label='filtered')
+        plt.legend(loc='upper right')
+        plt.grid(True)
+        #PlotTikZ('ConverganceLambda.tex',plt)
+        #plt.show()
+
+        plt.clf()
+        plt.xlabel('iteration')
+        plt.ylabel('deltas')
+        plt.semilogy(iterations,ccm._FilteredLogDeltaMseTracker,label='log(mse)')
+        plt.semilogy(iterations,ccm._FilteredLogDeltaLambdaTracker,label='log(lambda)')
+        plt.legend(loc='upper right')
+        plt.grid(True)
+        #PlotTikZ('ConverganceDeltas.tex',plt)
+        #plt.show()
+
+        SpAreEqual=self.SParametersAreEqual(self.sp, fitsp,0.15)
+        self.SParameterRegressionChecker(fitsp, '_'.join(self.id().split('.')[-2:])+'.s2p')
+        if not SpAreEqual:
+            if si.test.PySIAppTestHelper.plotErrors:
+                import matplotlib.pyplot as plt
+                plt.clf()
+                plt.title('s-parameter compare')
+                plt.xlabel('frequency (Hz)')
+                plt.ylabel('amplitude')
+                for r in range(self.sp.m_P):
+                    for c in range(self.sp.m_P):
+                        plt.semilogy(self.sp.f(),[abs(fitsp[n][r][c]-self.sp[n][r][c]) for n in range(len(self.sp))],label='S'+str(r+1)+str(c+1))
+                plt.legend(loc='upper right')
+                plt.grid(True)
+                plt.show()
+
+                for r in range(self.sp.m_P):
+                    for c in range(self.sp.m_P):
+                        plt.clf()
+                        plt.title('s-parameter compare')
+                        plt.xlabel('frequency (Hz)')
+                        plt.ylabel('amplitude')
+                        plt.plot(fitsp.f(),fitsp.FrequencyResponse(r,c).Values('dB'),label='Fitted S'+str(r+1)+str(c+1))
+                        plt.plot(self.sp.f(),self.sp.FrequencyResponse(r,c).Values('dB'),label='Actual S'+str(r+1)+str(c+1))
+                        plt.legend(loc='upper right')
+                        plt.grid(True)
+                        plt.show()
+
+        self.assertTrue(SpAreEqual,'RLGC fit did not succeed')
+        #pragma: include
     def testRLGCTestFitExact(self):
-        return
         (R,L,G,C,Rse,df)=[1.,114.241e-9,0,43.922e-12,80e-6,100e-6]
         Z0=50.
-        fList=[f for f in si.fd.EvenlySpacedFrequencyList(40e9,1000)[1:]]
+        fList=[f for f in si.fd.EvenlySpacedFrequencyList(20e9,500)[1:]]
         self.sp=si.sp.dev.TLineTwoPortRLGC(fList, R, Rse, L, G, C, df, Z0)
         guess=[1.,114.241e-9,0,43.922e-12,80e-6,100e-6]
         guess=[0.,115e-9,0,40e-12,0,0]
@@ -41,13 +140,16 @@ class TestRLGCLevMar(unittest.TestCase,si.test.PySIAppTestHelper,RoutineWriterTe
         #guess=[19.29331239903912,1.0169921429695769e-07,6.183111656296168e-10,0.007419799613583727,0.0001040252514702244,0.00037025795321293044]
         self.plotInitialized=False
         self.m_fitter=si.fit.RLGCFitter(self.sp,guess,self.PlotResult)
-        self.m_fitter.m_ConverganceThreshold=6
         self.m_fitter.Solve()
         print self.m_fitter.Results()
         (R,L,G,C,Rse,df)=[r[0] for r in self.m_fitter.Results()]
         fitsp=si.sp.dev.TLineTwoPortRLGC(fList, R, Rse, L, G, C, df, Z0)
-        SpAreEqual=self.SParametersAreEqual(sp, fitsp,1e-3)
-        if  not SpAreEqual:
+        SpAreEqual=self.SParametersAreEqual(self.sp, fitsp,1e-2)
+        printFitCurves=False
+        if printFitCurves:
+            self.m_fitter.ccm.PlotConvergence()
+
+        if not SpAreEqual:
             if si.test.PySIAppTestHelper.plotErrors:
                 import matplotlib.pyplot as plt
                 plt.clf()
@@ -62,28 +164,37 @@ class TestRLGCLevMar(unittest.TestCase,si.test.PySIAppTestHelper,RoutineWriterTe
                 plt.show()
         self.assertTrue(SpAreEqual,'RLGC fit did not succeed')
     def PrintProgress(self,iteration):
-        print self.m_fitter.m_iteration,self.m_fitter.m_mse,self.m_fitter.m_filterOutput
+        print self.m_fitter.ccm._IterationsTaken,self.m_fitter.m_mse
     def PlotResult(self,iteration):
         self.PrintProgress(iteration)
+        return
         import matplotlib.pyplot as plt
         if not self.plotInitialized:
+            plt.ion()
+            plt.show()
             plt.gcf()
-            plt.clf()
             plt.title('s-parameter compare')
             plt.xlabel('frequency (Hz)')
             plt.ylabel('amplitude')
             plt.legend(loc='upper right')
             plt.grid(True)
-            self.plotInitialized=False
+            self.plotInitialized=True
+            self.skipper=0
+        self.skipper=self.skipper+1
+        if self.skipper!=4:
+            return
+        plt.clf()
+        self.skipper=0
         (R,L,G,C,Rse,df)=[r[0] for r in self.m_fitter.Results()]
-        print R
         fList=self.m_fitter.f
         Z0=self.m_fitter.Z0
         fitsp=si.sp.dev.TLineTwoPortRLGC(fList, R, Rse, L, G, C, df, Z0)
         for r in range(fitsp.m_P):
             for c in range(fitsp.m_P):
                 plt.semilogy(self.sp.f(),[abs(fitsp[n][r][c]-self.sp[n][r][c]) for n in range(len(fitsp))],label='S'+str(r+1)+str(c+1))
-        plt.show(block=False)
+        plt.legend(loc='upper right')
+        plt.draw()
+        plt.pause(0.001)
     def testCompareApproxWithEquation(self):
         return
         Z0=50.
@@ -180,12 +291,12 @@ class TestRLGCLevMar(unittest.TestCase,si.test.PySIAppTestHelper,RoutineWriterTe
         fileName="../SignalIntegrity/Fit/RLGC.py"
         className='RLGCFitter'
         defName=['__init__','fF']
-        self.WriteClassCode(fileName,className,defName)
+        self.WriteClassCode(fileName,className,defName,lineDefs=True)
     def testWriteRLGCfJCode(self):
         fileName="../SignalIntegrity/Fit/RLGC.py"
         className='RLGCFitter'
         defName=['fJ']
-        self.WriteClassCode(fileName,className,defName)
+        self.WriteClassCode(fileName,className,defName,lineDefs=True)
     def testWriteLevMarInit(self):
         fileName="../SignalIntegrity/Fit/LevMar.py"
         className='LevMar'
@@ -193,16 +304,38 @@ class TestRLGCLevMar(unittest.TestCase,si.test.PySIAppTestHelper,RoutineWriterTe
         allfuncs=self.EntireListOfClassFunctions(fileName,className)
         allfuncs.remove(firstDef)
         allfuncs.remove('Iterate')
-        allfuncs.remove('TestConvergence')
         allfuncs.remove('Solve')
         defName=[firstDef]+allfuncs
-        self.WriteClassCode(fileName,className,defName)
+        self.WriteClassCode(fileName,className,defName,lineDefs=True)
     def testWriteLevMarSolve(self):
         fileName="../SignalIntegrity/Fit/LevMar.py"
         className='LevMar'
-        defName=['Solve','Iterate','TestConvergence']
-        self.WriteClassCode(fileName,className,defName)
+        defName=['Solve','Iterate']
+        self.WriteClassCode(fileName,className,defName,lineDefs=True)
+    def testPlotDynamicUpdate(self):
+        return
+        import numpy as np
+        from matplotlib import pyplot as plt
+
+        plt.axis([-50,50,0,10000])
+        plt.ion()
+        plt.show()
+
+        x = np.arange(-50, 51)
+        for pow in range(1,5):   # plot x^1, x^2, ..., x^4
+            y = [Xi**pow for Xi in x]
+            plt.plot(x, y)
+            plt.draw()
+            plt.pause(0.001)
+            raw_input("Press [enter] to continue.")
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+    runProfiler=False
+    if runProfiler:
+        import cProfile
+        cProfile.run('unittest.main()','stats')
+        import pstats
+        p = pstats.Stats('stats')
+        p.strip_dirs().sort_stats('cumulative').print_stats(30)
+    else:
+        unittest.main()
