@@ -16,11 +16,18 @@ CalculationPropertiesProject.py
 #
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>
-from Tkinter import Toplevel,PhotoImage,Frame,Button,Label,StringVar,Entry,Radiobutton
-from Tkinter import TOP,YES,LEFT,X,NO,NORMAL,RAISED,W
-from tkColorChooser import askcolor
-from SignalIntegrity.App.FilePicker import AskOpenFileName,AskSaveAsFilename
 
+import sys
+if sys.version_info.major < 3:
+    from Tkinter import Toplevel,PhotoImage,Frame,Button,Label,StringVar,Entry,Radiobutton
+    from Tkinter import TOP,YES,LEFT,X,NO,NORMAL,RAISED,W
+    from tkColorChooser import askcolor
+else:
+    from tkinter import Toplevel,PhotoImage,Frame,Button,Label,StringVar,Entry,Radiobutton
+    from tkinter import TOP,YES,LEFT,X,NO,NORMAL,RAISED,W
+    from tkinter import colorchooser
+
+from SignalIntegrity.App.FilePicker import AskOpenFileName,AskSaveAsFilename
 from SignalIntegrity.App.ToSI import FromSI,ToSI
 from SignalIntegrity.App.Files import FileParts,ConvertFileNameToRelativePath
 
@@ -249,7 +256,10 @@ class CalculationPropertyColor(Frame):
     def GetString(self):
         return self.string.get()
     def onPressed(self,event=None):
-        color = askcolor()[1]
+        if sys.version_info.major < 3:
+            color = askcolor()[1]
+        else:
+            color = colorchooser.askcolor()[1]
         if not color is None:
             self.SetString(color)
             if not ((self.project is None) or (self.projectPath is None)):

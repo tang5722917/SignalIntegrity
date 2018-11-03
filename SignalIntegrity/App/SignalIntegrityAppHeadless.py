@@ -20,7 +20,12 @@ import os
 import sys
 
 import xml.etree.ElementTree as et
-from Tkinter import ALL
+
+import sys
+if sys.version_info.major < 3:
+    from Tkinter import ALL
+else:
+    from tkinter import ALL
 
 from SignalIntegrity.App.CalculationProperties import CalculationProperties
 from SignalIntegrity.App.Files import FileParts

@@ -16,13 +16,20 @@ SParameterViewerWindow.py
 #
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>
-from Tkinter import Frame,Entry,Label,StringVar,Toplevel,PhotoImage,BooleanVar,Menu,Button
-from Tkinter import TOP,X,YES,LEFT,NO,SUNKEN,RAISED,NONE,BOTH
+import sys
+if sys.version_info.major < 3:
+    from Tkinter import Frame,Entry,Label,StringVar,Toplevel,PhotoImage,BooleanVar,Menu,Button
+    from Tkinter import TOP,X,YES,LEFT,NO,SUNKEN,RAISED,NONE,BOTH
+    import tkMessageBox
+else:
+    from tkinter import Frame,Entry,Label,StringVar,Toplevel,PhotoImage,BooleanVar,Menu,Button
+    from tkinter import TOP,X,YES,LEFT,NO,SUNKEN,RAISED,NONE,BOTH
+    from tkinter import messagebox
+
 import matplotlib
 import math
 import sys
 import os
-import tkMessageBox
 
 from SignalIntegrity.App.PartProperty import PartPropertyDelay,PartPropertyReferenceImpedance
 from SignalIntegrity.App.Files import FileParts
@@ -39,7 +46,10 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import platform
 if platform.system() == 'Linux':
-    from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg
+    if sys.version_info.major < 3:
+        from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg
+    else:
+        from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 else:
     from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
@@ -189,7 +199,10 @@ class SParametersDialog(Toplevel):
         self.topLeftCanvas=FigureCanvasTkAgg(self.topLeftFigure, master=topLeftFrame)
         self.topLeftCanvas.get_tk_widget().pack(side=TOP, fill=X, expand=1)
         if platform.system() == 'Linux':
-            self.topLeftToolbar = NavigationToolbar2TkAgg( self.topLeftCanvas, topLeftFrame )
+            if sys.version_info.major < 3:
+                self.topLeftToolbar = NavigationToolbar2TkAgg( self.canvas, self )
+            else:
+                self.topLeftToolbar = NavigationToolbar2Tk( self.canvas, self )
         else:
             self.topLeftToolbar = NavigationToolbar2Tk( self.topLeftCanvas, topLeftFrame )
         self.topLeftToolbar.update()
@@ -200,7 +213,10 @@ class SParametersDialog(Toplevel):
         self.topRightCanvas=FigureCanvasTkAgg(self.topRightFigure, master=topRightFrame)
         self.topRightCanvas.get_tk_widget().pack(side=TOP, fill=X, expand=1)
         if platform.system() == 'Linux':
-            self.topRightToolbar = NavigationToolbar2TkAgg( self.topRightCanvas, topRightFrame )
+            if sys.version_info.major < 3:
+                self.topRightToolbar = NavigationToolbar2TkAgg( self.canvas, self )
+            else:
+                self.topRightToolbar = NavigationToolbar2Tk( self.canvas, self )
         else:
             self.topRightToolbar = NavigationToolbar2Tk( self.topRightCanvas, topRightFrame )
         self.topRightToolbar.update()
@@ -216,7 +232,10 @@ class SParametersDialog(Toplevel):
         self.bottomLeftCanvas=FigureCanvasTkAgg(self.bottomLeftFigure, master=bottomLeftFrame)
         self.bottomLeftCanvas.get_tk_widget().pack(side=TOP, fill=X, expand=1)
         if platform.system() == 'Linux':
-            self.bottomLeftToolbar = NavigationToolbar2TkAgg( self.bottomLeftCanvas, bottomLeftFrame )
+            if sys.version_info.major < 3:
+                self.bottomLeftToolbar = NavigationToolbar2TkAgg( self.canvas, self )
+            else:
+                self.bottomLeftToolbar = NavigationToolbar2Tk( self.canvas, self )
         else:
             self.bottomLeftToolbar = NavigationToolbar2Tk( self.bottomLeftCanvas, bottomLeftFrame )
         self.bottomLeftToolbar.update()
@@ -227,7 +246,10 @@ class SParametersDialog(Toplevel):
         self.bottomRightCanvas=FigureCanvasTkAgg(self.bottomRightFigure, master=bottomRightFrame)
         self.bottomRightCanvas.get_tk_widget().pack(side=TOP, fill=X, expand=1)
         if platform.system() == 'Linux':
-            self.bottomRightToolbar = NavigationToolbar2TkAgg( self.bottomRightCanvas, bottomRightFrame )
+            if sys.version_info.major < 3:
+                self.bottomRightToolbar = NavigationToolbar2TkAgg( self.canvas, self )
+            else:
+                self.bottomRightToolbar = NavigationToolbar2Tk( self.canvas, self )
         else:
             self.bottomRightToolbar = NavigationToolbar2Tk( self.bottomRightCanvas, bottomRightFrame )
         self.bottomRightToolbar.update()
@@ -586,8 +608,10 @@ class SParametersDialog(Toplevel):
                 texfile.write(line)
             texfile.close()
         except:
-            tkMessageBox.showerror('Export LaTeX','LaTeX could not be generated or written ')
-
+            if sys.version_info.major < 3:
+                tkMessageBox.showerror('Export LaTeX','LaTeX could not be generated or written ')
+            else:
+                messagebox.showerror('Export LaTeX','LaTeX could not be generated or written ')                
         fp=FileParts(filename.replace('Magnitude.tex', ''))
         filename=fp.filename
 
@@ -612,8 +636,10 @@ class SParametersDialog(Toplevel):
                 texfile.write(line)
             texfile.close()
         except:
-            tkMessageBox.showerror('Export LaTeX','LaTeX could not be generated or written ')
-
+            if sys.version_info.major < 3:
+                tkMessageBox.showerror('Export LaTeX','LaTeX could not be generated or written ')
+            else:
+                messagebox.showerror('Export LaTeX','LaTeX could not be generated or written ')                
         fp=FileParts(filename.replace('Phase.tex', ''))
         filename=fp.filename
 
@@ -638,8 +664,10 @@ class SParametersDialog(Toplevel):
                 texfile.write(line)
             texfile.close()
         except:
-            tkMessageBox.showerror('Export LaTeX','LaTeX could not be generated or written ')
-
+            if sys.version_info.major < 3:
+                tkMessageBox.showerror('Export LaTeX','LaTeX could not be generated or written ')
+            else:
+                messagebox.showerror('Export LaTeX','LaTeX could not be generated or written ')                
         fp=FileParts(filename.replace('ImpulseResponse.tex', ''))
         filename=fp.filename
 
@@ -664,13 +692,19 @@ class SParametersDialog(Toplevel):
                 texfile.write(line)
             texfile.close()
         except:
-            tkMessageBox.showerror('Export LaTeX','LaTeX could not be generated or written ')
+            if sys.version_info.major < 3:
+                tkMessageBox.showerror('Export LaTeX','LaTeX could not be generated or written ')
+            else:
+                messagebox.showerror('Export LaTeX','LaTeX could not be generated or written ')
 
     def onHelp(self):
         import webbrowser
         helpfile=self.parent.helpSystemKeys['sec:S-parameter-Viewer']
         if helpfile is None:
-            tkMessageBox.showerror('Help System','Cannot find or open this help element')
+            if sys.version_info.major < 3:
+                tkMessageBox.showerror('Help System','Cannot find or open this help element')
+            else:
+                messagebox.showerror('Help System','Cannot find or open this help element')                
             return
         if self.parent.preferences.GetValue('OnlineHelp.UseOnlineHelp'):
             helpdir=self.parent.preferences.GetValue('OnlineHelp.URL')

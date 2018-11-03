@@ -16,8 +16,13 @@ Schematic.py
 #
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>
-from Tkinter import Menu,Frame,Canvas
-from Tkinter import RAISED,SUNKEN,BOTH,YES,TOP,ALL
+import sys
+if sys.version_info.major < 3:
+    from Tkinter import Menu,Frame,Canvas
+    from Tkinter import RAISED,SUNKEN,BOTH,YES,TOP,ALL
+else:
+    from tkinter import Menu,Frame,Canvas
+    from tkinter import RAISED,SUNKEN,BOTH,YES,TOP,ALL
 
 import xml.etree.ElementTree as et
 import copy
