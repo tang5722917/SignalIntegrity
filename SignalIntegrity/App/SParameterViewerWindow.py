@@ -384,10 +384,10 @@ class SParametersDialog(Toplevel):
 
         if ir is not None:
             if self.buttonLabels[self.toPort-1][self.fromPort-1][:2]=='i/' or self.buttonLabels[self.toPort-1][self.fromPort-1][:3]=='di/':
-                print 'Integrate'
+                print('Integrate')
                 ir=si.td.wf.ImpulseResponse(ir.Integral(addPoint=False))
             if self.buttonLabels[self.toPort-1][self.fromPort-1][:3]=='di/':
-                print 'Integrate'
+                print('Integrate')
                 ir=si.td.wf.ImpulseResponse(ir.Integral(addPoint=False)*ir.td.Fs)
 
             y=ir.Values()

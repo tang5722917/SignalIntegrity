@@ -27,7 +27,10 @@ from SignalIntegrity.Lib.TimeDomain.Waveform.Waveform import Waveform
 from SignalIntegrity.Lib.SParameters.SParameterFile import SParameterFile
 
 def PlotTikZ(filename,plot2save,scale=None):
-    from matplotlib2tikz import save as tikz_save
+    try:
+        from matplotlib2tikz import save as tikz_save
+    except:
+        return
     tikz_save(filename,figure=plot2save.gcf(),show_info=False,float_format='%.6g')
     texfile=open(filename,'rU')
     lines=[]

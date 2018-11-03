@@ -85,7 +85,7 @@ class XMLProperty(object):
         return self
     def Print(self):
         for item in self.dict:
-            print self.dict[item]
+            print(self.dict[item])
     def PrintFullInformation(self,prefix):
         if 'type' in self.dict:
             propertyType=self.dict['type']
@@ -99,7 +99,7 @@ class XMLProperty(object):
             for i in range(len(propertyValue)):
                 propertyValue[i].PrintFullInformation(prefix+'['+str(i)+']')
         else:
-            print prefix + ' <' + propertyType + '> = ' + propertyValue
+            print(prefix + ' <' + propertyType + '> = ' + propertyValue)
 
     def GetPropertyValue(self,path):
         if path in self.dict:
@@ -171,7 +171,7 @@ class XMLConfiguration(object):
         return self
     def Print(self):
         for item in self.dict:
-            print item
+            print (item)
             self.dict[item].Print()
 
     def PrintFullInformation(self,prefix):
@@ -224,7 +224,7 @@ class ProjectFileBase(object):
             lines=lines+self.dict[item].OutputXML(self.indent)
         lines=lines+['</Project>']
         for line in lines:
-            print line
+            print(line)
         return self
 
     def Write(self,filename):
@@ -260,7 +260,7 @@ class ProjectFileBase(object):
 
     def Print(self):
         for item in self.dict:
-            print item
+            print(item)
             self.dict[item].Print()
 
     def PrintFullInformation(self):

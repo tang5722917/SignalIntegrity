@@ -38,7 +38,7 @@ class Preferences(PreferencesFile):
             self.preferencesFileName=pathToPreferencesFile+'/preferences'
             try:
                 os.makedirs(pathToPreferencesFile)
-            except OSError, e:
+            except OSError as e:
                 if e.errno != errno.EEXIST:
                     return
         else:

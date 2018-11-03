@@ -514,7 +514,7 @@ class PartPictureAmp(PartPicture):
     
 class PartPictureSpecifiedPorts(PartPictureBox):
     def __init__(self,ports,origin,orientation,mirroredHorizontally,mirroredVertically):
-        LeftPorts=(ports+1)/2
+        LeftPorts=(ports+1)//2
         RightPorts=ports-LeftPorts
         RightPinOffset = 1 if RightPorts < LeftPorts else 0
         PartPictureBox.__init__(self,origin,
@@ -523,7 +523,7 @@ class PartPictureSpecifiedPorts(PartPictureBox):
 
 class PartPictureSpecifiedPortsAcross(PartPictureBox):
     def __init__(self,ports,origin,orientation,mirroredHorizontally,mirroredVertically):
-        LeftPorts=(ports+1)/2
+        LeftPorts=(ports+1)//2
         RightPorts=ports-LeftPorts
         RightPinOffset = 1 if RightPorts < LeftPorts else 0
         PartPictureBox.__init__(self,origin,
@@ -532,7 +532,7 @@ class PartPictureSpecifiedPortsAcross(PartPictureBox):
 
 class PartPictureSpecifiedPortsDownAndUp(PartPictureBox):
     def __init__(self,ports,origin,orientation,mirroredHorizontally,mirroredVertically):
-        LeftPorts=(ports+1)/2
+        LeftPorts=(ports+1)//2
         RightPorts=ports-LeftPorts
         RightPinOffset = 1 if RightPorts < LeftPorts else 0
         PartPictureBox.__init__(self,origin,

@@ -186,6 +186,8 @@ class Waveform(list):
         else:
             raise SignalIntegrityExceptionWaveform('cannot multiply waveform by type '+str(other.__class__.__name__))
         # pragma: include
+    def __truediv__(self,d):
+        return self.__div__(d)
     def __div__(self,other):
         """overloads /
         @param other instance of float, int, complex to divide by.
