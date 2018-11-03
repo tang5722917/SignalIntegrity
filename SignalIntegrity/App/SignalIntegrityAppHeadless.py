@@ -1,7 +1,6 @@
 """
 SignalIntegrityAppHeadless.py
 """
-
 # Copyright (c) 2018 Teledyne LeCroy, Inc.
 # All rights reserved worldwide.
 #
@@ -23,10 +22,10 @@ import sys
 import xml.etree.ElementTree as et
 from Tkinter import ALL
 
-from CalculationProperties import CalculationProperties
-from Files import FileParts,ConvertFileNameToRelativePath
-from Schematic import Schematic
-from Preferences import Preferences
+from SignalIntegrity.App.CalculationProperties import CalculationProperties
+from SignalIntegrity.App.Files import FileParts
+from SignalIntegrity.App.Schematic import Schematic
+from SignalIntegrity.App.Preferences import Preferences
 
 class DrawingHeadless(object):
     def __init__(self,parent):

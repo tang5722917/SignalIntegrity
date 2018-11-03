@@ -19,7 +19,7 @@ WaveletDenoiser
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>
 
-from Wavelets import WaveletDaubechies16
+from SignalIntegrity.Lib.Wavelets.Wavelets import WaveletDaubechies16
 from SignalIntegrity.Lib.TimeDomain.Waveform.Waveform import Waveform
 from SignalIntegrity.Lib.TimeDomain.Filters.WaveformTrimmer import WaveformTrimmer
 

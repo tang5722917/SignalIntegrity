@@ -1,7 +1,6 @@
 """
 Simulator.py
 """
-
 # Copyright (c) 2018 Teledyne LeCroy, Inc.
 # All rights reserved worldwide.
 #
@@ -20,13 +19,13 @@ Simulator.py
 from Tkinter import Toplevel,Frame,PhotoImage,Menu,Button
 from Tkinter import TOP,NO,RAISED,LEFT,X,NONE,BOTH
 import tkMessageBox
-from PartProperty import PartPropertyPartName,PartPropertyReferenceDesignator,PartPropertyVoltageOffset
-from PartProperty import PartPropertyTransresistance,PartPropertyVoltageGain,PartPropertyDelay
-from SParameterViewerWindow import SParametersDialog
-from MenuSystemHelpers import Doer
-from ProgressDialog import ProgressDialog
-from FilePicker import AskSaveAsFilename
-from ToSI import FromSI,ToSI
+from SignalIntegrity.App.PartProperty import PartPropertyPartName,PartPropertyReferenceDesignator,PartPropertyVoltageOffset
+from SignalIntegrity.App.PartProperty import PartPropertyTransresistance,PartPropertyVoltageGain,PartPropertyDelay
+from SignalIntegrity.App.SParameterViewerWindow import SParametersDialog
+from SignalIntegrity.App.MenuSystemHelpers import Doer
+from SignalIntegrity.App.ProgressDialog import ProgressDialog
+from SignalIntegrity.App.FilePicker import AskSaveAsFilename
+from SignalIntegrity.App.ToSI import FromSI,ToSI
 
 import matplotlib
 

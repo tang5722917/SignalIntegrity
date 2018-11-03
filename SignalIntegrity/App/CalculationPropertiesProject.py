@@ -1,7 +1,6 @@
 """
 CalculationPropertiesProject.py
 """
-
 # Copyright (c) 2018 Teledyne LeCroy, Inc.
 # All rights reserved worldwide.
 #
@@ -20,10 +19,10 @@ CalculationPropertiesProject.py
 from Tkinter import Toplevel,PhotoImage,Frame,Button,Label,StringVar,Entry,Radiobutton
 from Tkinter import TOP,YES,LEFT,X,NO,NORMAL,RAISED,W
 from tkColorChooser import askcolor
-from FilePicker import AskOpenFileName,AskSaveAsFilename
+from SignalIntegrity.App.FilePicker import AskOpenFileName,AskSaveAsFilename
 
-from ToSI import FromSI,ToSI
-from Files import FileParts,ConvertFileNameToRelativePath
+from SignalIntegrity.App.ToSI import FromSI,ToSI
+from SignalIntegrity.App.Files import FileParts,ConvertFileNameToRelativePath
 
 class CalculationProperty(Frame):
     def __init__(self,parentFrame,textLabel,enteredCallback,updateStringsCallback,project=None,projectPath=None):

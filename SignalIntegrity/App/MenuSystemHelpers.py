@@ -17,8 +17,8 @@ MenuSystemHelpers.py
 #
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>
-from Tkinter import *
-import os
+from Tkinter import PhotoImage,Button,Frame,Label
+from Tkinter import SUNKEN,W,X
 
 class MenuElement(object):
     def __init__(self,menu,**kw):

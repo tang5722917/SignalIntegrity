@@ -90,7 +90,7 @@ class SystemDescriptionParser(ParserFile,ParserArgs):
         a device has been declared.
         """
         # pragma: silent exclude
-        from Devices.DeviceParser import DeviceParser
+        from SignalIntegrity.Lib.Parsers.Devices.DeviceParser import DeviceParser
         from SignalIntegrity.Lib.Helpers.LineSplitter import LineSplitter
         # pragma: include
         lineList=self.ReplaceArgs(LineSplitter(line))
@@ -125,7 +125,7 @@ class SystemDescriptionParser(ParserFile,ParserArgs):
         @see _ProcessLine() for explanation of parameters and functionality.
         """
         # pragma: silent exclude
-        from SignalIntegrity.Lib.SystemDescriptions import SystemDescription
+        from SignalIntegrity.Lib.SystemDescriptions.SystemDescription import SystemDescription
         # pragma: include
         self.m_sd=SystemDescription()
         self.m_spc=[]; self.m_spcl=[]; self.m_ul=[]

@@ -20,7 +20,7 @@ PartPicture.py
 import xml.etree.ElementTree as et
 import copy
 
-from PartPin import *
+from SignalIntegrity.App.PartPin import *
 from matplotlib.pyplot import grid
 
 class CoordinateTranslater(object):

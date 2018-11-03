@@ -24,7 +24,6 @@ from SignalIntegrity.Lib.Measurement.CalKit.Standards.LoadStandard import LoadSt
 from SignalIntegrity.Lib.Measurement.CalKit.Standards.ThruStandard import ThruStandard
 from SignalIntegrity.Lib.SParameters.SParameterFile import SParameterFile
 
-
 class CalibrationConstants(object):
     """Class for holding, reading and writing calibration constants for a calibration kit
 

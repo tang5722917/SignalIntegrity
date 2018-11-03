@@ -1,7 +1,6 @@
 """
 NetList.py
 """
-
 # Copyright (c) 2018 Teledyne LeCroy, Inc.
 # All rights reserved worldwide.
 #
@@ -21,8 +20,8 @@ from Tkinter import Toplevel,Frame,Button
 from Tkinter import TOP,BOTH,YES,LEFT,END,ACTIVE
 from ScrolledText import ScrolledText
 
-from FilePicker import AskSaveAsFilename
-from PartProperty import PartPropertyPartName,PartPropertyReferenceDesignator,PartPropertyWeight
+from SignalIntegrity.App.FilePicker import AskSaveAsFilename
+from SignalIntegrity.App.PartProperty import PartPropertyPartName,PartPropertyReferenceDesignator,PartPropertyWeight
 #from Wire import *
 
 class NetList(object):

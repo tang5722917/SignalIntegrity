@@ -1,7 +1,6 @@
 """
 SParameterViewerWindow.py
 """
-
 # Copyright (c) 2018 Teledyne LeCroy, Inc.
 # All rights reserved worldwide.
 #
@@ -25,14 +24,13 @@ import sys
 import os
 import tkMessageBox
 
+from SignalIntegrity.App.PartProperty import PartPropertyDelay,PartPropertyReferenceImpedance
+from SignalIntegrity.App.Files import FileParts
+from SignalIntegrity.App.MenuSystemHelpers import Doer
 
-from PartProperty import PartPropertyDelay,PartPropertyReferenceImpedance
-from Files import FileParts
-from MenuSystemHelpers import Doer
+from SignalIntegrity.App.FilePicker import AskOpenFileName,AskSaveAsFilename
 
-from FilePicker import AskOpenFileName,AskSaveAsFilename
-
-from ToSI import ToSI,FromSI
+from SignalIntegrity.App.ToSI import ToSI,FromSI
 
 if not 'matplotlib.backends' in sys.modules:
     matplotlib.use('TkAgg')

@@ -1,7 +1,6 @@
 """
 Schematic.py
 """
-
 # Copyright (c) 2018 Teledyne LeCroy, Inc.
 # All rights reserved worldwide.
 #
@@ -23,12 +22,12 @@ from Tkinter import RAISED,SUNKEN,BOTH,YES,TOP,ALL
 import xml.etree.ElementTree as et
 import copy
 
-from PartProperty import PartPropertyReferenceDesignator,PartPropertyDefaultReferenceDesignator
-from Device import DeviceXMLClassFactory
-from NetList import NetList
-from Wire import WireList,Vertex,SegmentList,Wire
-from MenuSystemHelpers import Doer
-from DeviceProperties import DevicePropertiesDialog
+from SignalIntegrity.App.PartProperty import PartPropertyReferenceDesignator,PartPropertyDefaultReferenceDesignator
+from SignalIntegrity.App.Device import DeviceXMLClassFactory
+from SignalIntegrity.App.NetList import NetList
+from SignalIntegrity.App.Wire import WireList,Vertex,SegmentList,Wire
+from SignalIntegrity.App.MenuSystemHelpers import Doer
+from SignalIntegrity.App.DeviceProperties import DevicePropertiesDialog
 
 class Schematic(object):
     def __init__(self):
@@ -53,7 +52,7 @@ class Schematic(object):
                         returnedDevice=None
                     if not returnedDevice is None:
                         # hack to fix port numbering of old four port transmission lines
-                        from Device import DeviceTelegrapherFourPort
+                        from SignalIntegrity.App.Device import DeviceTelegrapherFourPort
                         if isinstance(returnedDevice,DeviceTelegrapherFourPort):
                             if returnedDevice.partPicture.current.pinList[1].pinNumber==3:
                                 returnedDevice.partPicture.current.pinList[1].pinNumber=2
