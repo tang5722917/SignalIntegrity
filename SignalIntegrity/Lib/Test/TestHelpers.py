@@ -20,7 +20,11 @@ TestHelpers.py
 
 import os
 import sys
-from cStringIO import StringIO
+
+if sys.version_info.major < 3:
+    from cStringIO import StringIO
+else:
+    from io import StringIO
 
 from SignalIntegrity.Lib.FrequencyDomain.FrequencyResponse import FrequencyResponse
 from SignalIntegrity.Lib.TimeDomain.Waveform.Waveform import Waveform
@@ -212,8 +216,7 @@ class RoutineWriterTesterHelper(object):
         self.CheckRoutineWriterResult(scriptFileName,sourceCode,Routine + ' source code')
         old_stdout = sys.stdout
         sys.stdout = mystdout = StringIO()
-        execfile(scriptFileName)
-        #os.chdir(os.path.dirname(os.path.realpath(__file__)))
+        exec(open('./'+scriptFileName).read())
         sys.stdout = old_stdout
         outputFileName = scriptName + '.po'
         if not os.path.exists(outputFileName):

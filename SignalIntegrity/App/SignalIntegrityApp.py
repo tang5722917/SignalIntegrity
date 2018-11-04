@@ -353,7 +353,7 @@ class SignalIntegrityApp(Frame):
             if sys.version_info.major < 3:
                 tkMessageBox.showerror('read project file','file not found or unreadable')
             else:
-		messagebox.showerror('read project file','file not found or unreadable')
+                messagebox.showerror('read project file','file not found or unreadable')
             return
         self.Drawing.stateMachine.Nothing()
         self.Drawing.DrawSchematic()
@@ -504,7 +504,7 @@ class SignalIntegrityApp(Frame):
             if sys.version_info.major < 3:
                 tkMessageBox.showerror('Export LaTeX','LaTeX could not be generated or written ')
             else:
-		messagebox.showerror('Export LaTeX','LaTeX could not be generated or written ')
+                messagebox.showerror('Export LaTeX','LaTeX could not be generated or written ')
 
     def onAddPart(self):
         self.onAddPartFromSpecificList(DeviceList+DeviceListUnknown+DeviceListSystem)
@@ -649,7 +649,7 @@ class SignalIntegrityApp(Frame):
             if sys.version_info.major < 3:
                 tkMessageBox.showerror('S-parameter Calculator',e.parameter+': '+e.message)
             else:
-		messagebox.showerror('S-parameter Calculator',e.parameter+': '+e.message)                
+                messagebox.showerror('S-parameter Calculator',e.parameter+': '+e.message)                
             return
         SParametersDialog(self,sp,filename=self.fileparts.FullFilePathExtension('s'+str(sp.m_P)+'p'))
 
@@ -687,7 +687,7 @@ class SignalIntegrityApp(Frame):
             if sys.version_info.major < 3:
                 tkMessageBox.showerror('Deembedder',e.parameter+': '+e.message)
             else:
-		messagebox.showerror('Deembedder',e.parameter+': '+e.message)
+                messagebox.showerror('Deembedder',e.parameter+': '+e.message)
             return
         unknownNames=dnp.m_sd.UnknownNames()
         if len(unknownNames)==1:
