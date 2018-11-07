@@ -124,7 +124,7 @@ class LinesCache(ResultsCache):
         It is formed by hashing a combination of the netlist lines, the frequencies, and the arguments provided.
         @return integer hash value
         """
-        return hashlib.sha256(repr(self.m_lines)+repr(self.m_f)+repr(self.m_args)).hexdigest()
+        return hashlib.sha256((repr(self.m_lines)+repr(self.m_f)+repr(self.m_args)).encode()).hexdigest()
     def CheckTimes(self,cacheFilename):
         """
         Checks the times for files associated with a netlist.\n
