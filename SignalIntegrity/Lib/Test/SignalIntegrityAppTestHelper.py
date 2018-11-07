@@ -107,7 +107,6 @@ class SignalIntegrityAppTestHelper:
                                 continue
                         self.assertTrue(foundOne,testFilename + ' incorrect')
                     print(testFilename+' okay, but connections in different order')
-
         os.chdir(currentDirectory)
     def SParameterRegressionChecker(self,sp,spfilename):
         from SignalIntegrity.Lib.SParameters.SParameterFile import SParameterFile
