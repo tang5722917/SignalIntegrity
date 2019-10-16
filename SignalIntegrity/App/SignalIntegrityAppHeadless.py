@@ -198,6 +198,7 @@ class SignalIntegrityAppHeadless(object):
         if SignalIntegrity.App.Preferences['Cache.CacheResults']:
             cacheFileName=self.fileparts.FileNameTitle()
         si.sd.Numeric.trySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
         spnp=si.p.SystemSParametersNumericParser(
             si.fd.EvenlySpacedFrequencyList(
                 SignalIntegrity.App.Project['CalculationProperties.EndFrequency'],
@@ -230,6 +231,7 @@ class SignalIntegrityAppHeadless(object):
         if SignalIntegrity.App.Preferences['Cache.CacheResults']:
             cacheFileName=self.fileparts.FileNameTitle()
         si.sd.Numeric.trySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
         snp=si.p.SimulatorNumericParser(fd,cacheFileName=cacheFileName)
         if not callback == None:
             snp.InstallCallback(callback)
@@ -330,6 +332,7 @@ class SignalIntegrityAppHeadless(object):
         if SignalIntegrity.App.Preferences['Cache.CacheResults']:
             cacheFileName=self.fileparts.FileNameTitle()
         si.sd.Numeric.trySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
         snp=si.p.VirtualProbeNumericParser(
             si.fd.EvenlySpacedFrequencyList(
                 SignalIntegrity.App.Project['CalculationProperties.EndFrequency'],
@@ -430,6 +433,7 @@ class SignalIntegrityAppHeadless(object):
         if SignalIntegrity.App.Preferences['Cache.CacheResults']:
             cacheFileName=self.fileparts.FileNameTitle()
         si.sd.Numeric.trySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
         dnp=si.p.DeembedderNumericParser(
             si.fd.EvenlySpacedFrequencyList(
                 SignalIntegrity.App.Project['CalculationProperties.EndFrequency'],
@@ -469,6 +473,7 @@ class SignalIntegrityAppHeadless(object):
         if SignalIntegrity.App.Preferences['Cache.CacheResults']:
             cacheFileName=self.fileparts.FileNameTitle()
         si.sd.Numeric.trySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
         etnp=si.p.CalibrationNumericParser(
             si.fd.EvenlySpacedFrequencyList(
                 SignalIntegrity.App.Project['CalculationProperties.EndFrequency'],
@@ -508,6 +513,7 @@ class SignalIntegrityAppHeadless(object):
         if SignalIntegrity.App.Preferences['Cache.CacheResults']:
             cacheFileName=self.fileparts.FileNameTitle()+'_DUTSParameters'
         si.sd.Numeric.trySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
         spnp=si.p.DUTSParametersNumericParser(fd,cacheFileName=cacheFileName)
         spnp.AddLines(netList)
         try:
@@ -539,6 +545,7 @@ class SignalIntegrityAppHeadless(object):
         if SignalIntegrity.App.Preferences['Cache.CacheResults']:
             cacheFileName=self.fileparts.FileNameTitle()+'_TransferMatrices'
         si.sd.Numeric.trySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
         snp=si.p.NetworkAnalyzerSimulationNumericParser(fd,DUTSp,spnp.NetworkAnalyzerPortConnectionList,cacheFileName=cacheFileName)
         snp.AddLines(netListText)
         level=SignalIntegrityAppHeadless.projectStack.Push()

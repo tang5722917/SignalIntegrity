@@ -257,6 +257,7 @@ class SParametersDialog(tk.Toplevel):
         plotWidth=SignalIntegrity.App.Preferences['Appearance.PlotWidth']
         plotHeight=SignalIntegrity.App.Preferences['Appearance.PlotHeight']
         plotDPI=SignalIntegrity.App.Preferences['Appearance.PlotDPI']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
 
         self.topLeftFigure=Figure(figsize=(plotWidth,plotHeight), dpi=plotDPI)
         self.topLeftPlot=self.topLeftFigure.add_subplot(111)

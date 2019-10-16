@@ -637,6 +637,7 @@ class Simulator(object):
         if SignalIntegrity.App.Preferences['Cache.CacheResults']:
             cacheFileName=self.parent.fileparts.FileNameTitle()
         si.sd.Numeric.trySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
         snp=si.p.SimulatorNumericParser(fd,cacheFileName=cacheFileName)
         snp.AddLines(netListText)
         progressDialog=ProgressDialog(self.parent,"Transfer Parameters",snp,snp.TransferMatrices, granularity=1.0)
@@ -741,6 +742,7 @@ class Simulator(object):
         if SignalIntegrity.App.Preferences['Cache.CacheResults']:
             cacheFileName=self.parent.fileparts.FileNameTitle()
         si.sd.Numeric.trySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
+        si.fd.FrequencyResponse.tryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
         snp=si.p.VirtualProbeNumericParser(
             si.fd.EvenlySpacedFrequencyList(
                 SignalIntegrity.App.Project['CalculationProperties.EndFrequency'],

@@ -34,6 +34,8 @@ class TestPI(unittest.TestCase,si.test.SourcesTesterHelper,si.test.ResponseTeste
         pysi=SignalIntegrityAppHeadless()
         self.TrySVD=SignalIntegrity.App.Preferences['Calculation.TrySVD']
         SignalIntegrity.App.Preferences['Calculation.TrySVD']=True
+        self.TryRestoreLowFrequencyPoints=SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']
+        SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']=True
         SignalIntegrity.App.Preferences.SaveToFile()
     def tearDown(self):
         unittest.TestCase.tearDown(self)
@@ -43,6 +45,7 @@ class TestPI(unittest.TestCase,si.test.SourcesTesterHelper,si.test.ResponseTeste
         import SignalIntegrity.App.Project
         pysi=SignalIntegrityAppHeadless()
         SignalIntegrity.App.Preferences['Calculation.TrySVD']=self.TrySVD
+        SignalIntegrity.App.Preferences['Calculation.TryRestoreLowFrequencyPoints']=self.TryRestoreLowFrequencyPoints
         SignalIntegrity.App.Preferences.SaveToFile()
     def testRLCOnePort(self):
         # one port impedance calculation based on s11

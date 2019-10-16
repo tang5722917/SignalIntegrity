@@ -18,7 +18,7 @@ Frequency Response
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>
 
-from numpy import fft
+from numpy import fft,matrix,linalg
 import math
 import cmath
 
@@ -29,6 +29,7 @@ from SignalIntegrity.Lib.TimeDomain.Waveform.TimeDescriptor import TimeDescripto
 from SignalIntegrity.Lib.Splines import Spline
 from SignalIntegrity.Lib.ChirpZTransform import CZT
 from SignalIntegrity.Lib.Rat import Rat
+#from traits.trait_types import self
 
 class FrequencyResponse(FrequencyDomain):
     """FrequencyResponse  
@@ -38,6 +39,7 @@ class FrequencyResponse(FrequencyDomain):
     instance of class FrequencyContent, would filter the waveform in the frequency-domain.
     @see ImpulseResponse
     """
+    tryRestoreLowFrequencyPoints=True
     def __init__(self,f=None,resp=None):
         """Constructor
         @param f instance of class FrequencyList
@@ -166,14 +168,19 @@ class FrequencyResponse(FrequencyDomain):
         @see FrequencyResponse.ResampleCZT()
         @see Spline
         """
-        fd=self.FrequencyList()
+        Result=FrequencyResponse(self.FrequencyList(),self.Values())
+        # pragma: silent exclude
+        if self.tryRestoreLowFrequencyPoints:
+            Result=Result.RestoreLowFrequencyPoints()
+        # pragma: include
+        fd=Result.FrequencyList()
         evenlySpaced = fd.CheckEvenlySpaced() and fdp.CheckEvenlySpaced()
-        if not evenlySpaced: return self._SplineResample(fdp)
+        if not evenlySpaced: return Result._SplineResample(fdp)
         R=Rat(fd.Fe/fdp.Fe*fdp.N); ND1=R[0]; D2=R[1]
         if ND1 < fd.N: R=Rat(fd.Fe/fdp.Fe*fdp.N/fd.N); ND1=R[0]*fd.N; D2=R[1]
-        if  ND1 > 50000: return self.ResampleCZT(fdp)
-        if ND1 == fd.N: fr=self
-        else: fr=self.ImpulseResponse()._Pad(2*ND1).FrequencyResponse(None,False)
+        if  ND1 > 50000: return Result.ResampleCZT(fdp)
+        if ND1 == fd.N: fr=Result
+        else: fr=Result.ImpulseResponse()._Pad(2*ND1).FrequencyResponse(None,False)
         if D2*fdp.N != ND1: fr=fr._Pad(D2*fdp.N)
         if D2==1: return fr
         else: return fr._Decimate(D2)
@@ -211,3 +218,77 @@ class FrequencyResponse(FrequencyDomain):
         return FrequencyResponse(EvenlySpacedFrequencyList(Fei,Ni),
             CZT(ir.DelayBy(-TD).Values(),ir.td.Fs,0,Fei,Ni,speedy)).\
             _Pad(fdp.N)._DelayBy(-fd.N/2./fd.Fe+TD)
+    def RestoreLowFrequencyPoints(self):
+        """restores low frequency points
+        This algorithm works on a very special case of frequency responses only.  The criteria
+        for this algorithm is that the frequency response must contain frequency points must have
+        a constant delta frequency and be on a grid containing DC.  In other words, the first
+        frequency point must be at, for a given number of missing points M, and a deltaF at M*deltaF.
+        and each point should be at some (M+n)*deltaF.
+        If this criteria is met, solutions exist that can better determine these low frequency points
+        using causality as a criteria.
+        @return The new frequency response with the low frequency points potentially restored.
+        """
+        epsilon=1e-10
+        fd=self.FrequencyList()
+        if len(fd)<3:
+            return self
+        if abs(fd[0])<epsilon:
+            return self
+        spacing=fd[1]-fd[0]
+        for n in range(len(fd)):
+            if abs(math.floor(fd[n]/spacing+0.5)*spacing-fd[n])>epsilon:
+                return self
+        newfd=EvenlySpacedFrequencyList(fd[-1],math.floor(fd[-1]/spacing+0.5))
+        newtd=newfd.TimeDescriptor()
+        numMissing=int(fd[0]/spacing+0.5)
+        numEquations=int(newtd.K/2*0.75)
+        if numEquations < numMissing:
+            return self
+        A=[[0.0 for c in range(2*numMissing-1)] for r in range(numEquations)]
+        B=[[0.0] for r in range(numEquations)]
+        W=cmath.exp(1j*2*math.pi/newtd.K)
+
+        K=newtd.K
+        N=K//2
+        X=[0. for n in range(K)]
+        for n in range(K//2+1):
+            if n < numMissing:
+                X[n]=0.
+            else:
+                X[n]=self[n-numMissing]
+        for nn in range(1,K//2):
+            X[N+nn]=X[N-nn].conjugate()
+        pass
+        for r in range(numEquations):
+            for nm in range(numMissing):
+                if nm==0:
+                    A[r][nm]=1./K
+                else:
+                    A[r][nm*2-1]=2*(W**((K//2+r)*nm)).real/K
+                    A[r][nm*2]=-2*(W**((K//2+r)*nm)).imag/K
+            B[r][0]=-1./K*sum([X[n]*W**(n*(K/2+r)) for n in range(K)])
+        s = linalg.svd(matrix(A),compute_uv=False)
+        #print (s[0],s[-1])
+        missingValues=(matrix(A).getI()*matrix(B)).tolist()
+        missingValues=[v[0] for v in missingValues]
+        missingValues[0]=missingValues[0].real
+        v=[0. for _ in range(numMissing)]
+        for n in range(numMissing):
+            if n == 0:
+                v[n]=missingValues[n].real
+            else:
+                v[n]=missingValues[2*n-1].real+1j*missingValues[2*n].real
+        fr = FrequencyResponse(newfd,v+self.Values())
+        return fr
+    ##
+    # @var tryRestoreLowFrequencyPoints
+    # whether to try to restore low frequeny points.  Defaults to True (but the GUI application will
+    # control this through the preferences.
+    # This algorithm works on a very special case of frequency responses only.  The criteria
+    # for this algorithm is that the frequency response must contain frequency points must have
+    # a constant delta frequency and be on a grid containing DC.  In other words, the first
+    # frequency point must be at, for a given number of missing points M, and a deltaF at M*deltaF.
+    # and each point should be at some (M+n)*deltaF.
+    # If this criteria is met, solutions exist that can better determine these low frequency points
+    # using causality as a criteria.
