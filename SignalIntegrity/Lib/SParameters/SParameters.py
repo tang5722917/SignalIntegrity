@@ -45,7 +45,7 @@ class SParameters(SParameterManipulation):
         @param data list of list of list matrices were each element is a list of list s-parameter matrix.
         @param Z0 (optional) real or complex reference impedance
         """
-        self.m_sToken='S'; self.m_d=data; self.m_Z0=Z0
+        self.m_parameterType='S'; self.m_d=data; self.m_Z0=Z0
         self.m_f=FrequencyList(f)
         if not data is None:
             if len(data)>0: self.m_P=len(data[0])
@@ -101,7 +101,7 @@ class SParameters(SParameterManipulation):
                 if 'db' in lineList: cpxType = 'DB'
                 if 'r' in lineList: Z0=float(lineList[lineList.index('r')+1])
         for lin in self.header: lines.append(('! '+lin if lin[0] != '!' else lin)+'\n')
-        lines.append('# '+fToken+' '+self.m_sToken+' '+cpxType+' R '+str(Z0)+'\n')
+        lines.append('# '+fToken+' '+self.m_parameterType+' '+cpxType+' R '+str(Z0)+'\n')
         for n in range(len(self.m_f)):
             line=[str(self.m_f[n]/freqMul)]
             mat=self[n]
